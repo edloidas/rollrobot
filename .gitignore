@@ -1,0 +1,13 @@
+# Directories #
+
+bower_components/
+node_modules/
+coverage/
+
+
+# Files #
+
+npm-debug.log
+
+.DS_Store
+Desktop.ini

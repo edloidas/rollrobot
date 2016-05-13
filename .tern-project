@@ -1,0 +1,24 @@
+{
+  "ecmaVersion": 6,
+  "libs": [
+    "browser",
+    "jquery",
+    "lodash"
+  ],
+  "loadEagerly": [
+    "**.js"
+  ],
+  "plugins": {
+    "complete_strings": {},
+    "node": {},
+    "lint": {},
+    "requirejs": {
+      "baseURL": "./",
+      "paths": {}
+    },
+    "es_modules": {},
+    "doc_comment": {
+      "fullDocs": true
+    }
+  }
+}
