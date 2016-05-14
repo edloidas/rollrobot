@@ -1,0 +1,46 @@
+{
+  "name": "rollrobot",
+  "version": "0.0.1",
+  "description": "An ultimate webpack boilerplate",
+  "keywords": [
+    "rollrobot",
+    "telegram",
+    "bot",
+    "roll",
+    "dice",
+    "random"
+  ],
+  "homepage": "https://github.com/edloidas/rollrobot",
+  "bugs": {
+    "url": "https://github.com/edloidas/rollrobot/issues",
+    "email": "edloidas@gmail.com"
+  },
+  "license": "MIT",
+  "author": "Mikita Taukachou <edloidas@gmail.com> (http://edloidas.com)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/edloidas/rollrobot.git"
+  },
+  "scripts": {
+    "test": "mocha",
+    "start": "node rollrobot.js"
+  },
+  "dependencies": {
+    "lodash": "^4.12.0",
+    "node-telegram-bot-api": "^0.21.1"
+  },
+  "devDependencies": {
+    "coveralls": "^2.11.9",
+    "istanbul": "^0.4.3",
+    "mocha": "^2.4.5",
+    "mocha-lcov-reporter": "^1.2.0",
+    "nodemon": "^1.9.2",
+    "npm-run-all": "^2.1.0",
+		"should": "^8.3.1",
+    "tern": "^0.18.0"
+  },
+  "engines": {
+    "node": ">= 6.1.0",
+    "npm": ">= 3.8.6"
+  }
+}
