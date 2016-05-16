@@ -7,7 +7,7 @@ const message = {
     },
   },
   roll: {
-    regexp: /^(\/roll){1}(\s+\d+)?$/,
+    regexp: /^(?:(\/roll){1}((?:\s+\d+){0,3}))(?:\s+\S*)*$/,
   },
   sroll: {
     regexp: /^(\/sroll){1}(\s+\d+)?(?:\s+\S*)*$/,
