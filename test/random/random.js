@@ -1,5 +1,5 @@
 const should = require( 'should' );
-const random = require( '../src/random' );
+const random = require( '../../src/random' );
 
 before(( done ) => {
    // HACK: bypass ESLint no-unused-var error
