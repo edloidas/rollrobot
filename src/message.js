@@ -10,13 +10,13 @@ const message = {
     regexp: /^(\/roll){1}(\s+\d+)?$/,
   },
   sroll: {
-    regexp: /^(\/sroll){1}(\s+\d+)?$/,
+    regexp: /^(\/sroll){1}(\s+\d+)?(?:\s+\S*)*$/,
   },
   droll: {
-    regexp: /^(\/droll){1}(\s+\d+)?$/,
+    regexp: /^(\/droll){1}(\s+\d+)?(?:\s+\S*)*$/,
   },
   random: {
-    regexp: /^(\/random){1}((\s+\d+)?|(\s+\S*)*)$/,
+    regexp: /^(\/random){1}(\s+\d+)?(?:\s+\S*)*$/,
   },
 };
 

@@ -1,5 +1,5 @@
 const should = require( 'should' );
-const message = require( '../src/message' );
+const message = require( '../../src/message' );
 
 before(( done ) => {
    // HACK: bypass ESLint no-unused-var error
@@ -30,6 +30,7 @@ describe( 'message.start.regexp', () => {
   it( msg, ( done ) => {
     const commands = [
       'start', ' /start', '/start2', '/startqw',
+      '/Start', '/START', ' 123', ' asdf',
     ];
 
     commands.forEach(( cmd ) => {
