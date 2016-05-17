@@ -8,15 +8,27 @@ const message = {
   },
   roll: {
     regexp: /^(?:(\/roll){1}((?:\s+\d+){0,3}))(?:\s+\S*)*$/,
+    options: {
+      parse_mode: 'Markdown',
+    },
   },
   sroll: {
     regexp: /^(\/sroll){1}(\s+\d+)?(?:\s+\S*)*$/,
+    options: {
+      parse_mode: 'Markdown',
+    },
   },
   droll: {
     regexp: /^(\/droll){1}(\s+\d+)?(?:\s+\S*)*$/,
+    options: {
+      parse_mode: 'Markdown',
+    },
   },
   random: {
     regexp: /^(\/random){1}(\s+\d+)?(?:\s+\S*)*$/,
+    options: {
+      parse_mode: 'Markdown',
+    },
   },
 };
 
