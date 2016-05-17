@@ -8,7 +8,7 @@ before(( done ) => {
 });
 
 describe( 'message.start.regexp', () => {
-  const regexp = message.start.regexp;
+  const regexp = message.type.start.regexp;
   let msg = 'should be valid for `/start` followed by nothing or whitespace and anything after';
   it( msg, ( done ) => {
     const commands = [

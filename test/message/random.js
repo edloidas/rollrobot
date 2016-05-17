@@ -8,7 +8,7 @@ before(( done ) => {
 });
 
 describe( 'message.random.regexp', () => {
-  const regexp = message.random.regexp;
+  const regexp = message.type.random.regexp;
   let msg = 'should be valid for `/random` followed by non or any char but whitespaces with digit';
   it( msg, ( done ) => {
     const commands = [

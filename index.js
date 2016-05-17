@@ -9,8 +9,8 @@ const bot = new TelegramBot( token, settings );
 bot.setWebHook( URL );
 
 // /start
-bot.onText( message.start.regexp, ( msg ) => {
+bot.onText( message.type.start.regexp, ( msg ) => {
   const fromId = msg.from.id;
-  const { resp, options } = message.start;
+  const { resp, options } = message.type.start;
   bot.sendMessage( fromId, resp, options );
 });

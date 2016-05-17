@@ -9,7 +9,7 @@ before(( done ) => {
 });
 
 describe( 'message.roll.regexp', () => {
-  const regexp = message.roll.regexp;
+  const regexp = message.type.roll.regexp;
   let msg = 'should be valid for `/roll` followed by non or any char but whitespaces with digit';
   it( msg, ( done ) => {
     const commands = [

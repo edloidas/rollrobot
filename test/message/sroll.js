@@ -8,7 +8,7 @@ before(( done ) => {
 });
 
 describe( 'message.sroll.regexp', () => {
-  const regexp = message.sroll.regexp;
+  const regexp = message.type.sroll.regexp;
   let msg = 'should be valid for `/sroll` followed by non or any char but whitespaces with digit';
   it( msg, ( done ) => {
     const commands = [
