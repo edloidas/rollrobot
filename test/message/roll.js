@@ -1,6 +1,6 @@
 const should = require( 'should' );
-const message = require( '../../src/message' );
 const compact = require( 'lodash' ).compact;
+const message = require( '../../src/message' );
 
 before(( done ) => {
    // HACK: bypass ESLint no-unused-var error
