@@ -38,18 +38,22 @@ function Message() {
 
 Message.prototype.parse = function parse( msg, type ) {
   let match;
-  switch ( msg ) {
+
+  switch ( type ) {
     case 'start':
-      return null;
+      return [];
     case 'roll':
-      match = msg.match( this.type[ type ].regexp );
-      return compact( match.split( ' ' )).map(( value ) => parseInt( value, 10 ));
+      match = msg.match( this.type[ type ].regexp )[ 2 ];
+      return compact( match.split( ' ' )).map(( value ) => parseInt( value, 10 )) || [];
     case 'sroll':
-      return parseInt( msg.match( this.type[ type ].regexp )[ 2 ], 10 );
+      match = msg.match( this.type[ type ].regexp )[ 2 ];
+      return compact([ parseInt( match, 10 ) ]) || [];
     case 'droll':
-      return parseInt( msg.match( this.type[ type ].regexp )[ 2 ], 10 );
+      match = msg.match( this.type[ type ].regexp )[ 2 ];
+      return compact([ parseInt( match, 10 ) ]) || [];
     case 'random':
-      return parseInt( msg.match( this.type[ type ].regexp )[ 2 ], 10 );
+      match = msg.match( this.type[ type ].regexp )[ 2 ];
+      return compact([ parseInt( match, 10 ) ]) || [];
     default:
       return null;
   }
