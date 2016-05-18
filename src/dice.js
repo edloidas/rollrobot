@@ -16,7 +16,7 @@ Dice.prototype.random = function random( y ) {
   return rand.getRandomPositiveInt( y );
 };
 
-Dice.prototype.roll = function random( x = 2, y = 10, n = 5 ) {
+Dice.prototype.roll = function random( x = 2, y = 10, n = 0 ) {
   const safeX = this.reviseValue( x, 10000 ) || 1;
   const safeY = this.reviseValue( y ) || 1;
   const safeN = this.reviseValue( n );
@@ -38,11 +38,11 @@ Dice.prototype.namedRoll = function namedRoll( type = 'roll', values = []) {
     case 'roll':
       return this.roll( ...values );
     case 'sroll':
-      return this.roll( 2, 6, values[ 0 ] || 0 );
+      return this.roll( 2, 6, values[ 0 ]);
     case 'droll':
-      return this.roll( 2, 20, values[ 0 ] || 0 );
+      return this.roll( 2, 20, values[ 0 ]);
     case 'random':
-      return this.roll( 1, values[ 0 ] || 100, 0 );
+      return this.roll( 1, values[ 0 ] || 100 );
     default:
       return null;
   }

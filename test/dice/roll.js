@@ -11,9 +11,9 @@ describe( 'dice.roll', () => {
   const msg = 'should roll the values in safe range.';
   describe( msg, () => {
     const values = [
-      { given: [], below: 26, view: '2d10+5' },
-      { given: [ 3 ], below: 31, view: '3d10+5' },
-      { given: [ 4, 100 ], below: 401, view: '4d100+5' },
+      { given: [], below: 26, view: '2d10+0' },
+      { given: [ 3 ], below: 31, view: '3d10+0' },
+      { given: [ 4, 100 ], below: 401, view: '4d100+0' },
       { given: [ 5, 1000, 999 ], below: 6000, view: '5d1000+999' },
       { given: [ 1, 3, 2, 5, 7 ], below: 12, view: '1d3+2' },
       { given: [ -1, -1, -1 ], below: 2, view: '1d1+0' },
