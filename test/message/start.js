@@ -14,6 +14,7 @@ describe( 'message.start.regexp', () => {
     const commands = [
       '/start', '/start   ', '/start 2',
       '/start   df 2', '/start xxx ',
+      '/start@rollrobot  1 ',
     ];
 
     commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {

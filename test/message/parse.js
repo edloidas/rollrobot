@@ -27,6 +27,7 @@ describe( 'message.matchAndParse()', () => {
     const commands = [
       '/start', '/start q', '/start 1q',
       '/start 1', '/start  1 ',
+      '/start@rollrobot  1 ',
     ];
 
     runCommands( commands, type, 0 );
@@ -39,6 +40,7 @@ describe( 'message.matchAndParse()', () => {
   describe( msg, () => {
     const commands = [
       '/roll', '/roll q', '/roll 1q',
+      '/roll@rollrobot  q ',
     ];
 
     runCommands( commands, type, 0 );
@@ -49,7 +51,7 @@ describe( 'message.matchAndParse()', () => {
     const commands = [
       '/roll 1', '/roll   2', '/roll   3   ',
       '/roll 999999999999999999999999999999',
-      '/roll 9 2q',
+      '/roll 9 2q', '/roll@rollrobot  1  q ',
     ];
 
     runCommands( commands, type, 1 );
@@ -61,7 +63,7 @@ describe( 'message.matchAndParse()', () => {
       '/roll 1 2', '/roll   2  3', '/roll   3  4 ',
       '/roll 1 999999999999999999999999999999',
       '/roll 999999999999999999999999999999 999999999999999999999999999999',
-      '/roll 1 2 3a',
+      '/roll 1 2 3a', '/roll@rollrobot  1  2  q ',
     ];
 
     runCommands( commands, type, 2 );
@@ -73,7 +75,7 @@ describe( 'message.matchAndParse()', () => {
       '/roll 1 2 3', '/roll   2  3  4', '/roll   3  4  5 ',
       '/roll 1 2 999999999999999999999999999999',
       '/roll 1 999999999999999999999999999999 999999999999999999999999999999',
-      '/roll 1 2 3 4', '/roll 1 2 3 4a',
+      '/roll 1 2 3 4', '/roll 1 2 3 4a', '/roll@rollrobot  1  2  3  q ',
     ];
 
     runCommands( commands, type, 3 );
@@ -86,6 +88,7 @@ describe( 'message.matchAndParse()', () => {
   describe( msg, () => {
     const commands = [
       '/sroll', '/sroll q', '/sroll 1q',
+      '/sroll@rollrobot  q ',
     ];
 
     runCommands( commands, type, 0 );
@@ -97,6 +100,7 @@ describe( 'message.matchAndParse()', () => {
       '/sroll 1', '/sroll   2', '/sroll   3   ',
       '/sroll 999999999999999999999999999999',
       '/sroll 9 2q', '/sroll 9 2',
+      '/sroll@rollrobot  1  q ',
     ];
 
     runCommands( commands, type, 1 );
@@ -109,6 +113,7 @@ describe( 'message.matchAndParse()', () => {
   describe( msg, () => {
     const commands = [
       '/droll', '/droll q', '/droll 1q',
+      '/droll@rollrobot  q ',
     ];
 
     runCommands( commands, type, 0 );
@@ -120,6 +125,7 @@ describe( 'message.matchAndParse()', () => {
       '/droll 1', '/droll   2', '/droll   3   ',
       '/droll 999999999999999999999999999999',
       '/droll 9 2q', '/droll 9 2',
+      '/droll@rollrobot  1  q ',
     ];
 
     runCommands( commands, type, 1 );
@@ -132,6 +138,7 @@ describe( 'message.matchAndParse()', () => {
   describe( msg, () => {
     const commands = [
       '/random', '/random q', '/random 1q',
+      '/random@rollrobot  q ',
     ];
 
     runCommands( commands, type, 0 );
@@ -143,6 +150,7 @@ describe( 'message.matchAndParse()', () => {
       '/random 1', '/random   2', '/random   3   ',
       '/random 999999999999999999999999999999',
       '/random 9 2q', '/random 9 2',
+      '/random@rollrobot  1  q ',
     ];
 
     runCommands( commands, type, 1 );

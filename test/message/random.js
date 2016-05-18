@@ -14,6 +14,7 @@ describe( 'message.random.regexp', () => {
     const commands = [
       '/random', '/random   ', '/random 2g',
       '/random   mn3', '/random  fghj  ',
+      '/random@rollrobot q ',
     ];
 
     commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
@@ -31,6 +32,7 @@ describe( 'message.random.regexp', () => {
     const commands = [
       '/random 2', '/random   3',
       '/random  4  ', '/random  4  sdfds',
+      '/random@rollrobot  1  g ',
     ];
 
     commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {

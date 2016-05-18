@@ -15,6 +15,7 @@ describe( 'message.roll.regexp', () => {
     const commands = [
       '/roll', '/roll   ', '/roll 2g',
       '/roll   mn3', '/roll  fghj  ',
+      '/roll@rollrobot q ',
     ];
 
     commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
@@ -24,23 +25,6 @@ describe( 'message.roll.regexp', () => {
       match[ 1 ].should.be.equal( '/roll' );
       should.exist( match[ 2 ]);
       match[ 2 ].should.be.equal( '' );
-      done();
-    }));
-  });
-
-  msg = 'should be valid for `/roll` followed by whitespaces with digit and anything after.';
-  describe( msg, () => {
-    const commands = [
-      '/roll 2', '/roll   3',
-      '/roll  4  ', '/roll  4  sdfds',
-    ];
-
-    commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
-      const match = cmd.match( regexp );
-      should.exist( match );
-      match.length.should.be.equal( 3 );
-      match[ 1 ].should.be.equal( '/roll' );
-      should.exist( match[ 2 ]);
       done();
     }));
   });
@@ -64,18 +48,21 @@ describe( 'message.roll.regexp', () => {
     let commands = [
       '/roll 2', '/roll   3', '/roll   3 4_',
       '/roll  4  ', '/roll  4  sdfds',
+      '/roll@rollrobot  1  g ',
     ];
     commands.forEach( paramCheck.bind( this, 1 ));
 
     commands = [
       '/roll 2 3', '/roll   3 4', '/roll   3 4 5_',
       '/roll  4  5 ', '/roll  4  5  sdfds',
+      '/roll@rollrobot  1  5  1g ',
     ];
     commands.forEach( paramCheck.bind( this, 2 ));
 
     commands = [
       '/roll 2 3 4', '/roll   3 4 5', '/roll   3 4 5 6_',
       '/roll  4  5 6 ', '/roll  4  5  6 sdfds', '/roll 4 5 6 7',
+      '/roll@rollrobot  1  5  4  1g ',
     ];
     commands.forEach( paramCheck.bind( this, 3 ));
   });
