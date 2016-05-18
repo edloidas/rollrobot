@@ -18,14 +18,8 @@ bot.onText( message.type.start.regexp, ( msg ) => {
 
 function commonRollHandler( type, msg, match ) {
   const { id, username } = msg.from;
-
   try {
-    const values = message.parse( match[ 2 ], type );
-    const { view, result } = dice.namedRoll( type, values );
-
-    const resp = message.getResponse( username, view, result );
-    const options = message.type[ type ];
-
+    const { resp, options } = message.getMessageBody( type, username, match[ 2 ]);
     bot.sendMessage( id, resp, options );
   } catch ( err ) {
     bot.sendMessage( id, message.getErrorMessage( username ));

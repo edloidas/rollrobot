@@ -1,4 +1,5 @@
 const compact = require( 'lodash' ).compact;
+const dice = require( './dice' );
 
 function Message() {
   this.type = {
@@ -67,11 +68,20 @@ Message.prototype.matchAndParse = function matchAndParse( msg, type ) {
 };
 
 Message.prototype.getResponse = function getResponse( username, view, result ) {
-  return `${ username } \`(${ view })\` *${ result }*`;
+  return `@${ username } \`(${ view })\` *${ result }*`;
 };
 
 Message.prototype.getErrorMessage = function getResponse( username ) {
-  return `${ username } : \`(${ this.error })\``;
+  return `@${ username } : \`(${ this.error })\``;
+};
+
+Message.prototype.getMessageBody = function getMessageBody( type, username, matchedValues ) {
+  const values = this.parse( matchedValues, type );
+  const { view, result } = dice.namedRoll( type, values );
+
+  const resp = this.getResponse( username, view, result );
+  const options = this.type[ type ].options;
+  return { resp, options };
 };
 
 module.exports = new Message();
