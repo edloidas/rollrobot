@@ -34,6 +34,8 @@ function Message() {
       },
     },
   };
+
+  this.error = 'Request encountered an error.';
 }
 
 Message.prototype.parse = function parse( msg, type ) {
@@ -62,6 +64,14 @@ Message.prototype.matchAndParse = function matchAndParse( msg, type ) {
   }
 
   return this.parse( match, type );
+};
+
+Message.prototype.getResponse = function getResponse( username, view, result ) {
+  return `${ username } \`(${ view })\` *${ result }*`;
+};
+
+Message.prototype.getErrorMessage = function getResponse( username ) {
+  return `${ username } : \`(${ this.error })\``;
 };
 
 module.exports = new Message();
