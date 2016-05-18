@@ -29,22 +29,11 @@ describe( 'Message.getMessageBody', () => {
     },
   };
 
-  const messageRollrobot = {
-    message_id: '1234567890abcdef',
-    from: {
-      first_name: 'Firstname',
-      last_name: 'Lastname',
-      username: 'userUsername',
-    },
-    chat: {
-      username: 'rollrobot',
-    },
-  };
-
   const messageChannel = {
     message_id: '1234567890abcdef',
     chat: {
       username: 'chatUsername',
+      type: 'group',
     },
   };
 
@@ -67,12 +56,6 @@ describe( 'Message.getMessageBody', () => {
       body.resp.should.be.startWith( '`(2d3+4)` *' );
       done();
     });
-
-    it( 'Chat with the rollrobot itself', ( done ) => {
-      const body = checkBody( 'roll', messageRollrobot, '2 3 4', false );
-      body.resp.should.be.startWith( '`(2d3+4)` *' );
-      done();
-    });
   });
 
   msg = 'should generate valid response options (reply)';
@@ -90,7 +73,7 @@ describe( 'Message.getMessageBody', () => {
   msg = 'should generate valid response options (reply, with)';
   describe( msg, () => {
     it( 'roll', ( done ) => {
-      const body = checkBody( 'roll', messageRollrobot, '2 3 4', true );
+      const body = checkBody( 'roll', messageChannel, '2 3 4', true );
       const optionsString = '{"parse_mode":"Markdown"}';
       JSON.stringify( body.options ).should.be.equal( optionsString );
       done();
