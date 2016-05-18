@@ -17,15 +17,15 @@ Dice.prototype.random = function random( y ) {
 };
 
 Dice.prototype.roll = function random( x = 2, y = 10, n = 5 ) {
-  let result = n;
-  const safeX = this.reviseValue( x, 10000 );
-  const safeY = this.reviseValue( y );
+  const safeX = this.reviseValue( x, 10000 ) || 1;
+  const safeY = this.reviseValue( y ) || 1;
   const safeN = this.reviseValue( n );
+
+  let result = safeN;
 
   for ( let i = 0; i < safeX; i++ ) {
     result += this.random( safeY );
   }
-  result += safeN;
 
   return {
     view: `${ safeX }d${ safeY }+${ safeN }`,
@@ -38,11 +38,11 @@ Dice.prototype.namedRoll = function namedRoll( type = 'roll', values = []) {
     case 'roll':
       return this.roll( ...values );
     case 'sroll':
-      return this.roll( 2, 6, ...values );
+      return this.roll( 2, 6, values[ 0 ] || 0 );
     case 'droll':
-      return this.roll( 2, 20, ...values );
+      return this.roll( 2, 20, values[ 0 ] || 0 );
     case 'random':
-      return this.roll( 2, values[ 0 ] || 100, 0 );
+      return this.roll( 1, values[ 0 ] || 100, 0 );
     default:
       return null;
   }

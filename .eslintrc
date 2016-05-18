@@ -8,7 +8,8 @@
     "arrow-spacing": [ 2, { "before": true, "after": true } ],
     "array-bracket-spacing": [ 2, "always" ],
     "computed-property-spacing": [ 2, "always" ],
-    "template-curly-spacing": [ 2, "always" ]
+    "template-curly-spacing": [ 2, "always" ],
+    "no-restricted-syntax": [ "off" ]
   },
   "env": {
     "browser": true,
