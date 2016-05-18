@@ -37,26 +37,31 @@ function Message() {
 }
 
 Message.prototype.parse = function parse( msg, type ) {
-  let match;
-
   switch ( type ) {
     case 'start':
       return [];
     case 'roll':
-      match = msg.match( this.type[ type ].regexp )[ 2 ];
-      return compact( match.split( ' ' )).map(( value ) => parseInt( value, 10 )) || [];
+      return compact( msg.split( ' ' )).map(( value ) => parseInt( value, 10 )) || [];
     case 'sroll':
-      match = msg.match( this.type[ type ].regexp )[ 2 ];
-      return compact([ parseInt( match, 10 ) ]) || [];
+      return compact([ parseInt( msg, 10 ) ]) || [];
     case 'droll':
-      match = msg.match( this.type[ type ].regexp )[ 2 ];
-      return compact([ parseInt( match, 10 ) ]) || [];
+      return compact([ parseInt( msg, 10 ) ]) || [];
     case 'random':
-      match = msg.match( this.type[ type ].regexp )[ 2 ];
-      return compact([ parseInt( match, 10 ) ]) || [];
+      return compact([ parseInt( msg, 10 ) ]) || [];
     default:
       return null;
   }
+};
+
+Message.prototype.matchAndParse = function matchAndParse( msg, type ) {
+  let match;
+  const isRoll = [ 'roll', 'sroll', 'droll', 'random' ].indexOf( type ) !== -1;
+
+  if ( isRoll ) {
+    match = msg.match( this.type[ type ].regexp )[ 2 ];
+  }
+
+  return this.parse( match, type );
 };
 
 module.exports = new Message();

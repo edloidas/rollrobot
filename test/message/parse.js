@@ -7,12 +7,12 @@ before(( done ) => {
   done();
 });
 
-describe( 'message.parse()', () => {
-  const parse = message.parse.bind( message );
+describe( 'message.matchAndParse()', () => {
+  const matchAndParse = message.matchAndParse.bind( message );
 
   function runCommands( commands, type, equal ) {
     commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
-      const values = parse( cmd, type );
+      const values = matchAndParse( cmd, type );
       should.exist( values );
       values.length.should.be.equal( equal );
       done();
