@@ -67,20 +67,31 @@ Message.prototype.matchAndParse = function matchAndParse( msg, type ) {
   return this.parse( match, type );
 };
 
-Message.prototype.getResponse = function getResponse( username, view, result ) {
-  return `@${ username } \`(${ view })\` *${ result }*`;
+Message.prototype.getResponse = function getResponse( msg, view, result, reply ) {
+  // Channel or a reply
+  if ( !msg.from || reply || msg.chat.username === 'rollrobot' ) {
+    return `\`(${ view })\` *${ result }*`;
+  }
+  let fullname = `${ msg.from.first_name } ${ msg.from.last_name }`.trim();
+  fullname = fullname.length ? `${ fullname } ` : '';
+  const username = msg.from.username;
+  return `_${ fullname }_@${ username } \`(${ view })\` *${ result }*`;
 };
 
-Message.prototype.getErrorMessage = function getResponse( username ) {
+Message.prototype.getErrorMessage = function getErrorMessage( msg ) {
+  const username = msg.from ? msg.from.username : msg.chat.username;
   return `@${ username } : \`(${ this.error })\``;
 };
 
-Message.prototype.getMessageBody = function getMessageBody( type, username, matchedValues ) {
+Message.prototype.getMessageBody = function getMessageBody( type, msg, matchedValues, reply ) {
   const values = this.parse( matchedValues, type );
   const { view, result } = dice.namedRoll( type, values );
 
-  const resp = this.getResponse( username, view, result );
+  const resp = this.getResponse( msg, view, result, reply );
   const options = this.type[ type ].options;
+  if ( reply ) {
+    options.reply_to_message_id = msg.message_id;
+  }
   return { resp, options };
 };
 

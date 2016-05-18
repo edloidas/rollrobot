@@ -17,12 +17,11 @@ bot.onText( message.type.start.regexp, ( msg ) => {
 
 function commonRollHandler( type, msg, match ) {
   const id = msg.chat.id;
-  const username = msg.from ? msg.from.username : msg.chat.username;
   try {
-    const { resp, options } = message.getMessageBody( type, username, match[ 2 ]);
+    const { resp, options } = message.getMessageBody( type, msg, match[ 2 ], true );
     bot.sendMessage( id, resp, options );
   } catch ( err ) {
-    bot.sendMessage( id, message.getErrorMessage( username ));
+    bot.sendMessage( id, message.getErrorMessage( msg ));
   }
 }
 
