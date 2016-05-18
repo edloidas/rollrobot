@@ -88,8 +88,9 @@ Message.prototype.getMessageBody = function getMessageBody( type, msg, matchedVa
   const { view, result } = dice.namedRoll( type, values );
 
   const resp = this.getResponse( msg, view, result, reply );
-  const options = this.type[ type ].options;
-  if ( reply ) {
+  const options = {};
+  Object.assign( options, this.type[ type ].options );
+  if ( reply && msg.chat.username !== 'rollrobot' ) {
     options.reply_to_message_id = msg.message_id;
   }
   return { resp, options };

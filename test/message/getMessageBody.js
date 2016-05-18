@@ -75,7 +75,7 @@ describe( 'Message.getMessageBody', () => {
     });
   });
 
-  msg = 'should generate valid response options';
+  msg = 'should generate valid response options (reply)';
   describe( msg, () => {
     [ 'roll', 'sroll', 'droll', 'random' ].forEach(( type ) => {
       it( type, ( done ) => {
@@ -84,6 +84,16 @@ describe( 'Message.getMessageBody', () => {
         JSON.stringify( body.options ).should.be.equal( optionsString );
         done();
       });
+    });
+  });
+
+  msg = 'should generate valid response options (reply, with)';
+  describe( msg, () => {
+    it( 'roll', ( done ) => {
+      const body = checkBody( 'roll', messageRollrobot, '2 3 4', true );
+      const optionsString = '{"parse_mode":"Markdown"}';
+      JSON.stringify( body.options ).should.be.equal( optionsString );
+      done();
     });
   });
 });
