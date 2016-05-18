@@ -33,7 +33,7 @@ describe( 'Message.getMessageBody', () => {
     message_id: '1234567890abcdef',
     chat: {
       username: 'chatUsername',
-      type: 'group',
+      type: 'channel',
     },
   };
 
@@ -63,18 +63,18 @@ describe( 'Message.getMessageBody', () => {
     [ 'roll', 'sroll', 'droll', 'random' ].forEach(( type ) => {
       it( type, ( done ) => {
         const body = checkBody( type, messageFull, '2 3 4', true );
-        const optionsString = '{"parse_mode":"Markdown","reply_to_message_id":"1234567890abcdef"}';
+        const optionsString = '{"parse_mode":"Markdown"}';
         JSON.stringify( body.options ).should.be.equal( optionsString );
         done();
       });
     });
   });
 
-  msg = 'should generate valid response options (reply, with)';
+  msg = 'should generate valid response options (reply, channel)';
   describe( msg, () => {
     it( 'roll', ( done ) => {
       const body = checkBody( 'roll', messageChannel, '2 3 4', true );
-      const optionsString = '{"parse_mode":"Markdown"}';
+      const optionsString = '{"parse_mode":"Markdown","reply_to_message_id":"1234567890abcdef"}';
       JSON.stringify( body.options ).should.be.equal( optionsString );
       done();
     });

@@ -90,7 +90,7 @@ Message.prototype.getMessageBody = function getMessageBody( type, msg, matchedVa
   const resp = this.getResponse( msg, view, result, reply );
   const options = {};
   Object.assign( options, this.type[ type ].options );
-  const isInGroup = [ 'group', 'supergroup', 'channel' ].indexOf( msg.chat.type ) === -1;
+  const isInGroup = [ 'group', 'supergroup', 'channel' ].indexOf( msg.chat.type ) !== -1;
   if ( reply && isInGroup ) {
     options.reply_to_message_id = msg.message_id;
   }
