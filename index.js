@@ -8,12 +8,11 @@ const URL = `${ telegram.host }:${ telegram.port }/bot${ token }`;
 const bot = new TelegramBot( token, settings );
 bot.setWebHook( URL );
 
-// /start
-bot.onText( message.type.start.regexp, ( msg ) => {
+function commonHelpHandler( type, msg ) {
   const id = msg.chat.id;
-  const { resp, options } = message.type.start;
+  const { resp, options } = message.type[ type ];
   bot.sendMessage( id, resp, options );
-});
+}
 
 function commonRollHandler( type, msg, match ) {
   const id = msg.chat.id;
@@ -24,6 +23,11 @@ function commonRollHandler( type, msg, match ) {
     bot.sendMessage( id, message.getErrorMessage( msg ));
   }
 }
+
+// /start  /help
+[ 'start', 'help' ].forEach(( type ) => {
+  bot.onText( message.type[ type ].regexp, commonHelpHandler.bind( null, type ));
+});
 
 // /roll  /sroll  /droll  /random
 [ 'roll', 'sroll', 'droll', 'random' ].forEach(( type ) => {

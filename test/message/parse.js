@@ -19,7 +19,7 @@ describe( 'message.matchAndParse()', () => {
     }));
   }
 
-  // /roll
+  // /start
   let type = 'start';
 
   let msg = 'should be parsed without exceptions `/start`';
@@ -28,6 +28,20 @@ describe( 'message.matchAndParse()', () => {
       '/start', '/start q', '/start 1q',
       '/start 1', '/start  1 ',
       '/start@rollrobot  1 ',
+    ];
+
+    runCommands( commands, type, 0 );
+  });
+
+  // /help
+  type = 'help';
+
+  msg = 'should be parsed without exceptions `/help`';
+  describe( msg, () => {
+    const commands = [
+      '/help', '/help q', '/help 1q',
+      '/help 1', '/help  1 ',
+      '/help@rollrobot  1 ',
     ];
 
     runCommands( commands, type, 0 );

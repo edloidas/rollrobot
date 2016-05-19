@@ -43,7 +43,9 @@ We wish you have much fun using our Roll Robot in your RPgames.
 Your ideas on improvement are [welcome](https://github.com/edloidas/rollrobot/issues)!
 
 Roll Robot team,
-[@edloidas](https://telegram.me/edloidas) and [@nartien](https://telegram.me/nartine)
+[@edloidas](https://telegram.me/edloidas)
+
+Special thx to [@nartien](https://telegram.me/nartine)
 
 ## Configuration ##
 
