@@ -33,3 +33,31 @@ function commonRollHandler( type, msg, match ) {
 [ 'roll', 'sroll', 'droll', 'random' ].forEach(( type ) => {
   bot.onText( message.type[ type ].regexp, commonRollHandler.bind( null, type ));
 });
+
+// inline queries
+bot.on( 'inline_query', ( msg ) => {
+  const { id, query, offset } = msg;
+  console.log( `Inline ${ id } :: ${ query }` );
+  console.log( `  offset :: ${ offset }` );
+
+  const results = [];
+
+  const InlineQueryResultArticle = {
+    type: 'article',
+    title: 'Title',
+    input_message_content: {
+      message_text: 'MessageBody',
+      parse_mode: 'Markdown',
+      disable_web_page_preview: true,
+    },
+    hide_url: true,
+  };
+
+  results.push( InlineQueryResultArticle );
+
+  bot.answerInlineQuery( id, results );
+});
+
+bot.on( 'chosen_inline_result', ( msg ) => {
+  console.log( `Chosen: ${ msg }` );
+});
