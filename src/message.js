@@ -42,6 +42,13 @@ function Message() {
         parse_mode: 'Markdown',
       },
     },
+    inline: {
+      // first ?: used to follow the common rule to return values on match[ 2 ]
+      regexp: /^(((?:\s+\d+){0,3}))(?:\s+\S*)*$/,
+      options: {
+        parse_mode: 'Markdown',
+      },
+    },
   };
 
   this.error = 'Request encountered an error.';
@@ -49,6 +56,8 @@ function Message() {
 
 Message.prototype.parse = function parse( msg, type ) {
   switch ( type ) {
+    case 'inline':
+      return compact( msg.split( ' ' )).map(( value ) => parseInt( value, 10 )) || [];
     case 'roll':
       return compact( msg.split( ' ' )).map(( value ) => parseInt( value, 10 )) || [];
     case 'sroll':
@@ -68,7 +77,7 @@ Message.prototype.parse = function parse( msg, type ) {
 
 Message.prototype.matchAndParse = function matchAndParse( msg, type ) {
   let match;
-  const isRoll = [ 'roll', 'sroll', 'droll', 'random' ].indexOf( type ) !== -1;
+  const isRoll = [ 'inline', 'roll', 'sroll', 'droll', 'random' ].indexOf( type ) !== -1;
 
   if ( isRoll ) {
     match = msg.match( this.type[ type ].regexp )[ 2 ];

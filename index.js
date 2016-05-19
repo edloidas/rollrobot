@@ -37,7 +37,6 @@ function commonRollHandler( type, msg, match ) {
 // inline queries
 bot.on( 'inline_query', ( msg ) => {
   const { id, query } = msg;
-  console.log( `Inline ${ id } :: ${ query }` );
 
   const results = [];
 
@@ -58,6 +57,4 @@ bot.on( 'inline_query', ( msg ) => {
   bot.answerInlineQuery( id, results );
 });
 
-bot.on( 'chosen_inline_result', ( msg ) => {
-  console.log( `Chosen: ${ msg }` );
-});
+// bot.on( 'chosen_inline_result', ( msg ) => {});
