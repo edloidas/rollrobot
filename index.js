@@ -36,14 +36,14 @@ function commonRollHandler( type, msg, match ) {
 
 // inline queries
 bot.on( 'inline_query', ( msg ) => {
-  const { id, query, offset } = msg;
+  const { id, query } = msg;
   console.log( `Inline ${ id } :: ${ query }` );
-  console.log( `  offset :: ${ offset }` );
 
   const results = [];
 
   const InlineQueryResultArticle = {
     type: 'article',
+    id: Math.random().toString( 10 ).substr( 2, 18 ),
     title: 'Title',
     input_message_content: {
       message_text: 'MessageBody',
