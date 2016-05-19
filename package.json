@@ -1,7 +1,7 @@
 {
   "name": "rollrobot",
-  "version": "1.0.0",
-  "description": "An ultimate webpack boilerplate",
+  "version": "1.1.0",
+  "description": "Roll Robot is a telegram bot used for common \"roll the dice\" purposes.",
   "keywords": [
     "rollrobot",
     "telegram",
