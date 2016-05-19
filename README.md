@@ -45,7 +45,7 @@ Your ideas on improvement are [welcome](https://github.com/edloidas/rollrobot/is
 Roll Robot team,
 [@edloidas](https://telegram.me/edloidas)
 
-Special thx to [@nartien](https://telegram.me/nartine)
+Special thx to [@nartien](https://telegram.me/nartien)
 
 ## Configuration ##
 
