@@ -48,8 +48,9 @@ function Message() {
     inline: {
       // ?: and parenthesis are used to follow the common rule to return values on match[ 2 ]
       regexp: /^(\s*(-?((?:(?:\d+\s+){2}(?:-\d+))|(?:\d+\s*){0,3})))(?:\s+\S*)*$/,
+      parse_mode: 'Markdown',
       options: {
-        parse_mode: 'Markdown',
+        cache_time: 0,
       },
     },
   };
@@ -125,7 +126,7 @@ Message.prototype.getInlineArticle = function getInlineArticle( type, values ) {
     return null;
   }
 
-  const parseMode = this.type[ type ].options.parse_mode;
+  const parseMode = this.type.inline.parse_mode;
   const { view, result } = dice.namedRoll( type, values );
   const resp = this.getResponse( null, view, result );
   const inlineMessage = new InputTextMessageContent( resp, parseMode );

@@ -40,12 +40,9 @@ Simply open the bot's profile and use the 'Add to group' button.
 
 We wish you have much fun using our Roll Robot in your RPgames.
 
-Your ideas on improvement are [welcome](https://github.com/edloidas/rollrobot/issues)!
+Your ideas on improvement are welcome.
 
-Roll Robot team,
-[@edloidas](https://telegram.me/edloidas)
-
-Special thx to [@nartien](https://telegram.me/nartien)
+[Rate](https://storebot.me/bot/rollrobot) the bot, if you like it.
 
 ## Configuration ##
 

@@ -1,5 +1,6 @@
 module.exports =
 `Roll the dice like no one before. Flexible settings allow you to generate random numbers by the following pattern (x)d(y)+(n), where (x) is number of dices, (y) related to the number of dice edges and (n) is a number that should be added to the randomly generated number.
+Inline mode is also supported.
 Bot recognizes and interacts with several commands, such as:
 
 /roll (x) (y) (n) -- 2d10+0, x=2, y=10, n=0 by default.
@@ -20,9 +21,13 @@ Simply open the bot's profile and use the 'Add to group' button.
 
 We wish you have much fun using our Roll Robot in your RPgames.
 
-Your ideas on improvement are welcome: https://github.com/edloidas/rollrobot/issues
+Rate the bot, if you like it.
+https://telegram.me/storebot?start=rollrobot
+
+Your ideas on improvement are welcome.
 
 Roll Robot team,
 @edloidas
 
-Special thx to @nartien`;
+Special thx to
+@nartien, @RadexD, @MarinaRiemann, @andy_grenwell`;
