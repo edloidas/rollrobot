@@ -169,4 +169,17 @@ describe( 'message.matchAndParse()', () => {
 
     runCommands( commands, type, 1 );
   });
+
+  // inline
+  type = 'inline';
+
+  msg = 'should be parsed without exceptions inline command';
+  describe( msg, () => {
+    const commands = [
+      '1 1 1', '-2 2 2 ', '3 3 -3 ',
+      '  -4  4  -4  ',
+    ];
+
+    runCommands( commands, type, 3 );
+  });
 });

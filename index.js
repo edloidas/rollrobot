@@ -37,23 +37,7 @@ function commonRollHandler( type, msg, match ) {
 // inline queries
 bot.on( 'inline_query', ( msg ) => {
   const { id, query } = msg;
-
-  const results = [];
-
-  const InlineQueryResultArticle = {
-    type: 'article',
-    id: Math.random().toString( 10 ).substr( 2, 18 ),
-    title: 'Title',
-    input_message_content: {
-      message_text: 'MessageBody',
-      parse_mode: 'Markdown',
-      disable_web_page_preview: true,
-    },
-    hide_url: true,
-  };
-
-  results.push( InlineQueryResultArticle );
-
+  const results = message.getInlineArticles( query );
   bot.answerInlineQuery( id, results );
 });
 

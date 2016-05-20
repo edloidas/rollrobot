@@ -1,6 +1,8 @@
 const compact = require( 'lodash' ).compact;
 const dice = require( './dice' );
 const helpText = require( './text/help' );
+const InlineQueryResultArticle = require( './types/InlineQueryResultArticle' );
+const InputTextMessageContent = require( './types/InputTextMessageContent' );
 
 function Message() {
   this.type = {
@@ -19,6 +21,7 @@ function Message() {
       },
     },
     roll: {
+      // For values: none || x || x y || x y n || x y -n
       regexp: /^(?:(\/roll){1}(?:@rollrobot)?((?:(?:\s+\d+){2}(?:\s+-\d+))|(?:\s+\d+){0,3}))(?:\s+\S*)*$/,
       options: {
         parse_mode: 'Markdown',
@@ -43,8 +46,8 @@ function Message() {
       },
     },
     inline: {
-      // first ?: used to follow the common rule to return values on match[ 2 ]
-      regexp: /^(((?:(?:\s+\d+){2}(?:\s+-\d+))|(?:\s+\d+){0,3}))(?:\s+\S*)*$/,
+      // ?: and parenthesis are used to follow the common rule to return values on match[ 2 ]
+      regexp: /^(\s*(-?((?:(?:\d+\s+){2}(?:-\d+))|(?:\d+\s*){0,3})))(?:\s+\S*)*$/,
       options: {
         parse_mode: 'Markdown',
       },
@@ -88,7 +91,7 @@ Message.prototype.matchAndParse = function matchAndParse( msg, type ) {
 
 Message.prototype.getResponse = function getResponse( msg, view, result, reply ) {
   // Channel or a reply
-  if ( !msg.from || reply || msg.chat.username === 'rollrobot' ) {
+  if ( !msg || !msg.from || reply || msg.chat.username === 'rollrobot' ) {
     return `\`(${ view })\` *${ result }*`;
   }
   let fullname = `${ msg.from.first_name } ${ msg.from.last_name }`.trim();
@@ -114,6 +117,40 @@ Message.prototype.getMessageBody = function getMessageBody( type, msg, matchedVa
     options.reply_to_message_id = msg.message_id;
   }
   return { resp, options };
+};
+
+Message.prototype.getInlineArticle = function getInlineArticle( type, values ) {
+  const isInvalid = !values || ( values[ 0 ] < 0 && [ 'roll', 'random' ].indexOf( type ) !== -1 );
+  if ( isInvalid ) {
+    return null;
+  }
+
+  const parseMode = this.type[ type ].options.parse_mode;
+  const { view, result } = dice.namedRoll( type, values );
+  const resp = this.getResponse( null, view, result );
+  const inlineMessage = new InputTextMessageContent( resp, parseMode );
+  const inlineArticle = new InlineQueryResultArticle( `/${ type }`, view, inlineMessage );
+
+  return inlineArticle;
+};
+
+Message.prototype.getInlineArticles = function getInlineArticles( query ) {
+  let values = this.matchAndParse( query, 'inline' );
+  const results = [];
+
+  // multiple values with first negative may result empty array of articles
+  values = ( values.length >= 2 && values[ 0 ] < 0 ) ? [ values[ 0 ] ] : values;
+
+  if ( values.length >= 0 ) {
+    results.push( this.getInlineArticle( 'roll', values ));
+    if ( values.length < 2 ) {
+      results.push( this.getInlineArticle( 'sroll', values ));
+      results.push( this.getInlineArticle( 'droll', values ));
+      results.push( this.getInlineArticle( 'random', values ));
+    }
+  }
+
+  return compact( results );
 };
 
 module.exports = new Message();
