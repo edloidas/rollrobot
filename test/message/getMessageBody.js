@@ -60,7 +60,7 @@ describe( 'Message.getMessageBody', () => {
 
   msg = 'should generate valid response options (reply)';
   describe( msg, () => {
-    [ 'roll', 'sroll', 'droll', 'random' ].forEach(( type ) => {
+    [ 'inline', 'roll', 'sroll', 'droll', 'random' ].forEach(( type ) => {
       it( type, ( done ) => {
         const body = checkBody( type, messageFull, '2 3 4', true );
         const optionsString = '{"parse_mode":"Markdown"}';

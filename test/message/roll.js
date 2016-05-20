@@ -15,7 +15,7 @@ describe( 'message.roll.regexp', () => {
     const commands = [
       '/roll', '/roll   ', '/roll 2g',
       '/roll   mn3', '/roll  fghj  ',
-      '/roll@rollrobot q ',
+      '/roll@rollrobot q ', '/roll -1',
     ];
 
     commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
@@ -48,7 +48,7 @@ describe( 'message.roll.regexp', () => {
     let commands = [
       '/roll 2', '/roll   3', '/roll   3 4_',
       '/roll  4  ', '/roll  4  sdfds',
-      '/roll@rollrobot  1  g ',
+      '/roll@rollrobot  1  g ', '/roll 5 -1',
     ];
     commands.forEach( paramCheck.bind( this, 1 ));
 
@@ -62,7 +62,7 @@ describe( 'message.roll.regexp', () => {
     commands = [
       '/roll 2 3 4', '/roll   3 4 5', '/roll   3 4 5 6_',
       '/roll  4  5 6 ', '/roll  4  5  6 sdfds', '/roll 4 5 6 7',
-      '/roll@rollrobot  1  5  4  1g ',
+      '/roll@rollrobot  1  5  4  1g ', '/roll 2 4 -5 -5',
     ];
     commands.forEach( paramCheck.bind( this, 3 ));
   });

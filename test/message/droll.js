@@ -32,7 +32,7 @@ describe( 'message.type.droll.regexp', () => {
     const commands = [
       '/droll 2', '/droll   3',
       '/droll  4  ', '/droll  4  sdfds',
-      '/droll@rollrobot  1  g ',
+      '/droll@rollrobot  1  g ', '/droll -5 ',
     ];
 
     commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {

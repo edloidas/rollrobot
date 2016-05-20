@@ -16,16 +16,24 @@ describe( 'dice.roll', () => {
       { given: [ 4, 100 ], below: 401, view: '4d100+0' },
       { given: [ 5, 1000, 999 ], below: 6000, view: '5d1000+999' },
       { given: [ 1, 3, 2, 5, 7 ], below: 12, view: '1d3+2' },
-      { given: [ -1, -1, -1 ], below: 2, view: '1d1+0' },
+      { given: [ -1, -1, 0 ], below: 2, view: '1d1+0' },
+      { given: [ -1, -1, -1 ], below: 1, view: '1d1-1' },
       { given: [ 'q', Number.MAX_VALUE, Infinity ], below: 2, view: '1d1+0' },
       { given: [ 10, 1, 1 ], below: 12, view: '10d1+1' },
       { given: [ 900000, 1, 1 ], below: 10002, view: '10000d1+1' },
+      { given: [ 4, 5, -20 ], above: -1, below: 1, view: '4d5-20' },
+      { given: [ 4, 5, -999 ], above: -1, below: 1, view: '4d5-999' },
     ];
 
     values.forEach(( value ) => it( `[ ${ value.given } ] <= '${ value.below }'`, ( done ) => {
       const rollResult = dice.roll( ...value.given );
       should.exist( rollResult );
-      rollResult.result.should.be.below( value.below );
+      if ( value.below ) {
+        rollResult.result.should.be.below( value.below );
+      }
+      if ( value.above ) {
+        rollResult.result.should.be.above( value.above );
+      }
       rollResult.view.should.be.equal( value.view );
       done();
     }));

@@ -19,19 +19,19 @@ function Message() {
       },
     },
     roll: {
-      regexp: /^(?:(\/roll){1}(?:@rollrobot)?((?:\s+\d+){0,3}))(?:\s+\S*)*$/,
+      regexp: /^(?:(\/roll){1}(?:@rollrobot)?((?:(?:\s+\d+){2}(?:\s+-\d+))|(?:\s+\d+){0,3}))(?:\s+\S*)*$/,
       options: {
         parse_mode: 'Markdown',
       },
     },
     sroll: {
-      regexp: /^(\/sroll){1}(?:@rollrobot)?(\s+\d+)?(?:\s+\S*)*$/,
+      regexp: /^(\/sroll){1}(?:@rollrobot)?(\s+-?\d+)?(?:\s+\S*)*$/,
       options: {
         parse_mode: 'Markdown',
       },
     },
     droll: {
-      regexp: /^(\/droll){1}(?:@rollrobot)?(\s+\d+)?(?:\s+\S*)*$/,
+      regexp: /^(\/droll){1}(?:@rollrobot)?(\s+-?\d+)?(?:\s+\S*)*$/,
       options: {
         parse_mode: 'Markdown',
       },
@@ -44,7 +44,7 @@ function Message() {
     },
     inline: {
       // first ?: used to follow the common rule to return values on match[ 2 ]
-      regexp: /^(((?:\s+\d+){0,3}))(?:\s+\S*)*$/,
+      regexp: /^(((?:(?:\s+\d+){2}(?:\s+-\d+))|(?:\s+\d+){0,3}))(?:\s+\S*)*$/,
       options: {
         parse_mode: 'Markdown',
       },
