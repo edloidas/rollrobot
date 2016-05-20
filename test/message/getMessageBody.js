@@ -60,13 +60,23 @@ describe( 'Message.getMessageBody', () => {
 
   msg = 'should generate valid response options (reply)';
   describe( msg, () => {
-    [ 'inline', 'roll', 'sroll', 'droll', 'random' ].forEach(( type ) => {
+    [ 'roll', 'sroll', 'droll', 'random' ].forEach(( type ) => {
       it( type, ( done ) => {
         const body = checkBody( type, messageFull, '2 3 4', true );
         const optionsString = '{"parse_mode":"Markdown"}';
         JSON.stringify( body.options ).should.be.equal( optionsString );
         done();
       });
+    });
+  });
+
+  msg = 'should generate valid response options (inline)';
+  describe( msg, () => {
+    it( 'inline', ( done ) => {
+      const body = checkBody( 'inline', messageFull, '2 3 4', true );
+      const optionsString = '{"cache_time":0}';
+      JSON.stringify( body.options ).should.be.equal( optionsString );
+      done();
     });
   });
 
