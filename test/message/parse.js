@@ -7,7 +7,7 @@ before(( done ) => {
   done();
 });
 
-describe( 'message.matchAndParse()', () => {
+describe( 'Message.matchAndParse()', () => {
   const matchAndParse = message.matchAndParse.bind( message );
 
   function runCommands( commands, type, equal ) {

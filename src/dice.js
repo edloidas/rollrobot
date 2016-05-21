@@ -15,10 +15,6 @@ Dice.prototype.reviseValue = function reviseValue( value = 0, max = MAX_SAFE_INT
   return Math.max( min, Math.min( val, max ));
 };
 
-Dice.prototype.random = function random( y ) {
-  return rand.getRandomPositiveInt( y );
-};
-
 Dice.prototype.roll = function roll( x = 2, y = 10, n = 0 ) {
   const safeX = this.reviseValue( x, 12, 1 ) || 1;
   const safeY = this.reviseValue( y ) || 1;
@@ -27,7 +23,7 @@ Dice.prototype.roll = function roll( x = 2, y = 10, n = 0 ) {
   let result = safeN;
 
   for ( let i = 0; i < safeX; i++ ) {
-    result += this.random( safeY );
+    result += rand.getRandomPositiveInt( safeY );
   }
 
   result = result < 0 ? 0 : result;

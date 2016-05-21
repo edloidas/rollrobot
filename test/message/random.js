@@ -7,14 +7,14 @@ before(( done ) => {
   done();
 });
 
-describe( 'message.random.regexp', () => {
+describe( 'Message.random.regexp', () => {
   const regexp = message.type.random.regexp;
-  let msg = 'should be valid for `/random` followed by non or any char but whitespaces with digit.';
+  let msg = 'should be parsed as default command';
   describe( msg, () => {
     const commands = [
       '/random', '/random   ', '/random 2g',
-      '/random   mn3', '/random  fghj  ',
-      '/random@rollrobot q ', '/random -5 ',
+      '/random   mn3 ', '/random@rollrobot q ',
+      '/random -5 ',
     ];
 
     commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
@@ -27,11 +27,10 @@ describe( 'message.random.regexp', () => {
     }));
   });
 
-  msg = 'should be valid for `/random` followed by whitespaces with digit and anything after.';
+  msg = 'should be parsed as command with 1 argument';
   describe( msg, () => {
     const commands = [
-      '/random 2', '/random   3',
-      '/random  4  ', '/random  4  sdfds',
+      '/random 2', '/random  4  sd',
       '/random@rollrobot  1  g ',
     ];
 
@@ -45,11 +44,11 @@ describe( 'message.random.regexp', () => {
     }));
   });
 
-  msg = 'should be valid when begins with `/random` and whitespaces or nothing right after.';
+  msg = 'should be not be recognized as command';
   describe( msg, () => {
     const commands = [
       'random', ' /random', '/random2', '/randomqw',
-      '/Random', '/RANDOM', ' 123', ' asdf',
+      '/Random', '/RANDOM', ' 123',
     ];
 
     commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {

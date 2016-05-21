@@ -7,7 +7,7 @@ before(( done ) => {
   done();
 });
 
-describe( 'dice.namedRoll', () => {
+describe( 'Dice.namedRoll', () => {
   let msg = 'should roll the values in safe range.';
   describe( msg, () => {
     const values = {

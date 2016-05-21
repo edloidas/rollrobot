@@ -8,8 +8,8 @@ before(( done ) => {
   done();
 });
 
-describe( 'dice.reviseValue', () => {
-  const msg = 'should revise the values from parameter of any time in valid range.';
+describe( 'Dice.reviseValue', () => {
+  const msg = 'should revise the values from parameter of any time in valid range';
   describe( msg, () => {
     const values = [
       { given: 1, expected: 1 },

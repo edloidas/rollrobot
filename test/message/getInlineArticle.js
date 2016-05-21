@@ -8,7 +8,7 @@ before(( done ) => {
   done();
 });
 
-describe( 'message.getInlineArticle()', () => {
+describe( 'Message.getInlineArticle()', () => {
   const getInlineArticle = message.getInlineArticle.bind( message );
   describe( 'should generate valid article', () => {
     const commonArticle = {

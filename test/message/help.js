@@ -7,14 +7,13 @@ before(( done ) => {
   done();
 });
 
-describe( 'message.help.regexp', () => {
+describe( 'Message.help.regexp', () => {
   const regexp = message.type.help.regexp;
-  let msg = 'should be valid for `/help` followed by nothing or whitespace and anything after.';
+  let msg = 'should be parsed as default command';
   describe( msg, () => {
     const commands = [
       '/help', '/help   ', '/help 2',
-      '/help   df 2', '/help xxx ',
-      '/help@rollrobot  1 ',
+      '/help   df 2 ', '/help@rollrobot  1 ',
     ];
 
     commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
@@ -26,11 +25,11 @@ describe( 'message.help.regexp', () => {
     }));
   });
 
-  msg = 'should be valid when begins with `/help` and whitespaces or nothing right after.';
+  msg = 'should be not be recognized as command';
   describe( msg, () => {
     const commands = [
       'help', ' /help', '/help2', '/helpqw',
-      '/Help', '/HELP', ' 123', ' asdf',
+      '/Help', '/HELP', ' 123',
     ];
 
     commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {

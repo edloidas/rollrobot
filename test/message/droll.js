@@ -7,14 +7,13 @@ before(( done ) => {
   done();
 });
 
-describe( 'message.type.droll.regexp', () => {
+describe( 'Message.type.droll.regexp', () => {
   const regexp = message.type.droll.regexp;
-  let msg = 'should be valid for `/droll` followed by non or any char but whitespaces with digit.';
+  let msg = 'should be parsed as default command';
   describe( msg, () => {
     const commands = [
       '/droll', '/droll   ', '/droll 2g',
-      '/droll   mn3', '/droll  fghj  ',
-      '/droll@rollrobot q ',
+      '/droll   mn3 ', '/droll@rollrobot q ',
     ];
 
     commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
@@ -27,12 +26,11 @@ describe( 'message.type.droll.regexp', () => {
     }));
   });
 
-  msg = 'should be valid for `/droll` followed by whitespaces with digit and anything after.';
+  msg = 'should be parsed as command with 1 argument';
   describe( msg, () => {
     const commands = [
-      '/droll 2', '/droll   3',
-      '/droll  4  ', '/droll  4  sdfds',
-      '/droll@rollrobot  1  g ', '/droll -5 ',
+      '/droll 2', '/droll  4  sd',
+      '/droll -5 ', '/droll@rollrobot  1  g ',
     ];
 
     commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
@@ -45,11 +43,11 @@ describe( 'message.type.droll.regexp', () => {
     }));
   });
 
-  msg = 'should be valid when begins with `/droll` and whitespaces or nothing right after.';
+  msg = 'should be not be recognized as command';
   describe( msg, () => {
     const commands = [
       'droll', ' /droll', '/droll2', '/drollqw',
-      '/Droll', '/DROLL', ' 123', ' asdf',
+      '/Droll', '/DROLL', ' 123',
     ];
 
     commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {

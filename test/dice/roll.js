@@ -7,8 +7,8 @@ before(( done ) => {
   done();
 });
 
-describe( 'dice.roll', () => {
-  const msg = 'should roll the values in safe range.';
+describe( 'Dice.roll', () => {
+  const msg = 'should roll the values in safe range';
   describe( msg, () => {
     const values = [
       { given: [], below: 26, view: '2d10+0' },
@@ -20,7 +20,7 @@ describe( 'dice.roll', () => {
       { given: [ -1, -1, -1 ], below: 1, view: '1d1-1' },
       { given: [ 'q', Number.MAX_VALUE, Infinity ], below: 2, view: '1d1+0' },
       { given: [ 10, 1, 1 ], below: 12, view: '10d1+1' },
-      { given: [ 900000, 1, 1 ], below: 10002, view: '10000d1+1' },
+      { given: [ 900000, 1, 1 ], below: 14, view: '12d1+1' },
       { given: [ 4, 5, -20 ], above: -1, below: 1, view: '4d5-20' },
       { given: [ 4, 5, -999 ], above: -1, below: 1, view: '4d5-999' },
     ];

@@ -7,7 +7,7 @@ before(( done ) => {
   done();
 });
 
-describe( 'message.getInlineArticles()', () => {
+describe( 'Message.getInlineArticles()', () => {
   const getInlineArticles = message.getInlineArticles.bind( message );
   describe( 'should generate valid number of articles', () => {
     const commands = [

@@ -1,7 +1,10 @@
+const MIN_INT = Number.MIN_SAFE_INTEGER;
+const MAX_INT = Number.MAX_SAFE_INTEGER;
+
 function Random() {}
 
 // ( min, max )
-Random.prototype.getRandomInt = function getRandomInt( min, max ) {
+Random.prototype.getRandomInt = function getRandomInt( min = MIN_INT, max = MAX_INT ) {
   return Math.floor( Math.random() * ( max - min )) + min;
 };
 
