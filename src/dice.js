@@ -1,5 +1,5 @@
 const rand = require( './random' );
-const { MAX_VALUE, MAX_SAFE_INTEGER, MIN_SAFE_INTEGER } = Number;
+const { MAX_SAFE_INTEGER, MIN_SAFE_INTEGER } = Number;
 
 // Dice is an 'object', that can be rolled to geerate random numbers.
 // All 'roll' functions follow the same pattern: (x)k(y)+(n), where
@@ -20,7 +20,7 @@ Dice.prototype.random = function random( y ) {
 };
 
 Dice.prototype.roll = function roll( x = 2, y = 10, n = 0 ) {
-  const safeX = this.reviseValue( x, 10000 ) || 1;
+  const safeX = this.reviseValue( x, 12, 1 ) || 1;
   const safeY = this.reviseValue( y ) || 1;
   const safeN = this.reviseValue( n, MAX_SAFE_INTEGER, MIN_SAFE_INTEGER );
 
