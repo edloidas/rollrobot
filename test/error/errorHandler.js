@@ -3,9 +3,21 @@ const sinon = require( 'sinon' );
 const errorHandler = require( '../../src/error/errorHandler' );
 require( 'should-sinon' );
 
+const errorHandlerStyles = errorHandler.styles;
+
+// Same global instance of ErrorHandler is used
+// Reset ErrorHandler before use...
 before(( done ) => {
    // HACK: bypass ESLint no-unused-var error
   should.exist( should );
+  errorHandler.resetStyles();
+  done();
+});
+
+// ... and restore it afterwards.
+after(( done ) => {
+  errorHandler.setStyles( errorHandlerStyles ).applyStyles();
+  errorHandler.stop().start();
   done();
 });
 
@@ -21,6 +33,7 @@ describe( 'ErrorHandler', () => {
 
   it( 'should start without styles', ( done ) => {
     const spy = sinon.spy( errorHandler, 'applyStyles' );
+    // errorHandler.resetStyles();
     errorHandler.start();
     errorHandler.stop();
     spy.should.not.be.called();
