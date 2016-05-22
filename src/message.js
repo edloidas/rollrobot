@@ -61,15 +61,15 @@ function Message() {
 Message.prototype.parse = function parse( msg, type ) {
   switch ( type ) {
     case 'inline':
-      return compact( msg.split( ' ' )).map(( value ) => parseInt( value, 10 )) || [];
+      return compact( msg.split( ' ' )).map(( value ) => parseInt( value, 10 ));
     case 'roll':
-      return compact( msg.split( ' ' )).map(( value ) => parseInt( value, 10 )) || [];
+      return compact( msg.split( ' ' )).map(( value ) => parseInt( value, 10 ));
     case 'sroll':
-      return compact([ parseInt( msg, 10 ) ]) || [];
+      return compact([ parseInt( msg, 10 ) ]);
     case 'droll':
-      return compact([ parseInt( msg, 10 ) ]) || [];
+      return compact([ parseInt( msg, 10 ) ]);
     case 'random':
-      return compact([ parseInt( msg, 10 ) ]) || [];
+      return compact([ parseInt( msg, 10 ) ]);
     case 'start':
       return [];
     case 'help':
@@ -95,7 +95,7 @@ Message.prototype.getResponse = function getResponse( msg, view, result, reply )
   if ( !msg || !msg.from || reply || msg.chat.username === 'rollrobot' ) {
     return `\`(${ view })\` *${ result }*`;
   }
-  let fullname = `${ msg.from.first_name } ${ msg.from.last_name }`.trim();
+  let fullname = `${ msg.from.first_name || '' } ${ msg.from.last_name || '' }`.trim();
   fullname = fullname.length ? `${ fullname } ` : '';
   const username = msg.from.username;
   return `_${ fullname }_@${ username } \`(${ view })\` *${ result }*`;
@@ -142,13 +142,11 @@ Message.prototype.getInlineArticles = function getInlineArticles( query ) {
   // multiple values with first negative may result empty array of articles
   values = ( values.length >= 2 && values[ 0 ] < 0 ) ? [ values[ 0 ] ] : values;
 
-  if ( values.length >= 0 ) {
-    results.push( this.getInlineArticle( 'roll', values ));
-    if ( values.length < 2 ) {
-      results.push( this.getInlineArticle( 'sroll', values ));
-      results.push( this.getInlineArticle( 'droll', values ));
-      results.push( this.getInlineArticle( 'random', values ));
-    }
+  results.push( this.getInlineArticle( 'roll', values ));
+  if ( values.length < 2 ) {
+    results.push( this.getInlineArticle( 'sroll', values ));
+    results.push( this.getInlineArticle( 'droll', values ));
+    results.push( this.getInlineArticle( 'random', values ));
   }
 
   return compact( results );

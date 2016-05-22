@@ -1,6 +1,7 @@
 const should = require( 'should' );
 const sinon = require( 'sinon' );
 const errorHandler = require( '../../src/error/errorHandler' );
+const defaultStyles = require( '../../src/error/errorHandlerStyles' );
 require( 'should-sinon' );
 
 const errorHandlerStyles = errorHandler.styles;
@@ -52,13 +53,22 @@ describe( 'ErrorHandler', () => {
   });
 
   it( 'should reset styles', ( done ) => {
-    const spy = sinon.spy( errorHandler, 'applyStyles' );
+    const applyStyles = sinon.spy( errorHandler, 'applyStyles' );
     errorHandler.setStyles();
     errorHandler.start().stop();
     errorHandler.resetStyles();
     errorHandler.start().stop();
-    spy.should.be.calledOnce();
+    applyStyles.should.be.calledOnce();
     errorHandler.applyStyles.restore();
+    done();
+  });
+
+  it( 'should apply default styles, if none present', ( done ) => {
+    const appendStyle = sinon.spy( errorHandler.pe, 'appendStyle' );
+    errorHandler.resetStyles();
+    errorHandler.applyStyles();
+    appendStyle.should.be.calledWith( defaultStyles );
+    appendStyle.restore();
     done();
   });
 });

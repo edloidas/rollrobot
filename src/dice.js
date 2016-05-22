@@ -16,8 +16,8 @@ Dice.prototype.reviseValue = function reviseValue( value = 0, max = MAX_SAFE_INT
 };
 
 Dice.prototype.roll = function roll( x = 2, y = 10, n = 0 ) {
-  const safeX = this.reviseValue( x, 12, 1 ) || 1;
-  const safeY = this.reviseValue( y ) || 1;
+  const safeX = this.reviseValue( x, 12, 1 );
+  const safeY = this.reviseValue( y, MAX_SAFE_INTEGER, 1 );
   const safeN = this.reviseValue( n, MAX_SAFE_INTEGER, MIN_SAFE_INTEGER );
 
   let result = safeN;

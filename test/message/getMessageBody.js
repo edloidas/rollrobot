@@ -37,6 +37,16 @@ describe( 'Message.getMessageBody', () => {
     },
   };
 
+  const messageWithoutName = {
+    message_id: '1234567890abcdef',
+    from: {
+      username: 'userUsername',
+    },
+    chat: {
+      username: 'chatUsername',
+    },
+  };
+
   let msg = 'should generate valid response';
   describe( msg, () => {
     it( 'Full message', ( done ) => {
@@ -88,5 +98,20 @@ describe( 'Message.getMessageBody', () => {
       JSON.stringify( body.options ).should.be.equal( optionsString );
       done();
     });
+  });
+
+  msg = 'should generate message without full name';
+  it( msg, ( done ) => {
+    const body = checkBody( 'roll', messageWithoutName, '2 3 4', false );
+    const optionsString = '"__@userUsername `(2d3+4)` *';
+    JSON.stringify( body.resp ).should.startWith( optionsString );
+    done();
+  });
+
+  msg = 'should not generate response for invalid type';
+  it( msg, ( done ) => {
+    const errorMessage = "Cannot match against 'undefined' or 'null'.";
+    ( message.getMessageBody.bind( message, 'none' )).should.throw( errorMessage );
+    done();
   });
 });
