@@ -29,7 +29,7 @@ Bot recognizes and interacts with several commands, including inline commands, s
 * `/random (y)` -- 1d100+0, y=100 by default
 
 Examples:
-* (inline) `-1 -- 2d6-1 `
+* `-1 -- 2d6-1 ` (inline) 
 * `/roll 1 -- 1d10`
 * `/roll 4 6 -3 -- 4d6-3`
 * `/droll 3 -- 2d20+3`
