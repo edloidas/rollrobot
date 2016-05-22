@@ -11,12 +11,13 @@ function ErrorHandler() {
 }
 
 ErrorHandler.prototype.render = function render( error ) {
-  this.pe.render( error );
+  return this.pe.render( error );
 };
 
 ErrorHandler.prototype.start = function start() {
   this.pe.start();
-  if ( this.style ) {
+
+  if ( this.styles ) {
     this.applyStyles();
   }
   return this;
@@ -28,8 +29,7 @@ ErrorHandler.prototype.stop = function stop() {
 };
 
 ErrorHandler.prototype.setStyles = function setStyles( styles ) {
-  this.styles = styles;
-  this.pe.appendStyle( styles || defaultStyles );
+  this.styles = styles || defaultStyles;
   return this;
 };
 
@@ -39,7 +39,7 @@ ErrorHandler.prototype.applyStyles = function applyStyles() {
 };
 
 ErrorHandler.prototype.resetStyles = function resetStyles() {
-  this.style = null;
+  this.styles = null;
   return this;
 };
 
