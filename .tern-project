@@ -8,9 +8,9 @@
     "**.js"
   ],
   "plugins": {
+    "doc_comment": {},
     "complete_strings": {},
     "node": {},
-    "lint": {},
     "requirejs": {
       "baseURL": "./",
       "paths": {}
