@@ -2,6 +2,8 @@ const should = require( 'should' );
 const deepAssign = require( 'deep-assign' );
 const message = require( '../../src/message' );
 
+should.config.checkProtoEql = false;
+
 before(( done ) => {
    // HACK: bypass ESLint no-unused-var error
   should.exist( should );
@@ -62,7 +64,7 @@ describe( 'Message.getInlineArticle()', () => {
       if ( !cmd.article ) {
         should.not.exist( article );
       } else {
-        const testArticle = deepAssign( commonArticle, cmd.article );
+        const testArticle = deepAssign({}, commonArticle, cmd.article );
         article.id = 123456789;
         article.input_message_content.message_text = 'GeneratedNumber';
         article.should.be.eql( testArticle );
