@@ -1,5 +1,5 @@
 /* eslint max-len: ["error", 100, { "ignorePattern": "^[\s\w:]+\/.+\/" }] */
-const compact = require( 'lodash' ).compact;
+const compact = require( 'lodash.compact' );
 const dice = require( './dice' );
 const helpText = require( './text/help' );
 const InlineQueryResultArticle = require( './types/InlineQueryResultArticle' );

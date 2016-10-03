@@ -29,7 +29,7 @@
     "fix": "eslint --fix **/*.js || true"
   },
   "dependencies": {
-    "lodash": "^4.16.3",
+    "lodash.compact": "^3.0.1",
     "node-telegram-bot-api": "^0.23.3"
   },
   "devDependencies": {
