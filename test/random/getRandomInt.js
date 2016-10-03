@@ -15,7 +15,7 @@ describe( 'Random.getRandomInt', () => {
       result.push( random.getRandomInt( -10, -1 ));
     }
 
-    result.should.matchEach(( value ) => value.should.be.below( 0 ));
+    result.should.matchEach( value => value.should.be.below( 0 ));
     done();
   });
 });

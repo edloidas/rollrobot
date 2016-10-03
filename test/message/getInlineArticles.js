@@ -21,7 +21,7 @@ describe( 'Message.getInlineArticles()', () => {
       { query: '  1 2 3 ', count: 1 },
     ];
 
-    commands.forEach(( cmd ) => it( `'${ cmd.query }' → ${ cmd.count }`, ( done ) => {
+    commands.forEach( cmd => it( `'${ cmd.query }' → ${ cmd.count }`, ( done ) => {
       const articles = getInlineArticles( cmd.query );
       should.exist( articles );
       articles.length.should.be.equal( cmd.count );

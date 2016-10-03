@@ -1,5 +1,6 @@
 const should = require( 'should' );
 const dice = require( '../../src/dice' );
+
 const { MAX_VALUE, MAX_SAFE_INTEGER, MIN_SAFE_INTEGER } = Number;
 
 before(( done ) => {
@@ -27,7 +28,7 @@ describe( 'Dice.reviseValue', () => {
       { given: -99007199254740991, expected: MIN_SAFE_INTEGER, min: MIN_SAFE_INTEGER },
     ];
 
-    values.forEach(( value ) => it( `${ value.given } → '${ value.expected }'`, ( done ) => {
+    values.forEach( value => it( `${ value.given } → '${ value.expected }'`, ( done ) => {
       dice.reviseValue( value.given, value.max, value.min ).should.be.equal( value.expected );
       done();
     }));

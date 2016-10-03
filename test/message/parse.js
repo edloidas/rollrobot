@@ -18,7 +18,7 @@ describe( 'Message.parse()', () => {
       'roll ', 'asdf', '',
     ];
 
-    types.forEach(( type ) => it( `[ '${ type }' ]`, ( done ) => {
+    types.forEach( type => it( `[ '${ type }' ]`, ( done ) => {
       const values = parse( null, type );
       should.not.exist( values );
       done();

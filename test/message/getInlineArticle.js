@@ -57,7 +57,7 @@ describe( 'Message.getInlineArticle()', () => {
       { type: 'roll', values: [ 8, 7, -10 ], article: { title: '/roll', description: '8d7-10' } },
     ];
 
-    commands.forEach(( cmd ) => it( `'/${ cmd.type }' ${ cmd.values }`, ( done ) => {
+    commands.forEach( cmd => it( `'/${ cmd.type }' ${ cmd.values }`, ( done ) => {
       const article = getInlineArticle( cmd.type, cmd.values );
       if ( !cmd.article ) {
         should.not.exist( article );

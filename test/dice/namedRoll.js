@@ -45,7 +45,7 @@ describe( 'Dice.namedRoll', () => {
         msg = `'${ type }'`;
         describe( msg, () => {
           values[ type ].forEach(
-            ( value ) => it( `[ ${ value.given } ] <= '${ value.below }'`, ( done ) => {
+            value => it( `[ ${ value.given } ] <= '${ value.below }'`, ( done ) => {
               const rollResult = dice.namedRoll( type, value.given );
               should.exist( rollResult );
               if ( value.below ) {

@@ -17,7 +17,7 @@ describe( 'Message.random.regexp', () => {
       '/random -5 ',
     ];
 
-    commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
+    commands.forEach( cmd => it( `[ '${ cmd }' ]`, ( done ) => {
       const match = cmd.match( regexp );
       should.exist( match );
       match.length.should.be.equal( 3 );
@@ -34,7 +34,7 @@ describe( 'Message.random.regexp', () => {
       '/random@rollrobot  1  g ',
     ];
 
-    commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
+    commands.forEach( cmd => it( `[ '${ cmd }' ]`, ( done ) => {
       const match = cmd.match( regexp );
       should.exist( match );
       match.length.should.be.equal( 3 );
@@ -51,7 +51,7 @@ describe( 'Message.random.regexp', () => {
       '/Random', '/RANDOM', ' 123',
     ];
 
-    commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
+    commands.forEach( cmd => it( `[ '${ cmd }' ]`, ( done ) => {
       const match = cmd.match( regexp );
       should.not.exist( match );
       done();

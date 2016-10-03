@@ -16,7 +16,7 @@ describe( 'Message.sroll.regexp', () => {
       '/sroll   mn3 ', '/sroll@rollrobot q ',
     ];
 
-    commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
+    commands.forEach( cmd => it( `[ '${ cmd }' ]`, ( done ) => {
       const match = cmd.match( regexp );
       should.exist( match );
       match.length.should.be.equal( 3 );
@@ -33,7 +33,7 @@ describe( 'Message.sroll.regexp', () => {
       '/sroll -5 ', '/sroll@rollrobot  1  g ',
     ];
 
-    commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
+    commands.forEach( cmd => it( `[ '${ cmd }' ]`, ( done ) => {
       const match = cmd.match( regexp );
       should.exist( match );
       match.length.should.be.equal( 3 );
@@ -50,7 +50,7 @@ describe( 'Message.sroll.regexp', () => {
       '/Sroll', '/SROLL', ' 123',
     ];
 
-    commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
+    commands.forEach( cmd => it( `[ '${ cmd }' ]`, ( done ) => {
       const match = cmd.match( regexp );
       should.not.exist( match );
       done();

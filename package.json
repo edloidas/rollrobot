@@ -24,25 +24,28 @@
   "scripts": {
     "test": "mocha test/**/*.js",
     "cover": "istanbul cover ./node_modules/mocha/bin/_mocha",
-    "start": "node index.js"
+    "start": "node index.js",
+    "prepush": "npm test",
+    "fix": "eslint --fix **/*.js || true"
   },
   "dependencies": {
-    "lodash": "^4.12.0",
-    "node-telegram-bot-api": "^0.21.1"
+    "lodash": "^4.16.3",
+    "node-telegram-bot-api": "^0.23.3"
   },
   "devDependencies": {
-    "coveralls": "^2.11.9",
+    "coveralls": "^2.11.14",
     "deep-assign": "^2.0.0",
-    "eslint": "^2.10.1",
-    "eslint-config-airbnb-base": "^3.0.1",
-    "eslint-plugin-import": "^1.8.0",
-    "istanbul": "^v1.0.0-alpha.2",
-    "mocha": "^2.4.5",
+    "eslint": "^3.7.0",
+    "eslint-config-airbnb-base": "^8.0.0",
+    "eslint-plugin-import": "^2.0.0",
+    "husky": "^0.11.8",
+    "istanbul": "^1.1.0-alpha.1",
+    "mocha": "^3.1.0",
     "mocha-lcov-reporter": "^1.2.0",
-    "pretty-error": "^2.0.0",
-    "should": "^8.3.1",
+    "pretty-error": "^2.0.1",
+    "should": "^11.1.0",
     "should-sinon": "0.0.5",
-    "sinon": "^1.17.4"
+    "sinon": "^1.17.6"
   },
   "engines": {
     "node": ">= 6.2.0",

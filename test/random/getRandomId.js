@@ -14,7 +14,7 @@ describe( 'Random.getRandomId', () => {
       for ( let i = 0; i < 10; i++ ) {
         result.push( random.getRandomId( length, radix ));
       }
-      result.should.matchEach(( value ) => value.length.should.be.equal( length ));
+      result.should.matchEach( value => value.length.should.be.equal( length ));
       done();
     });
   }

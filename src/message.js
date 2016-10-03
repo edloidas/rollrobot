@@ -1,3 +1,4 @@
+/* eslint max-len: ["error", 100, { "ignorePattern": "^[\s\w:]+\/.+\/" }] */
 const compact = require( 'lodash' ).compact;
 const dice = require( './dice' );
 const helpText = require( './text/help' );
@@ -61,9 +62,9 @@ function Message() {
 Message.prototype.parse = function parse( msg, type ) {
   switch ( type ) {
     case 'inline':
-      return compact( msg.split( ' ' )).map(( value ) => parseInt( value, 10 ));
+      return compact( msg.split( ' ' )).map( value => parseInt( value, 10 ));
     case 'roll':
-      return compact( msg.split( ' ' )).map(( value ) => parseInt( value, 10 ));
+      return compact( msg.split( ' ' )).map( value => parseInt( value, 10 ));
     case 'sroll':
       return compact([ parseInt( msg, 10 ) ]);
     case 'droll':

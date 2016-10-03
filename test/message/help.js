@@ -16,7 +16,7 @@ describe( 'Message.help.regexp', () => {
       '/help   df 2 ', '/help@rollrobot  1 ',
     ];
 
-    commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
+    commands.forEach( cmd => it( `[ '${ cmd }' ]`, ( done ) => {
       const match = cmd.match( regexp );
       should.exist( match );
       match.length.should.be.equal( 2 );
@@ -32,7 +32,7 @@ describe( 'Message.help.regexp', () => {
       '/Help', '/HELP', ' 123',
     ];
 
-    commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
+    commands.forEach( cmd => it( `[ '${ cmd }' ]`, ( done ) => {
       const match = cmd.match( regexp );
       should.not.exist( match );
       done();

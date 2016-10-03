@@ -25,7 +25,7 @@ describe( 'Dice.roll', () => {
       { given: [ 4, 5, -999 ], above: -1, below: 1, view: '4d5-999' },
     ];
 
-    values.forEach(( value ) => it( `[ ${ value.given } ] <= '${ value.below }'`, ( done ) => {
+    values.forEach( value => it( `[ ${ value.given } ] <= '${ value.below }'`, ( done ) => {
       const rollResult = dice.roll( ...value.given );
       should.exist( rollResult );
       if ( value.below ) {

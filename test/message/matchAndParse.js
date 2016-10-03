@@ -11,7 +11,7 @@ describe( 'Message.matchAndParse()', () => {
   const matchAndParse = message.matchAndParse.bind( message );
 
   function runCommands( commands, type, equal ) {
-    commands.forEach(( cmd ) => it( `[ '${ cmd }' ]`, ( done ) => {
+    commands.forEach( cmd => it( `[ '${ cmd }' ]`, ( done ) => {
       const values = matchAndParse( cmd, type );
       should.exist( values );
       values.length.should.be.equal( equal );

@@ -9,7 +9,9 @@
     "array-bracket-spacing": [ 2, "always" ],
     "computed-property-spacing": [ 2, "always" ],
     "template-curly-spacing": [ 2, "always" ],
-    "no-restricted-syntax": [ "off" ]
+    "no-restricted-syntax": [ "off" ],
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "import/no-extraneous-dependencies": ["off"]
   },
   "env": {
     "browser": true,

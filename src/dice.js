@@ -1,4 +1,5 @@
 const rand = require( './random' );
+
 const { MAX_SAFE_INTEGER, MIN_SAFE_INTEGER } = Number;
 
 // Dice is an 'object', that can be rolled to geerate random numbers.
