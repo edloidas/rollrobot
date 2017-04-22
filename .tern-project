@@ -1,15 +1,16 @@
 {
   "ecmaVersion": 6,
   "libs": [
-    "browser",
-    "jquery"
+    "browser"
   ],
   "loadEagerly": [
-    "**.js"
+    "*.js"
   ],
   "plugins": {
     "doc_comment": {},
-    "complete_strings": {},
+    "complete_strings": {
+      "maxLength": 15
+    },
     "node": {},
     "requirejs": {
       "baseURL": "./",
@@ -17,7 +18,8 @@
     },
     "es_modules": {},
     "doc_comment": {
-      "fullDocs": true
+      "fullDocs": true,
+      "strong": true
     }
   }
 }

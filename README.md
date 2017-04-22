@@ -7,8 +7,8 @@ Roll Robot
 [![Dependency Status](https://david-dm.org/edloidas/rollrobot.svg)](https://david-dm.org/edloidas/rollrobot)
 [![devDependency Status](https://david-dm.org/edloidas/rollrobot/dev-status.svg)](https://david-dm.org/edloidas/rollrobot#info=devDependencies)
 
-[![https://telegram.me/rollrobot](https://img.shields.io/badge/💬 Telegram-rollrobot-blue.svg)](https://telegram.me/rollrobot)
-[![https://telegram.me/edloidas](https://img.shields.io/badge/💬 Telegram-edloidas-blue.svg)](https://telegram.me/edloidas)
+[![https://telegram.me/rollrobot](https://img.shields.io/badge/💬%20Telegram-rollrobot-blue.svg)](https://telegram.me/rollrobot)
+[![https://telegram.me/edloidas](https://img.shields.io/badge/💬%20Telegram-edloidas-blue.svg)](https://telegram.me/edloidas)
 
 > A Telegram bot that can roll the dice like no one before.
 
@@ -29,7 +29,7 @@ Bot recognizes and interacts with several commands, including inline commands, s
 * `/random (y)` -- 1d100+0, y=100 by default
 
 Examples:
-* `-1 -- 2d6-1 ` (inline) 
+* `-1 -- 2d6-1 ` (inline)
 * `/roll 1 -- 1d10`
 * `/roll 4 6 -3 -- 4d6-3`
 * `/droll 3 -- 2d20+3`

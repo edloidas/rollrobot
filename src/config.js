@@ -1,4 +1,4 @@
-const config = {
+module.exports = {
   token: process.env.TOKEN,
   settings: {
     webHook: {
@@ -11,5 +11,3 @@ const config = {
     host: process.env.URL || 'https://rollrobot.herokuapp.com',
   },
 };
-
-module.exports = config;
