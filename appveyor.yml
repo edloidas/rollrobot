@@ -8,12 +8,14 @@ version: "{build}"
 build: off
 deploy: off
 
+cache:
+  - "%LOCALAPPDATA%/Yarn"
+
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install
+  - yarn install
   - node --version
-  - npm --version
+  - yarn --version
 
 test_script:
-  - npm test
-  - npm run package
+  - yarn test

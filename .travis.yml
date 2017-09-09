@@ -9,4 +9,3 @@ node_js:
 script:
   - yarn typecheck
   - yarn report
-  - npm run package

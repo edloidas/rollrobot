@@ -2956,6 +2956,12 @@ table@^4.0.1:
     slice-ansi "0.0.4"
     string-width "^2.0.0"
 
+telegram-test@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/telegram-test/-/telegram-test-0.1.5.tgz#f3e2bf2f4a10e105e1e73ea27bfb5646b7cd6ccf"
+  dependencies:
+    bluebird "^3.5.0"
+
 test-exclude@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/test-exclude/-/test-exclude-4.0.3.tgz#86a13ce3effcc60e6c90403cf31a27a60ac6c4e7"
