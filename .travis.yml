@@ -4,8 +4,9 @@ language: node_js
 env: TRAVIS_CI=true
 
 node_js:
-  - "7"
+  - "8"
 
 script:
-  - npm run report
-  
+  - yarn typecheck
+  - yarn report
+  - npm run package

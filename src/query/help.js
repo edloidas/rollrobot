@@ -6,5 +6,10 @@ Matches `start` or `help` commands:
 const regexp = /^\/(start|help)(@rollrobot)?(\s[\s\S]*)*$/;
 
 const options = {
-  disable_web_page_preview: true,
+  disable_web_page_preview: true
+};
+
+module.exports = {
+  regexp,
+  options
 };

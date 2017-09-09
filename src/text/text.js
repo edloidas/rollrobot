@@ -35,5 +35,5 @@ const deprecated = "'/sroll' and '/droll' commands are no longer supported.";
 
 module.exports = {
   help,
-  deprecated,
+  deprecated
 };

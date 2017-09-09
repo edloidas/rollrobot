@@ -1,20 +1,32 @@
 module.exports = {
-  'extends': 'airbnb-base',
+  'extends': [
+    'airbnb-base',
+    'prettier',
+  ],
+  'plugins': [
+    'prettier',
+  ],
   'rules': {
-    'block-spacing': [ 2, 'always' ],
-    'space-before-function-paren': [ 2, { 'anonymous': 'always', 'named': 'never' } ],
-    'space-in-parens': [ 2, 'always', { 'exceptions': [ '{}', '[]', '()' ] } ],
     'spaced-comment': [ 2, 'always', { 'exceptions': [ '-', '+' ] } ],
-    'arrow-spacing': [ 2, { 'before': true, 'after': true } ],
-    'array-bracket-spacing': [ 2, 'always' ],
-    'computed-property-spacing': [ 2, 'always' ],
-    'template-curly-spacing': [ 2, 'always' ],
     'no-restricted-syntax': [ 'off' ],
     'object-property-newline': [ 'off', { 'allowMultiplePropertiesPerLine': true } ],
-    'no-plusplus': [ 'error', { 'allowForLoopAfterthoughts': true } ]
+    'no-underscore-dangle': [ 'off' ],
+    'comma-dangle': [ 'error', {
+        'arrays': 'never',
+        'objects': 'never',
+        'imports': 'never',
+        'exports': 'never',
+        'functions': 'ignore',
+    }],
+    'import/no-extraneous-dependencies': [ 'off', { 'devDependencies': [ 'util/', '**/*.test.js', '**/*.spec.js' ] } ],
+    'prettier/prettier': ['error', {
+      'singleQuote': true,
+    }],
+    // 'quotes': ['error', 'single'],
+    // no support in 'babel-eslint'; should be 'error'
+    'no-await-in-loop': [ 'off' ],
   },
   'env': {
-    'browser': true,
     'node': true,
     'jest': true
   }

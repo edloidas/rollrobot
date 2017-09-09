@@ -1,7 +1,7 @@
-const CONFIG = require( '../src/config' );
+const CONFIG = require('../src/config');
 
-describe( 'Stub', () => {
-  test( 'Should ... stub.', () => {
-    expect( CONFIG ).toBeTruthy();
+describe('Stub', () => {
+  test('Should ... stub.', () => {
+    expect(CONFIG).toBeTruthy();
   });
 });
