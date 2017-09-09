@@ -1,15 +1,15 @@
+const { help } = require('../text');
+
 /*
 Matches `start` or `help` commands:
 `/start` - command for chat
 `/start@rollrobot` - command in group chat (named command)
 */
-const regexp = /^\/(start|help)(@rollrobot)?(\s[\s\S]*)*$/;
+const regexp = /^\/(start|help)(@rollrobot)?(\s.*)*$/;
 
-const options = {
-  disable_web_page_preview: true
-};
+const reply = () => help;
 
 module.exports = {
   regexp,
-  options
+  reply
 };

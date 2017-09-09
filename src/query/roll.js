@@ -1,15 +1,22 @@
+const { parseAndRoll } = require('roll-parser');
+
 /*
-Matches `start` or `help` commands:
-`/start` - command for chat
-`/start@rollrobot` - command in group chat (named command)
+Matches `roll` command:
+`/roll` - command for chat
+`/roll@rollrobot` - command in group chat (named command)
 */
 const regexp = /^\/(roll)(@rollrobot)?(\s[\s\S]*)*$/;
 
-const options = {
-  disable_web_page_preview: true
-};
+function reply(notation) {
+  const result = parseAndRoll(notation);
+
+  if (result) {
+    return `\`(${result.notation})\` *${result.value}*`;
+  }
+  return null;
+}
 
 module.exports = {
   regexp,
-  options
+  reply
 };

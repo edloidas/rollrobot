@@ -1,3 +1,5 @@
+const { deprecated } = require('../text');
+
 /*
 Matches deprecated commands `sroll` or `droll` commands:
 `/sroll` - command for chat
@@ -5,11 +7,9 @@ Matches deprecated commands `sroll` or `droll` commands:
 */
 const regexp = /^\/(sroll|droll)(@rollrobot)?(\s[\s\S]*)*$/;
 
-const options = {
-  disable_web_page_preview: true
-};
+const reply = () => deprecated;
 
 module.exports = {
   regexp,
-  options
+  reply
 };
