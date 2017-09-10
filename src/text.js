@@ -42,8 +42,25 @@ const deprecated = '`/sroll` and `/droll` commands are no longer supported.';
 
 const error = `_Sorry, can't parse notation._`;
 
+function createResultMessage(result) {
+  if (result) {
+    return `\`(${result.notation})\` *${result.value}*`;
+  }
+  return null;
+}
+
+function createFullResultMessage(result) {
+  if (result) {
+    const rolls = result.rolls.join();
+    return `\`(${result.notation})\` *${result.value}* \`[${rolls}]\``;
+  }
+  return null;
+}
+
 module.exports = {
   help,
   deprecated,
-  error
+  error,
+  createResultMessage,
+  createFullResultMessage
 };

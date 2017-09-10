@@ -32,6 +32,7 @@
     "prettier-check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check"
   },
   "dependencies": {
+    "nanoid": "^0.2.0",
     "node-telegram-bot-api": "^0.27.1",
     "roll-parser": "^2.3.2"
   },

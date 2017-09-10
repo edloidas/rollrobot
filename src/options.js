@@ -12,7 +12,7 @@ const createOptions = msg => {
 };
 
 const createInlineOptions = () => ({
-  parse_mode: 'Markdown'
+  cache_time: 0
 });
 
 module.exports = {
