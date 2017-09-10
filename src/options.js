@@ -10,6 +10,7 @@ const createOptions = msg => {
 
   return options;
 };
+
 const createInlineOptions = () => ({
   parse_mode: 'Markdown'
 });

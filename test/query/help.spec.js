@@ -1,10 +1,8 @@
-const TelegramTest = require('telegram-test');
 const { regexp } = require('../../src/query/help');
 const { help } = require('../../src/text');
-const { createBot } = require('../utils');
+const { createTestServer } = require('../utils');
 
-const server = new TelegramTest(createBot());
-const chat = 1;
+const server = createTestServer();
 
 describe('Help commands', () => {
   test('should have valid RegExp', async () => {
@@ -16,13 +14,11 @@ describe('Help commands', () => {
 
   test('should reply with help text for `/start` command', async () => {
     expect.assertions(1);
-    const data = await server.sendUpdate(chat, '/start');
-    expect(data.text).toEqual(help);
+    await expect(server.send('/start')).resolves.toEqual(help);
   });
 
   test('should reply with help text for `/help` command', async () => {
     expect.assertions(1);
-    const data = await server.sendUpdate(chat, '/help');
-    expect(data.text).toEqual(help);
+    await expect(server.send('/help')).resolves.toEqual(help);
   });
 });
