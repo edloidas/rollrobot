@@ -2,6 +2,11 @@ const { inline, roll, full, random, help, deprecated } = require('./query');
 const { createOptions, createInlineOptions } = require('./options');
 const { error } = require('./text');
 
+/*
+More event type are described in official API of `node-telegram-bot-api`
+https://github.com/yagop/node-telegram-bot-api/blob/master/doc/usage.md
+*/
+
 function createHandler(bot, query) {
   const { regexp, reply } = query;
 
@@ -21,7 +26,7 @@ function createHandler(bot, query) {
 function createInlineHandler(bot) {
   const { createInlineArticles } = inline;
 
-  bot.onText('inline_query', msg => {
+  bot.on('inline_query', msg => {
     try {
       const { id, query } = msg;
       const options = createInlineOptions();
