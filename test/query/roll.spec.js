@@ -32,4 +32,26 @@ describe('/roll', () => {
     await expect(server.send('/roll 4d20-1')).resolves.toEqual(matching);
     await expect(server.send('/roll 3d10!>6f3')).resolves.toEqual(matching);
   });
+
+  test('should limit roll values', async () => {
+    expect.assertions(3);
+
+    const classicMatching = expect.stringMatching(
+      /`\(12d99999(\+|-)9999\)` \*\d+\*/
+    );
+    const wodMatching = expect.stringMatching(
+      /`\(12d99999!>99999f99998\)` \*\d+\*/
+    );
+
+    let result;
+
+    result = server.send('/roll 100d123456+12345');
+    await expect(result).resolves.toEqual(classicMatching);
+
+    result = server.send('/roll 77d777777-77777');
+    await expect(result).resolves.toEqual(classicMatching);
+
+    result = server.send('/roll 999d123456!>777777f111111');
+    await expect(result).resolves.toEqual(wodMatching);
+  });
 });

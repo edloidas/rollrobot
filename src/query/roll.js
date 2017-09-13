@@ -1,5 +1,6 @@
-const { parseAndRoll } = require('roll-parser');
+const { parse, roll } = require('roll-parser');
 const { createResultMessage } = require('../text');
+const { limit } = require('../limiter');
 
 /*
 Matches `roll` command:
@@ -9,7 +10,7 @@ Matches `roll` command:
 const regexp = /^\/(roll)(@rollrobot)?(\s[\s\S]*)*$/;
 
 function reply(notation) {
-  const result = parseAndRoll(notation);
+  const result = roll(limit(parse(notation)));
   return createResultMessage(result);
 }
 
