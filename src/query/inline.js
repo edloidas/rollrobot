@@ -1,9 +1,12 @@
 const nanoid = require('nanoid');
 const {
   parseAndRollSimple,
-  parseAndRollClassic,
-  parseAndRollWod
+  parseSimpleRoll,
+  parseClassicRoll,
+  parseWodRoll,
+  roll
 } = require('roll-parser');
+const { limit } = require('../limiter');
 const { createFullResultMessage } = require('../text');
 
 const createInputMessageContent = text => ({
@@ -23,14 +26,16 @@ const createArticle = (title, description, message) => ({
 
 function createRollArticle(notation) {
   const title = 'Classic';
-  const result = parseAndRollClassic(notation || 'd20');
+  const result = roll(
+    limit(parseClassicRoll(notation || 'd20') || parseSimpleRoll(notation))
+  );
   const message = result && createFullResultMessage(result);
   return result && createArticle(title, result.notation, message);
 }
 
 function createWodArticle(notation) {
   const title = 'World of Darkness';
-  const result = parseAndRollWod(notation || 'd10');
+  const result = roll(limit(parseWodRoll(notation || 'd10')));
   const message = result && createFullResultMessage(result);
   return result && createArticle(title, result.notation, message);
 }
@@ -49,6 +54,7 @@ function createInlineArticles(query = '') {
     createWodArticle(notation),
     createRandomArticle()
   ];
+
   return articles.filter(article => !!article);
 }
 
