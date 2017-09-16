@@ -1,7 +1,10 @@
 const GROUPS = ['group', 'supergroup', 'channel'];
 
 const createOptions = msg => {
-  let options = { parse_mode: 'Markdown' };
+  let options = {
+    parse_mode: 'Markdown',
+    disable_web_page_preview: true
+  };
 
   const inGroup = GROUPS.some(type => type === msg.chat.type);
   if (inGroup) {

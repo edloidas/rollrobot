@@ -20,21 +20,36 @@ Roll Robot is a telegram bot used for common "roll the dice" purposes which is w
 
 Roll the dice like no one before. Generate random numbers by default RPG pattern (x)d(y)±(n).
 
-Bot recognizes and interacts with several commands, including inline commands, such as:
+Bot recognizes several commands and can be used in inline mode:
 
-* `@rollrobot (...values)` -- for inline requests, follows the /roll pattern
-* `/roll (x) (y) (-)(n)` -- 2d10+0, x=2, y=10, n=0 by default
-* `/sroll (n)` -- 2d6+(n), n=0 by default
-* `/droll (n)` -- 2d20+(n), n=0 by default
-* `/random (y)` -- 1d100+0, y=100 by default
+@rollrobot [notation] -- inline request, recognizes both notations
+/roll [notation] -- default roll, recognizes both notations
+/full [notation] -- same to '/roll', but shows roll for each dice
+/random -- 'd100' roll
 
-Examples:
-* `-1 -- 2d6-1 ` (inline)
-* `/roll 1 -- 1d10`
-* `/roll 4 6 -3 -- 4d6-3`
-* `/droll 3 -- 2d20+3`
+#### Notation: ####
+1. Classic<br/>
+    `[count]d[dice]±[modifier]`
+2. World of Darkness<br/>
+    `[count]d[dice][!]>[success]f[fail]`
+3. Simplfied (classic, space separated)<br/>
+    `[count] [dice] [modifier]`
+4. Single-valued<br/>
+    `[dice]`
+where ...
+  * `count` -- number of rolls
+  * `dice` -- dice type
+  * `modifier` -- value, that will be added or subtracted from result
+  * `!` -- sign, indicating to repeat
+  * `success` -- minimum roll value, that counts as success
+  * `fail` -- maximum roll value, that counts as fail
 
-Simply open the bot's profile and use the 'Add to group' button.
+#### Examples: ####
+`/roll 20` ➜ 'd20'<br/>
+`/roll 2 10 -1` ➜ result of '2d10-1'<br/>
+`/roll 4d8+3` ➜ result of '4d8+3'<br/>
+`/wod 6d10!>6f1` ➜ number of successes for '6d10!>6f1'<br/>
+`/random` ➜ 'd100'
 
 [Rate](https://telegram.me/storebot?start=rollrobot) the bot, if you like it.
 
