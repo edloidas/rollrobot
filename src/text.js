@@ -38,7 +38,8 @@ Your ideas on improvement are welcome.
 
 MIT © @edloidas`;
 
-const deprecated = '`/sroll` and `/droll` commands are no longer supported.';
+const deprecated =
+  '`/sroll` and `/droll` commands are no longer supported. Use /help for more details.';
 
 const error = `_Sorry, can't parse notation._`;
 
