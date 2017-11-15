@@ -14,7 +14,10 @@ function reply(notation) {
   return createFullResultMessage(result);
 }
 
+const title = 'Full';
+
 module.exports = {
   regexp,
-  reply
+  reply,
+  title
 };

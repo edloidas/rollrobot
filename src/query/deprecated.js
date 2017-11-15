@@ -9,7 +9,10 @@ const regexp = /^\/(sroll|droll)(@rollrobot)?(\s[\s\S]*)*$/;
 
 const reply = () => deprecated;
 
+const title = 'Deprecated';
+
 module.exports = {
   regexp,
-  reply
+  reply,
+  title
 };

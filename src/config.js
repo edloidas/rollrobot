@@ -9,5 +9,8 @@ module.exports = {
   telegram: {
     port: 443,
     host: process.env.URL || 'https://rollrobot.herokuapp.com'
+  },
+  botan: {
+    token: process.env.TOKEN || '1234abcd-12ab-12ab-12ab-1234567890ab'
   }
 };

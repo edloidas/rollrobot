@@ -22,6 +22,7 @@ module.exports = {
     'prettier/prettier': ['error', {
       'singleQuote': true,
     }],
+    'no-console': [ 'warn', { allow: [ 'error' ] } ],
     // 'quotes': ['error', 'single'],
     // no support in 'babel-eslint'; should be 'error'
     'no-await-in-loop': [ 'off' ],

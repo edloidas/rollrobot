@@ -9,7 +9,10 @@ const regexp = /^\/(start|help)(@rollrobot)?(\s.*)*$/;
 
 const reply = () => help;
 
+const title = 'Help';
+
 module.exports = {
   regexp,
-  reply
+  reply,
+  title
 };

@@ -12,7 +12,10 @@ function reply() {
   return `\`(${result.notation})\` *${result.value}*`;
 }
 
+const title = 'Random';
+
 module.exports = {
   regexp,
-  reply
+  reply,
+  title
 };

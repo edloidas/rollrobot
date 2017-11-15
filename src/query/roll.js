@@ -14,7 +14,10 @@ function reply(notation) {
   return createResultMessage(result);
 }
 
+const title = 'Roll';
+
 module.exports = {
   regexp,
-  reply
+  reply,
+  title
 };
