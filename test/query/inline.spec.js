@@ -47,6 +47,7 @@ describe('Inline queries', () => {
   test('should limit inline query roll values', async () => {
     expect.assertions(4);
 
-    matchResults('d9999999', createResults('d99999', 'd99999>6', 'd100'));
+    const results = createResults('d999999999', 'd999999999>6', 'd100');
+    matchResults('d9999999999', results);
   });
 });

@@ -1,13 +1,13 @@
 const { Roll, WodRoll } = require('roll-parser');
 
-const MAX_DICE = 99999;
+const MAX_DICE = 999999999;
 const MAX_COUNT = 12;
 
-const MIN_MOD = -9999;
-const MAX_MOD = 9999;
+const MIN_MOD = -999999999;
+const MAX_MOD = 999999999;
 
-const MAX_SUCCESS = 99999;
-const MAX_FAIL = 99998;
+const MAX_SUCCESS = 999999999;
+const MAX_FAIL = 999999998;
 
 function limit(roll) {
   if (roll instanceof Roll) {

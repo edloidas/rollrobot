@@ -2,10 +2,10 @@ const help = `Roll the dice like no one before. Generate random numbers by defau
 
 Bot recognizes several commands and can be used in inline mode:
 
-@rollrobot [notation] -- inline request, recognizes both notations
-/roll [notation] -- default roll, recognizes both notations
-/full [notation] -- same to '/roll', but shows roll for each dice
-/random -- 'd100' roll
+@rollrobot [notation] — inline request, recognizes both notations
+/roll [notation] — default roll, recognizes both notations
+/full [notation] — same to '/roll', but shows roll for each dice
+/random — 'd100' roll
 
 *Notation:*
 *1.* Classic
@@ -17,12 +17,12 @@ Bot recognizes several commands and can be used in inline mode:
 *4.* Single-valued
     \`[dice]\`
 where ...
-  • \`count\` -- number of rolls
-  • \`dice\` -- dice type
-  • \`modifier\` -- value, that will be added or subtracted from result
-  • \`!\` -- sign, indicating to repeat
-  • \`success\` -- minimum roll value, that counts as success
-  • \`fail\` -- maximum roll value, that counts as fail
+  • \`count\` — number of rolls
+  • \`dice\` — dice type
+  • \`modifier\` — value, that will be added or subtracted from result
+  • \`!\` — sign, indicating to repeat
+  • \`success\` — minimum roll value, that counts as success
+  • \`fail\` — maximum roll value, that counts as fail
 
 *Examples:*
 \`/roll 20\` ➜ 'd20'

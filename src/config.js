@@ -10,7 +10,7 @@ module.exports = {
     port: 443,
     host: process.env.URL || 'https://rollrobot.herokuapp.com'
   },
-  botan: {
-    token: process.env.BOTAN || '1234abcd-12ab-12ab-12ab-1234567890ab'
+  analytics: {
+    token: process.env.ANALYTICS || '1234abcd-12ab-12ab-12ab-1234567890ab'
   }
 };

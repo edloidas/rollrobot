@@ -37,21 +37,21 @@ describe('/roll', () => {
     expect.assertions(3);
 
     const classicMatching = expect.stringMatching(
-      /`\(12d99999(\+|-)9999\)` \*\d+\*/
+      /`\(12d999999999(\+|-)999999999\)` \*\d+\*/
     );
     const wodMatching = expect.stringMatching(
-      /`\(12d99999!>99999f99998\)` \*\d+\*/
+      /`\(12d999999999!>999999999f999999998\)` \*\d+\*/
     );
 
     let result;
 
-    result = server.send('/roll 100d123456+12345');
+    result = server.send('/roll 100d1234567890+1234567890');
     await expect(result).resolves.toEqual(classicMatching);
 
-    result = server.send('/roll 77d777777-77777');
+    result = server.send('/roll 77d7777777777-7777777777');
     await expect(result).resolves.toEqual(classicMatching);
 
-    result = server.send('/roll 999d123456!>777777f111111');
+    result = server.send('/roll 999d1234567890!>7777777777f1111111111');
     await expect(result).resolves.toEqual(wodMatching);
   });
 });

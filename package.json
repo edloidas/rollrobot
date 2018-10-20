@@ -32,7 +32,6 @@
     "prettier-check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check"
   },
   "dependencies": {
-    "botanio": "^0.0.6",
     "nanoid": "^0.2.0",
     "node-telegram-bot-api": "^0.27.1",
     "roll-parser": "^2.3.2"
@@ -52,8 +51,8 @@
     "telegram-test": "^0.1.5"
   },
   "engines": {
-    "node": ">= 8.4.0",
-    "npm": ">= 5.4.1",
-    "yarn": ">= 1.0.0"
+    "node": ">= 10.11.0",
+    "npm": ">= 6.4.1",
+    "yarn": ">= 1.10.1"
   }
 }
