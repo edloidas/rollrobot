@@ -7,8 +7,8 @@ More event type are described in official API of `node-telegram-bot-api`
 https://github.com/yagop/node-telegram-bot-api/blob/master/doc/usage.md
 */
 
-function createHandler(bot, query, track) {
-  const { regexp, reply, title } = query;
+function createHandler(bot, query) {
+  const { regexp, reply } = query;
 
   bot.onText(regexp, (msg, match) => {
     try {
@@ -17,14 +17,13 @@ function createHandler(bot, query, track) {
       const response = reply(notation) || error;
       const options = createOptions(msg);
       bot.sendMessage(id, response, options);
-      track(msg, title);
     } catch (e) {
       console.error(e);
     }
   });
 }
 
-function createInlineHandler(bot, track) {
+function createInlineHandler(bot) {
   const { createInlineArticles } = inline;
 
   bot.on('inline_query', msg => {
@@ -37,24 +36,15 @@ function createInlineHandler(bot, track) {
       console.error(e);
     }
   });
-
-  bot.on('chosen_inline_result', msg => {
-    try {
-      track(msg);
-    } catch (e) {
-      console.error(e);
-    }
-  });
 }
 
-function initHandlers(bot, analytics) {
-  const { track, trackInline } = analytics;
-  createInlineHandler(bot, trackInline);
-  createHandler(bot, roll, track);
-  createHandler(bot, full, track);
-  createHandler(bot, random, track);
-  createHandler(bot, help, track);
-  createHandler(bot, deprecated, track);
+function initHandlers(bot) {
+  createInlineHandler(bot);
+  createHandler(bot, roll);
+  createHandler(bot, full);
+  createHandler(bot, random);
+  createHandler(bot, help);
+  createHandler(bot, deprecated);
 }
 
 module.exports = {
