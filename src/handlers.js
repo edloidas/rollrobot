@@ -12,6 +12,8 @@ function createHandler(bot, query) {
 
   bot.onText(regexp, (msg, match) => {
     try {
+      const { username, first_name } = msg.from || {};
+      console.log(`[${username}](${first_name}): ${msg.text || ''}`);
       const { id } = msg.chat;
       const notation = ((match && match[3]) || '').trim();
       const response = reply(notation) || error;

@@ -22,6 +22,7 @@ module.exports = {
     // no support in 'babel-eslint'; should be 'error'
     'no-await-in-loop': [ 'off' ],
     'import/prefer-default-export': [ 'off' ],
+    'camelcase': [ 'off' ],
   },
   'env': {
     'node': true,

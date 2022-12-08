@@ -8,9 +8,6 @@ module.exports = {
   },
   telegram: {
     port: 443,
-    host: process.env.URL || 'https://rollrobot.herokuapp.com'
-  },
-  analytics: {
-    token: process.env.ANALYTICS || '1234abcd-12ab-12ab-12ab-1234567890ab'
+    host: process.env.URL || 'https://rollrobot.vercel.app/'
   }
 };

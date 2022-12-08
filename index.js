@@ -5,6 +5,11 @@ const CONFIG = require('./src/config');
 const { token, settings, telegram } = CONFIG;
 const URL = `${telegram.host}:${telegram.port}/bot${token}`;
 
-const bot = new TelegramBot(token, settings);
-bot.setWebHook(URL);
-initHandlers(bot);
+try {
+  console.log(`Starting bot on URL: ${URL}`);
+  const bot = new TelegramBot(token, settings);
+  bot.setWebHook(URL);
+  initHandlers(bot);
+} catch (e) {
+  console.log(e);
+}
