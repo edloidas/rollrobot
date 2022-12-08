@@ -30,7 +30,9 @@ function createInlineHandler(bot) {
 
   bot.on('inline_query', msg => {
     try {
+      const { username, first_name } = msg.from || {};
       const { id, query } = msg;
+      console.log(`Inline [${username}](${first_name}): ${query || ''}`);
       const options = createInlineOptions();
       const results = createInlineArticles(query);
       bot.answerInlineQuery(id, results, options);
