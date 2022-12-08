@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "nanoid": "^2.1.11",
-    "node-telegram-bot-api": "^0.27.1",
+    "node-telegram-bot-api": "^0.60.0",
     "roll-parser": "^2.3.2"
   },
   "devDependencies": {
@@ -38,7 +38,6 @@
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.3.0",
     "jest": "^20.0.4",
-    "prettier": "^1.6.1",
     "telegram-test": "^0.1.5"
   },
   "engines": {

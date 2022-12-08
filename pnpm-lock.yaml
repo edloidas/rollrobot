@@ -6,14 +6,13 @@ specifiers:
   eslint-plugin-import: ^2.3.0
   jest: ^20.0.4
   nanoid: ^2.1.11
-  node-telegram-bot-api: ^0.27.1
-  prettier: ^1.6.1
+  node-telegram-bot-api: ^0.60.0
   roll-parser: ^2.3.2
   telegram-test: ^0.1.5
 
 dependencies:
   nanoid: 2.1.11
-  node-telegram-bot-api: 0.27.1
+  node-telegram-bot-api: 0.60.0
   roll-parser: 2.3.2
 
 devDependencies:
@@ -21,7 +20,6 @@ devDependencies:
   eslint-config-airbnb-base: 11.3.2_bpgmajksyl3nfruupxzs75flmm
   eslint-plugin-import: 2.26.0_eslint@4.19.1
   jest: 20.0.4
-  prettier: 1.19.1
   telegram-test: 0.1.8
 
 packages:
@@ -619,6 +617,7 @@ packages:
         optional: true
     dependencies:
       ms: 2.0.0
+    dev: true
 
   /debug/3.2.7:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
@@ -629,7 +628,6 @@ packages:
         optional: true
     dependencies:
       ms: 2.1.3
-    dev: true
 
   /decamelize/1.2.0:
     resolution: {integrity: sha512-z2S+W9X73hAUUki+N+9Za2lBlun89zigOyGrsax+KUQ6wKW4ZoWpEYBkGhQjwAjjDCkWxhY0VKEhk8wzY7F5cA==}
@@ -657,11 +655,6 @@ packages:
   /delayed-stream/1.0.0:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
-
-  /depd/1.1.2:
-    resolution: {integrity: sha512-7emPTl6Dpo6JRXOXjLRxck+FlLRX5847cLKEn00PLAgc3g2hTZZgr+e4c2v6QpSmLeFP3n5yUo7ft6avBK/5jQ==}
-    engines: {node: '>= 0.6'}
-    dev: false
 
   /detect-indent/4.0.0:
     resolution: {integrity: sha512-BDKtmHlOzwI7iRuEkhzsnPoi5ypEhWAJB5RvHWe1kMr06js3uK5B3734i3ui5Yd+wOJV1cpE4JnivPD283GU/A==}
@@ -953,8 +946,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /eventemitter3/2.0.3:
-    resolution: {integrity: sha512-jLN68Dx5kyFHaePoXWPsCGW5qdyZQtLYHkxkg02/Mz6g0kYpDx4FyP6XfArhQdlOC4b8Mv+EMxPo/8La7Tzghg==}
+  /eventemitter3/3.1.2:
+    resolution: {integrity: sha512-tvtQIeLVHjDkJYnzf2dgVMxfuSGJeM/7UCG17TT4EumTfNtF+0nebF/4zWOIkCreAbtNqhGEboB6BWrwqNaw4Q==}
     dev: false
 
   /exec-sh/0.2.2:
@@ -2091,10 +2084,10 @@ packages:
 
   /ms/2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
+    dev: true
 
   /ms/2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
-    dev: true
 
   /mute-stream/0.0.7:
     resolution: {integrity: sha512-r65nCZhrbXXb6dXOACihYApHw2Q6pV0M3V0PSxd74N0+D8nzAdEAITq2oAjA1jVnKI+tGvEBUpqiMh0+rW6zDQ==}
@@ -2126,19 +2119,17 @@ packages:
       which: 1.3.1
     dev: true
 
-  /node-telegram-bot-api/0.27.1:
-    resolution: {integrity: sha512-1vTA0o2JfY7lh07LFeSkShipzc2e6rX9owVYMlHt4E1kAzPPXoSLNjOUkQSArzsvHzqTsZ7yepsWNTEnzWgZig==}
+  /node-telegram-bot-api/0.60.0:
+    resolution: {integrity: sha512-SBI2PjfCAfMVuieQb95GBvaWiprRdk5SKfzX6B6G2ciG7J4SjOVwaMvaYhm9dJDTqvRSzl5pbioGbqRO/vx1Zg==}
     engines: {node: '>=0.12'}
     dependencies:
       array.prototype.findindex: 2.2.1
       bl: 1.2.3
-      bluebird: 3.7.2
-      debug: 2.6.9
-      depd: 1.1.2
-      eventemitter3: 2.0.3
+      debug: 3.2.7
+      eventemitter3: 3.1.2
       file-type: 3.9.0
       mime: 1.6.0
-      pump: 1.0.3
+      pump: 2.0.1
       request: 2.88.2
       request-promise: 4.2.6_request@2.88.2
     transitivePeerDependencies:
@@ -2366,12 +2357,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /prettier/1.19.1:
-    resolution: {integrity: sha512-s7PoyDv/II1ObgQunCbB9PdLmUcBZcnWOcxDh7O0N/UwDEsHyqkW+Qh28jW+mVuCdx7gLB0BotYI1Y6uI9iyew==}
-    engines: {node: '>=4'}
-    hasBin: true
-    dev: true
-
   /pretty-format/20.0.3:
     resolution: {integrity: sha512-dSW/15bmtC3vuheyzWUveowskTAUAWKE08+x06rgYzvSoDzg6cVg/MPKgNvh87jRJvOQ/qaQZLLWml2jrukk6w==}
     dependencies:
@@ -2403,8 +2388,8 @@ packages:
   /psl/1.9.0:
     resolution: {integrity: sha512-E/ZsdU4HLs/68gYzgGTkMicWTLPdAftJLfJFlLUAAKZGkStNU72sZjT66SnMDVOfOWY/YAoiD7Jxa9iHvngcag==}
 
-  /pump/1.0.3:
-    resolution: {integrity: sha512-8k0JupWme55+9tCVE+FS5ULT3K6AbgqrGa58lTT49RpyfwwcGedHqaC5LlQNdEAumn/wFsu6aPwkuPMioy8kqw==}
+  /pump/2.0.1:
+    resolution: {integrity: sha512-ruPMNRkN3MHP1cWJc9OWr+T/xDP0jhXYCLfJcBuX54hhfIBnaQmAUMfDcG4DM5UMWByBbJY69QSphm3jtDKIkA==}
     dependencies:
       end-of-stream: 1.4.4
       once: 1.4.0
