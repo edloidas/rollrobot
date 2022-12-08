@@ -41,7 +41,7 @@ MIT © @edloidas`;
 const deprecated =
   '`/sroll` and `/droll` commands are no longer supported. Use /help for more details.';
 
-const error = `_Sorry, can't parse notation._`;
+const error = "_Sorry, can't parse notation._";
 
 function createResultMessage(result) {
   if (result) {
