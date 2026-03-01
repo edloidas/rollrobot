@@ -4,6 +4,11 @@ node_modules/
 coverage/
 temp/
 
+# AI
+.claude/settings.local.json
+.claude/plans/
+.claude/notes/
+
 # Files #
 
 npm-debug.log
