@@ -1,16 +1,25 @@
-# Directories #
-
+# Dependencies
 node_modules/
+
+# Build output
+dist/
+
+# Coverage
 coverage/
+
+# Temporary
 temp/
 
-# Files #
+# Lock files
+bun.lock
 
+# Debug logs
 npm-debug.log
 
+# OS files
 .DS_Store
 Desktop.ini
 
-*.sh
-*.bat
-*.cmd
+# Claude Code local config
+.claude/settings.local.json
+.claude/plans/
