@@ -1,0 +1,25 @@
+import { Roll, WodRoll } from 'roll-parser';
+
+const MAX_DICE = 999999999;
+const MAX_COUNT = 12;
+const MIN_MOD = -999999999;
+const MAX_MOD = 999999999;
+const MAX_SUCCESS = 999999999;
+const MAX_FAIL = 999999998;
+
+export function limit(roll: any): any {
+  if (roll instanceof Roll) {
+    const dice = Math.min(roll.dice, MAX_DICE);
+    const count = Math.min(roll.count, MAX_COUNT);
+    const modifier = Math.max(Math.min(roll.modifier, MAX_MOD), MIN_MOD);
+    return new Roll(dice, count, modifier);
+  }
+  if (roll instanceof WodRoll) {
+    const dice = Math.min(roll.dice, MAX_DICE);
+    const count = Math.min(roll.count, MAX_COUNT);
+    const success = Math.min(roll.success, MAX_SUCCESS);
+    const fail = Math.min(roll.fail, MAX_FAIL);
+    return new WodRoll(dice, count, roll.again, success, fail);
+  }
+  return null;
+}
