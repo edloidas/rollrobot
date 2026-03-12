@@ -11,10 +11,16 @@ const GROUPS = ['group', 'supergroup', 'channel'];
 export function createBot(token: string): Bot {
   const bot = new Bot(token);
 
+  bot.catch((err) => {
+    console.error(`Error handling update ${err.ctx.update.update_id}:`, err.error);
+  });
+
   bot.command(['start', 'help'], async (ctx) => {
+    const isGroup = GROUPS.includes(ctx.chat.type);
     await ctx.reply(helpReply(), {
       parse_mode: 'Markdown',
       link_preview_options: { is_disabled: true },
+      ...(isGroup ? { reply_parameters: { message_id: ctx.msgId } } : {}),
     });
   });
 
@@ -51,9 +57,11 @@ export function createBot(token: string): Bot {
   });
 
   bot.command(['sroll', 'droll'], async (ctx) => {
+    const isGroup = GROUPS.includes(ctx.chat.type);
     await ctx.reply(deprecatedReply(), {
       parse_mode: 'Markdown',
       link_preview_options: { is_disabled: true },
+      ...(isGroup ? { reply_parameters: { message_id: ctx.msgId } } : {}),
     });
   });
 

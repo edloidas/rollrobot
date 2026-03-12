@@ -13,7 +13,7 @@ function createInputMessageContent(text: string) {
   return {
     message_text: text,
     parse_mode: 'Markdown' as const,
-    disable_web_page_preview: true,
+    link_preview_options: { is_disabled: true },
   };
 }
 
