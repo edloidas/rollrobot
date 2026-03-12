@@ -10,10 +10,13 @@ if (!token) {
 }
 
 const bot = createBot(token);
+const webhookPath = `/bot${token}`;
 
 if (webhookUrl) {
-  await bot.api.setWebhook(webhookUrl);
-  console.log(`Webhook set to: ${webhookUrl}`);
+  await bot.api.setWebhook(`${webhookUrl}${webhookPath}`);
+  console.log(`Webhook set to: ${webhookUrl}${webhookPath}`);
+} else {
+  console.warn('WEBHOOK_URL is not set — bot will not receive Telegram updates');
 }
 
 const handleUpdate = webhookCallback(bot, 'bun');
@@ -22,7 +25,7 @@ Bun.serve({
   port,
   async fetch(req) {
     const url = new URL(req.url);
-    if (req.method === 'POST') {
+    if (req.method === 'POST' && url.pathname === webhookPath) {
       return handleUpdate(req);
     }
     if (url.pathname === '/health') {
