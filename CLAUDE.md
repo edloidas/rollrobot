@@ -1,21 +1,21 @@
 # rollrobot
 
-Telegram bot for dice rolling. JavaScript, Node.js. Uses `roll-parser` for notation parsing.
+Telegram bot for dice rolling. TypeScript, Bun, grammY. Uses `roll-parser` for notation parsing.
 
 ## Commands
 
 ```bash
-npm test        # Run tests (Jest)
-npm run lint    # ESLint
-npm run cover   # Test coverage
+bun run test        # Run tests (bun:test)
+bun run lint        # Biome lint
+bun run validate    # Full check: typecheck + lint + format:check + test
 ```
 
 ## Constraints
 
-- Runtime: Node.js (>= 18.12.1)
-- Package manager: npm or pnpm
-- Plain JavaScript (no TypeScript)
-- Deployed via Vercel (webhook mode)
+- Runtime: Bun
+- Language: TypeScript (relaxed — `any` allowed during migration)
+- Bot framework: grammY with webhook mode
+- Deployment: Railway
 
 ## Git & GitHub
 
@@ -32,6 +32,7 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`, `bui
 
 - **Title**: `<type>: <description>`
 - Use `epic: <description>` for issues that aggregate sub-issues and describe a long-form implementation plan. Not used in commits.
+- Always assign the issue to the current user unless a different assignee is specified.
 - **Body**: concisely explain what and why, skip trivial details
 
   ```

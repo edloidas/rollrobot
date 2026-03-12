@@ -22,11 +22,11 @@
     "lint:fix": "biome lint --write .",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "check": "bun typecheck && bun lint && bun format:check",
-    "check:fix": "bun typecheck && bun lint:fix && bun format",
+    "check": "bun run typecheck && bun run lint && bun run format:check",
+    "check:fix": "bun run typecheck && bun run lint:fix && bun run format",
     "test": "bun test",
     "test:watch": "bun test --watch",
-    "validate": "bun run check && bun test"
+    "validate": "bun run check && bun run test"
   },
   "dependencies": {
     "grammy": "^1.41.0",
