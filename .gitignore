@@ -1,7 +1,7 @@
-# Directories #
-
+# Directories
 node_modules/
 coverage/
+dist/
 temp/
 
 # AI
@@ -9,9 +9,9 @@ temp/
 .claude/plans/
 .claude/notes/
 
-# Files #
-
+# Files
 npm-debug.log
+bun.lock
 
 .DS_Store
 Desktop.ini
