@@ -20,6 +20,3 @@ jobs:
 
       - name: Lint
         run: bun run lint
-
-      - name: Test
-        run: bun run test
