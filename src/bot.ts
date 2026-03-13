@@ -20,7 +20,9 @@ export function createBot(token: string): Bot {
     await ctx.reply(helpReply(), {
       parse_mode: 'Markdown',
       link_preview_options: { is_disabled: true },
-      ...(isGroup ? { reply_parameters: { message_id: ctx.msgId } } : {}),
+      ...(isGroup
+        ? { reply_parameters: { message_id: ctx.msgId, allow_sending_without_reply: true } }
+        : {}),
     });
   });
 
@@ -31,7 +33,9 @@ export function createBot(token: string): Bot {
     await ctx.reply(response, {
       parse_mode: 'Markdown',
       link_preview_options: { is_disabled: true },
-      ...(isGroup ? { reply_parameters: { message_id: ctx.msgId } } : {}),
+      ...(isGroup
+        ? { reply_parameters: { message_id: ctx.msgId, allow_sending_without_reply: true } }
+        : {}),
     });
   });
 
@@ -42,7 +46,9 @@ export function createBot(token: string): Bot {
     await ctx.reply(response, {
       parse_mode: 'Markdown',
       link_preview_options: { is_disabled: true },
-      ...(isGroup ? { reply_parameters: { message_id: ctx.msgId } } : {}),
+      ...(isGroup
+        ? { reply_parameters: { message_id: ctx.msgId, allow_sending_without_reply: true } }
+        : {}),
     });
   });
 
@@ -52,7 +58,9 @@ export function createBot(token: string): Bot {
     await ctx.reply(response, {
       parse_mode: 'Markdown',
       link_preview_options: { is_disabled: true },
-      ...(isGroup ? { reply_parameters: { message_id: ctx.msgId } } : {}),
+      ...(isGroup
+        ? { reply_parameters: { message_id: ctx.msgId, allow_sending_without_reply: true } }
+        : {}),
     });
   });
 
@@ -61,7 +69,9 @@ export function createBot(token: string): Bot {
     await ctx.reply(deprecatedReply(), {
       parse_mode: 'Markdown',
       link_preview_options: { is_disabled: true },
-      ...(isGroup ? { reply_parameters: { message_id: ctx.msgId } } : {}),
+      ...(isGroup
+        ? { reply_parameters: { message_id: ctx.msgId, allow_sending_without_reply: true } }
+        : {}),
     });
   });
 
