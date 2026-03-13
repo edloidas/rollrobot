@@ -66,3 +66,13 @@ Set the environment variables in the Railway dashboard:
 | PORT        | 3000                | Server port (Railway sets this automatically). |
 
 The bot registers the webhook with Telegram on startup. No manual webhook setup is needed.
+
+### Dropping stale updates
+
+If the bot was offline for a long time, Telegram will have accumulated pending updates (messages sent while the bot was down). These stale updates can cause a flood of errors on restart — replies to deleted messages, messages from chats the bot was removed from, etc.
+
+To clear the backlog, re-register the webhook with `drop_pending_updates=true`:
+
+```
+https://api.telegram.org/bot$TOKEN/setWebhook?url=$WEBHOOK_URL/bot$TOKEN&drop_pending_updates=true
+```
