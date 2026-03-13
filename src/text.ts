@@ -28,7 +28,7 @@ where ...
 \`/roll 20\` ➜ 'd20'
 \`/roll 2 10 -1\` ➜ result of '2d10-1'
 \`/roll 4d8+3\` ➜ result of '4d8+3'
-\`/wod 6d10!>6f1\` ➜ number of successes for '6d10!>6f1'
+\`/roll 6d10!>6f1\` ➜ number of successes for '6d10!>6f1'
 \`/random\` ➜ 'd100'
 
 Rate the bot, if you like it.

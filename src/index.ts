@@ -12,13 +12,6 @@ if (!token) {
 const bot = createBot(token);
 const webhookPath = `/bot${token}`;
 
-if (webhookUrl) {
-  await bot.api.setWebhook(`${webhookUrl}${webhookPath}`);
-  console.log(`Webhook set to: ${webhookUrl}${webhookPath}`);
-} else {
-  console.warn('WEBHOOK_URL is not set — bot will not receive Telegram updates');
-}
-
 const handleUpdate = webhookCallback(bot, 'bun');
 
 Bun.serve({
@@ -36,3 +29,14 @@ Bun.serve({
 });
 
 console.log(`Bot server running on port ${port}`);
+
+if (webhookUrl) {
+  try {
+    await bot.api.setWebhook(`${webhookUrl}${webhookPath}`);
+    console.log('Webhook registered');
+  } catch (err) {
+    console.error('Failed to register webhook:', err);
+  }
+} else {
+  console.warn('WEBHOOK_URL is not set — bot will not receive Telegram updates');
+}
