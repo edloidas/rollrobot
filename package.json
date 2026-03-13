@@ -1,5 +1,6 @@
 {
   "name": "rollrobot",
+  "private": true,
   "version": "3.0.0",
   "description": "Roll Robot is a Telegram bot for dice rolling.",
   "keywords": ["rollrobot", "telegram", "bot", "roll", "dice", "random"],

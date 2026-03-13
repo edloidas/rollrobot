@@ -1,0 +1,73 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: release
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  precheck:
+    name: Verify tag points to master
+    runs-on: ubuntu-latest
+    outputs:
+      allowed: ${{ steps.contains.outputs.allowed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if tag commit is on master
+        id: contains
+        shell: bash
+        run: |
+          git fetch --quiet origin '+refs/heads/*:refs/remotes/origin/*' || true
+
+          contains="$(git branch -r --contains "${GITHUB_SHA}" | sed 's/^[ *]*//')"
+
+          echo "Branches containing the tag commit:"
+          echo "${contains}"
+
+          if echo "${contains}" | grep -Eq '^origin/master$'; then
+            echo "allowed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "allowed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  validate:
+    name: Validate
+    needs: precheck
+    if: needs.precheck.outputs.allowed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Validate
+        run: bun run validate
+
+  release:
+    name: Create GitHub Release
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Rollrobot ${{ github.ref_name }}
