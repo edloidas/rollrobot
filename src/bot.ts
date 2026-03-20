@@ -1,18 +1,39 @@
-import { Bot } from 'grammy';
+import { Bot, GrammyError, HttpError } from 'grammy';
 import { rollReply } from './handlers/roll';
 import { fullReply } from './handlers/full';
 import { randomReply } from './handlers/random';
 import { helpReply } from './handlers/help';
 import { deprecatedReply } from './handlers/deprecated';
 import { createInlineArticles } from './handlers/inline';
+import { noPermissionText } from './text';
 
 const GROUPS = ['group', 'supergroup', 'channel'];
 
 export function createBot(token: string): Bot {
   const bot = new Bot(token);
 
-  bot.catch((err) => {
-    console.error(`Error handling update ${err.ctx.update.update_id}:`, err.error);
+  bot.catch(async (err) => {
+    const e = err.error;
+    if (e instanceof GrammyError) {
+      console.error(`[${e.method}] ${e.error_code}: ${e.description}`);
+      if (e.description.includes('not enough rights to send text messages')) {
+        const userId = err.ctx.from?.id;
+        if (userId) {
+          try {
+            const chatName = err.ctx.chat?.title;
+            await err.ctx.api.sendMessage(userId, noPermissionText(chatName), {
+              parse_mode: 'Markdown',
+            });
+          } catch {
+            // User hasn't started the bot — nothing we can do
+          }
+        }
+      }
+    } else if (e instanceof HttpError) {
+      console.error(`Network error: ${e.message}`);
+    } else {
+      console.error(`Error handling update ${err.ctx.update.update_id}:`, e);
+    }
   });
 
   bot.command(['start', 'help'], async (ctx) => {
