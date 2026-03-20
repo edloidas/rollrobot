@@ -43,6 +43,11 @@ export const deprecatedText =
 
 export const errorText = "_Sorry, can't parse notation._";
 
+export function noPermissionText(chatName?: string): string {
+  const where = chatName ? `in *${chatName}*` : 'in this chat';
+  return `_I can't send messages ${where} — an admin needs to grant me the Send Messages permission._`;
+}
+
 export function createResultMessage(result: any): string | null {
   if (result) {
     return `\`(${result.notation})\` *${result.value}*`;
