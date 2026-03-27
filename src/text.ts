@@ -12,7 +12,7 @@ Bot recognizes several commands and can be used in inline mode:
     \`[count]d[dice]±[modifier]\`
 *2.* World of Darkness
     \`[count]d[dice][!]>[success]f[fail]\`
-*3.* Simplfied (classic, space separated)
+*3.* Simplified (classic, space separated)
     \`[count] [dice] [modifier]\`
 *4.* Single-valued
     \`[dice]\`
@@ -31,9 +31,6 @@ where ...
 \`/roll 6d10!>6f1\` ➜ number of successes for '6d10!>6f1'
 \`/random\` ➜ 'd100'
 
-Rate the bot, if you like it.
-https://telegram.me/storebot?start=rollrobot
-
 Your ideas on improvement are welcome.
 
 MIT © @edloidas`;
@@ -43,8 +40,12 @@ export const deprecatedText =
 
 export const errorText = "_Sorry, can't parse notation._";
 
+function escapeMarkdown(text: string): string {
+  return text.replace(/([*_`\[])/g, '\\$1');
+}
+
 export function noPermissionText(chatName?: string): string {
-  const where = chatName ? `in *${chatName}*` : 'in this chat';
+  const where = chatName ? `in *${escapeMarkdown(chatName)}*` : 'in this chat';
   return `_I can't send messages ${where} — an admin needs to grant me the Send Messages permission._`;
 }
 

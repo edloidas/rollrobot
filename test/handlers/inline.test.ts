@@ -15,6 +15,21 @@ function expectArticles(results: any[], expected: { title: string; description?:
 }
 
 describe('Inline queries', () => {
+  test('should use personal caching', async () => {
+    await bot.sendInline('');
+    const payload = bot.inlineResults[0];
+    expect(payload.is_personal).toBe(true);
+    expect(payload.cache_time).toBe(0);
+  });
+
+  test('should include thumbnail URLs for all articles', async () => {
+    const results = await bot.sendInline('d20');
+    const base = 'https://raw.githubusercontent.com/edloidas/rollrobot/master/assets';
+    expect(results[0].thumbnail_url).toBe(`${base}/dnd-icon.png`);
+    expect(results[1].thumbnail_url).toBe(`${base}/wod-icon.png`);
+    expect(results[2].thumbnail_url).toBe(`${base}/d20-icon.png`);
+  });
+
   test('should return default articles for empty query', async () => {
     const results = await bot.sendInline('');
     expectArticles(results, [

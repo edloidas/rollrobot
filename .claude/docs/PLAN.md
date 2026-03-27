@@ -127,7 +127,7 @@ Adapted from roll-parser with relaxed rules for migration phase.
     "email": "edloidas@gmail.com"
   },
   "license": "MIT",
-  "author": "Mikita Taukachou <edloidas@gmail.com> (http://edloidas.com)",
+  "author": "Mikita Taukachou <edloidas@gmail.com> (https://edloidas.io)",
   "repository": {
     "type": "git",
     "url": "https://github.com/edloidas/rollrobot.git"

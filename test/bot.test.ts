@@ -27,10 +27,10 @@ describe('Bot message options', () => {
     expect(opts.reply_parameters).toBeDefined();
   });
 
-  test('should include reply_parameters in channel chats', async () => {
+  test('should not include reply_parameters in channel chats', async () => {
     await bot.send('/roll d20', 'channel');
     const opts = bot.getLastReplyOptions();
-    expect(opts.reply_parameters).toBeDefined();
+    expect(opts.reply_parameters).toBeUndefined();
   });
 
   test('should not include reply_parameters in private chats', async () => {
