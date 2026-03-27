@@ -67,12 +67,26 @@ Set the environment variables in the Railway dashboard:
 
 The bot registers the webhook with Telegram on startup. No manual webhook setup is needed.
 
-### Dropping stale updates
+### Manual webhook management
 
-If the bot was offline for a long time, Telegram will have accumulated pending updates (messages sent while the bot was down). These stale updates can cause a flood of errors on restart — replies to deleted messages, messages from chats the bot was removed from, etc.
+Set webhook:
+```
+https://api.telegram.org/bot$TOKEN/setWebhook?url=$WEBHOOK_URL/bot$TOKEN
+```
 
-To clear the backlog, re-register the webhook with `drop_pending_updates=true`:
+Remove webhook:
+```
+https://api.telegram.org/bot$TOKEN/setWebhook?remove
+```
 
+Check webhook status:
+```
+https://api.telegram.org/bot$TOKEN/getWebhookInfo
+```
+
+Drop stale updates (re-register webhook, clearing the backlog):
 ```
 https://api.telegram.org/bot$TOKEN/setWebhook?url=$WEBHOOK_URL/bot$TOKEN&drop_pending_updates=true
 ```
+
+This is useful if the bot was offline for a long time — Telegram accumulates pending updates that can cause a flood of errors on restart (replies to deleted messages, messages from chats the bot was removed from, etc.).
