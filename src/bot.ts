@@ -1,4 +1,4 @@
-import { Bot, GrammyError, HttpError } from 'grammy';
+import { Bot, type Context, GrammyError, HttpError } from 'grammy';
 import { rollReply } from './handlers/roll';
 import { fullReply } from './handlers/full';
 import { randomReply } from './handlers/random';
@@ -7,7 +7,18 @@ import { deprecatedReply } from './handlers/deprecated';
 import { createInlineArticles } from './handlers/inline';
 import { noPermissionText } from './text';
 
-const GROUPS = ['group', 'supergroup', 'channel'];
+const GROUPS = ['group', 'supergroup'];
+
+function replyOptions(ctx: Context) {
+  const isGroup = ctx.chat != null && GROUPS.includes(ctx.chat.type);
+  return {
+    parse_mode: 'Markdown' as const,
+    link_preview_options: { is_disabled: true },
+    ...(isGroup
+      ? { reply_parameters: { message_id: ctx.msgId, allow_sending_without_reply: true } }
+      : {}),
+  };
+}
 
 export function createBot(token: string): Bot {
   const bot = new Bot(token);
@@ -16,7 +27,9 @@ export function createBot(token: string): Bot {
     const e = err.error;
     if (e instanceof GrammyError) {
       console.error(`[${e.method}] ${e.error_code}: ${e.description}`);
-      if (e.description.includes('not enough rights to send text messages')) {
+      const chatType = err.ctx.chat?.type;
+      const isGroup = chatType && GROUPS.includes(chatType);
+      if (e.error_code === 403 && isGroup && e.description.includes('rights')) {
         const userId = err.ctx.from?.id;
         if (userId) {
           try {
@@ -37,68 +50,30 @@ export function createBot(token: string): Bot {
   });
 
   bot.command(['start', 'help'], async (ctx) => {
-    const isGroup = GROUPS.includes(ctx.chat.type);
-    await ctx.reply(helpReply(), {
-      parse_mode: 'Markdown',
-      link_preview_options: { is_disabled: true },
-      ...(isGroup
-        ? { reply_parameters: { message_id: ctx.msgId, allow_sending_without_reply: true } }
-        : {}),
-    });
+    await ctx.reply(helpReply(), replyOptions(ctx));
   });
 
   bot.command('roll', async (ctx) => {
     const notation = (ctx.match as string) || '';
-    const response = rollReply(notation);
-    const isGroup = GROUPS.includes(ctx.chat.type);
-    await ctx.reply(response, {
-      parse_mode: 'Markdown',
-      link_preview_options: { is_disabled: true },
-      ...(isGroup
-        ? { reply_parameters: { message_id: ctx.msgId, allow_sending_without_reply: true } }
-        : {}),
-    });
+    await ctx.reply(rollReply(notation), replyOptions(ctx));
   });
 
   bot.command('full', async (ctx) => {
     const notation = (ctx.match as string) || '';
-    const response = fullReply(notation);
-    const isGroup = GROUPS.includes(ctx.chat.type);
-    await ctx.reply(response, {
-      parse_mode: 'Markdown',
-      link_preview_options: { is_disabled: true },
-      ...(isGroup
-        ? { reply_parameters: { message_id: ctx.msgId, allow_sending_without_reply: true } }
-        : {}),
-    });
+    await ctx.reply(fullReply(notation), replyOptions(ctx));
   });
 
   bot.command('random', async (ctx) => {
-    const response = randomReply();
-    const isGroup = GROUPS.includes(ctx.chat.type);
-    await ctx.reply(response, {
-      parse_mode: 'Markdown',
-      link_preview_options: { is_disabled: true },
-      ...(isGroup
-        ? { reply_parameters: { message_id: ctx.msgId, allow_sending_without_reply: true } }
-        : {}),
-    });
+    await ctx.reply(randomReply(), replyOptions(ctx));
   });
 
   bot.command(['sroll', 'droll'], async (ctx) => {
-    const isGroup = GROUPS.includes(ctx.chat.type);
-    await ctx.reply(deprecatedReply(), {
-      parse_mode: 'Markdown',
-      link_preview_options: { is_disabled: true },
-      ...(isGroup
-        ? { reply_parameters: { message_id: ctx.msgId, allow_sending_without_reply: true } }
-        : {}),
-    });
+    await ctx.reply(deprecatedReply(), replyOptions(ctx));
   });
 
   bot.on('inline_query', async (ctx) => {
     const results = createInlineArticles(ctx.inlineQuery.query);
-    await ctx.answerInlineQuery(results, { cache_time: 0 });
+    await ctx.answerInlineQuery(results, { cache_time: 0, is_personal: true });
   });
 
   return bot;

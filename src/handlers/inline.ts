@@ -17,35 +17,51 @@ function createInputMessageContent(text: string) {
   };
 }
 
-function createArticle(title: string, description: string, message: string): InlineQueryResult {
+function createArticle(
+  title: string,
+  description: string,
+  message: string,
+  thumbnailUrl: string,
+): InlineQueryResult {
   return {
     type: 'article',
     id: crypto.randomUUID(),
     title,
     input_message_content: createInputMessageContent(message),
     description,
+    thumbnail_url: thumbnailUrl,
+    thumbnail_width: 128,
+    thumbnail_height: 128,
   };
 }
+
+const ASSET_BASE = 'https://raw.githubusercontent.com/edloidas/rollrobot/master/assets';
 
 function createRollArticle(notation: string): InlineQueryResult | null {
   const title = 'Classic';
   const result = roll(limit(parseClassicRoll(notation || 'd20') || parseSimpleRoll(notation)));
   const message = result && createFullResultMessage(result);
-  return result && message ? createArticle(title, result.notation, message) : null;
+  return result && message
+    ? createArticle(title, result.notation, message, `${ASSET_BASE}/dnd-icon.png`)
+    : null;
 }
 
 function createWodArticle(notation: string): InlineQueryResult | null {
   const title = 'World of Darkness';
-  const result = roll(limit(parseWodRoll(notation || 'd10')));
+  const result = roll(limit(parseWodRoll(notation || 'd10>6')));
   const message = result && createFullResultMessage(result);
-  return result && message ? createArticle(title, result.notation, message) : null;
+  return result && message
+    ? createArticle(title, result.notation, message, `${ASSET_BASE}/wod-icon.png`)
+    : null;
 }
 
 function createRandomArticle(): InlineQueryResult | null {
   const title = 'Random';
   const result = parseAndRollSimple('100');
   const message = result && createFullResultMessage(result);
-  return result && message ? createArticle(title, result.notation, message) : null;
+  return result && message
+    ? createArticle(title, result.notation, message, `${ASSET_BASE}/d20-icon.png`)
+    : null;
 }
 
 export function createInlineArticles(query = ''): InlineQueryResult[] {
