@@ -1,4 +1,5 @@
 import { Bot, type Context, GrammyError, HttpError } from 'grammy';
+import type { InlineQueryResultsButton } from 'grammy/types';
 import { rollReply } from './handlers/roll';
 import { fullReply } from './handlers/full';
 import { randomReply } from './handlers/random';
@@ -8,6 +9,11 @@ import { createInlineArticles } from './handlers/inline';
 import { noPermissionText } from './text';
 
 const GROUPS = ['group', 'supergroup'];
+
+const INLINE_HELP_BUTTON: InlineQueryResultsButton = {
+  text: '\u2753 How to use',
+  start_parameter: 'help',
+};
 
 function replyOptions(ctx: Context) {
   const isGroup = ctx.chat != null && GROUPS.includes(ctx.chat.type);
@@ -72,8 +78,12 @@ export function createBot(token: string): Bot {
   });
 
   bot.on('inline_query', async (ctx) => {
-    const results = createInlineArticles(ctx.inlineQuery.query);
-    await ctx.answerInlineQuery(results, { cache_time: 0, is_personal: true });
+    const { results, hasInvalidQuery } = createInlineArticles(ctx.inlineQuery.query);
+    await ctx.answerInlineQuery(results, {
+      cache_time: 0,
+      is_personal: true,
+      ...(hasInvalidQuery ? { button: INLINE_HELP_BUTTON } : {}),
+    });
   });
 
   return bot;

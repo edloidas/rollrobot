@@ -64,8 +64,21 @@ function createRandomArticle(): InlineQueryResult | null {
     : null;
 }
 
-export function createInlineArticles(query = ''): InlineQueryResult[] {
+export interface InlineQueryResponse {
+  results: InlineQueryResult[];
+  hasInvalidQuery: boolean;
+}
+
+export function createInlineArticles(query = ''): InlineQueryResponse {
   const notation = query.trim();
-  const articles = [createRollArticle(notation), createWodArticle(notation), createRandomArticle()];
-  return articles.filter((article): article is InlineQueryResult => article != null);
+  const rollArticle = createRollArticle(notation);
+  const wodArticle = createWodArticle(notation);
+  const randomArticle = createRandomArticle();
+
+  const results = [rollArticle, wodArticle, randomArticle].filter(
+    (article): article is InlineQueryResult => article != null,
+  );
+  const hasInvalidQuery = notation !== '' && rollArticle == null && wodArticle == null;
+
+  return { results, hasInvalidQuery };
 }
