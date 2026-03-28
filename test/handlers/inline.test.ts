@@ -87,6 +87,40 @@ describe('Inline queries', () => {
     ]);
   });
 
+  describe('Inline help button', () => {
+    const expectedButton = { text: '\u2753 How to use', start_parameter: 'help' };
+
+    test('should not show help button for empty query', async () => {
+      await bot.sendInline('');
+      expect(bot.inlineResults[0].button).toBeUndefined();
+    });
+
+    test('should not show help button for whitespace-only query', async () => {
+      await bot.sendInline('    ');
+      expect(bot.inlineResults[0].button).toBeUndefined();
+    });
+
+    test('should show help button for invalid query', async () => {
+      await bot.sendInline('abc');
+      expect(bot.inlineResults[0].button).toEqual(expectedButton);
+    });
+
+    test('should not show help button for valid classic notation', async () => {
+      await bot.sendInline('d20');
+      expect(bot.inlineResults[0].button).toBeUndefined();
+    });
+
+    test('should not show help button for valid WoD notation', async () => {
+      await bot.sendInline('4d10>5');
+      expect(bot.inlineResults[0].button).toBeUndefined();
+    });
+
+    test('should not show help button for number-only notation', async () => {
+      await bot.sendInline('10');
+      expect(bot.inlineResults[0].button).toBeUndefined();
+    });
+  });
+
   test('should limit inline query roll values', async () => {
     const results = await bot.sendInline('d9999999999');
     expectArticles(results, [
