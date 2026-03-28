@@ -30,8 +30,8 @@ function createArticle(
     input_message_content: createInputMessageContent(message),
     description,
     thumbnail_url: thumbnailUrl,
-    thumbnail_width: 128,
-    thumbnail_height: 128,
+    thumbnail_width: 64,
+    thumbnail_height: 64,
   };
 }
 
