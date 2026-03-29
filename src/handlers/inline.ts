@@ -70,7 +70,7 @@ export interface InlineQueryResponse {
 }
 
 export function createInlineArticles(query = ''): InlineQueryResponse {
-  const notation = query.trim();
+  const notation = query.trim() === 'd' ? '' : query.trim();
   const rollArticle = createRollArticle(notation);
   const wodArticle = createWodArticle(notation);
   const randomArticle = createRandomArticle();

@@ -11,7 +11,7 @@ import { noPermissionText } from './text';
 const GROUPS = ['group', 'supergroup'];
 
 const INLINE_HELP_BUTTON: InlineQueryResultsButton = {
-  text: '\u2753 How to use',
+  text: 'How to use',
   start_parameter: 'help',
 };
 

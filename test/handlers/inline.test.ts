@@ -48,6 +48,15 @@ describe('Inline queries', () => {
     ]);
   });
 
+  test('should return default articles for bare "d" query', async () => {
+    const results = await bot.sendInline('d');
+    expectArticles(results, [
+      { title: 'Classic', description: 'd20' },
+      { title: 'World of Darkness', description: 'd10>6' },
+      { title: 'Random', description: 'd100' },
+    ]);
+  });
+
   test('should return only random article for invalid query', async () => {
     const results = await bot.sendInline('abc');
     expectArticles(results, [{ title: 'Random', description: 'd100' }]);
@@ -88,7 +97,7 @@ describe('Inline queries', () => {
   });
 
   describe('Inline help button', () => {
-    const expectedButton = { text: '\u2753 How to use', start_parameter: 'help' };
+    const expectedButton = { text: 'How to use', start_parameter: 'help' };
 
     test('should not show help button for empty query', async () => {
       await bot.sendInline('');
@@ -97,6 +106,11 @@ describe('Inline queries', () => {
 
     test('should not show help button for whitespace-only query', async () => {
       await bot.sendInline('    ');
+      expect(bot.inlineResults[0].button).toBeUndefined();
+    });
+
+    test('should not show help button for bare "d" query', async () => {
+      await bot.sendInline('d');
       expect(bot.inlineResults[0].button).toBeUndefined();
     });
 

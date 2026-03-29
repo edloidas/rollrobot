@@ -4,27 +4,35 @@
 
 - `// ! ` — critical issues (bugs, security risks, breaking changes)
 
-  ```js
+  ```ts
   // ! Potential race condition if fetch retries here
   ```
 
 - `// ? ` — questions, uncertainties, rationale for unusual patterns
 
-  ```js
+  ```ts
   // ? May need to memoize this when the call becomes too heavy
   ```
 
 - `// * ` — logical block dividers in large files (surround with blank comment lines)
 
-  ```js
+  ```ts
   //
-  // * Parser Utils
+  // * Event Handlers
   //
+
+  /* ... */
+
+  //
+  // * Validators
+  //
+
+  /* ... */
   ```
 
 - `// TODO: ` — actionable future work; start with an imperative verb, reference issue if possible
 
-  ```js
+  ```ts
   // TODO: [#123] Replace mock with live API
   ```
 
@@ -35,8 +43,8 @@
 
 - Comment only non-obvious logic: algorithms, workarounds, edge cases.
 - Avoid commenting trivial code (obvious mappings, simple getters).
+- Prefer JSDoc/TSDoc for public API functions instead of inline prose.
 - Keep comments inside function bodies minimal — context belongs in tests or docs.
-- Lines ≤ 80 characters, no emojis, complete sentences starting with a capital letter.
 
 ## Maintenance
 
