@@ -10,6 +10,13 @@ import { noPermissionText } from './text';
 
 const GROUPS = ['group', 'supergroup'];
 
+function logRoll(ctx: Context, notation: string, reply: string): void {
+  const name = ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name ?? 'unknown');
+  const group = ctx.chat?.title ? ` [${ctx.chat.title}]` : '';
+  const result = reply.replace(/[`*_]/g, '');
+  console.log(`${name}${group}: ${notation} | ${result}`);
+}
+
 const INLINE_HELP_BUTTON: InlineQueryResultsButton = {
   text: 'How to use',
   start_parameter: 'help',
@@ -61,16 +68,22 @@ export function createBot(token: string): Bot {
 
   bot.command('roll', async (ctx) => {
     const notation = (ctx.match as string) || '';
-    await ctx.reply(rollReply(notation), replyOptions(ctx));
+    const reply = rollReply(notation);
+    logRoll(ctx, notation || 'd20', reply);
+    await ctx.reply(reply, replyOptions(ctx));
   });
 
   bot.command('full', async (ctx) => {
     const notation = (ctx.match as string) || '';
-    await ctx.reply(fullReply(notation), replyOptions(ctx));
+    const reply = fullReply(notation);
+    logRoll(ctx, notation || 'd20', reply);
+    await ctx.reply(reply, replyOptions(ctx));
   });
 
   bot.command('random', async (ctx) => {
-    await ctx.reply(randomReply(), replyOptions(ctx));
+    const reply = randomReply();
+    logRoll(ctx, 'd100', reply);
+    await ctx.reply(reply, replyOptions(ctx));
   });
 
   bot.command(['sroll', 'droll'], async (ctx) => {
