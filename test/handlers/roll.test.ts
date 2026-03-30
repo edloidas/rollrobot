@@ -10,7 +10,6 @@ beforeEach(() => {
 
 describe('/roll', () => {
   test('should notify of invalid input', async () => {
-    expect(await bot.send('/roll')).toEqual(errorText);
     expect(await bot.send('/roll a')).toEqual(errorText);
     expect(await bot.send('/roll -7')).toEqual(errorText);
     expect(await bot.send('/roll 6d')).toEqual(errorText);
@@ -18,6 +17,7 @@ describe('/roll', () => {
 
   test('should parse and roll notation', async () => {
     const pattern = /`\([\d+-dDf!>]+\)` \*\d+\*/;
+    expect(await bot.send('/roll')).toMatch(pattern);
     expect(await bot.send('/roll 10')).toMatch(pattern);
     expect(await bot.send('/roll d20')).toMatch(pattern);
     expect(await bot.send('/roll d8!')).toMatch(pattern);

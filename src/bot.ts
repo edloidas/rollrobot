@@ -67,16 +67,16 @@ export function createBot(token: string): Bot {
   });
 
   bot.command('roll', async (ctx) => {
-    const notation = (ctx.match as string) || '';
+    const notation = (ctx.match as string) || 'd20';
     const reply = rollReply(notation);
-    logRoll(ctx, 'roll', notation || 'd20', reply);
+    logRoll(ctx, 'roll', notation, reply);
     await ctx.reply(reply, replyOptions(ctx));
   });
 
   bot.command('full', async (ctx) => {
-    const notation = (ctx.match as string) || '';
+    const notation = (ctx.match as string) || 'd20';
     const reply = fullReply(notation);
-    logRoll(ctx, 'full', notation || 'd20', reply);
+    logRoll(ctx, 'full', notation, reply);
     await ctx.reply(reply, replyOptions(ctx));
   });
 
