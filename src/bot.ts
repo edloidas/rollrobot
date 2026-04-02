@@ -39,10 +39,20 @@ export function createBot(token: string): Bot {
   bot.catch(async (err) => {
     const e = err.error;
     if (e instanceof GrammyError) {
-      console.error(`[${e.method}] ${e.error_code}: ${e.description}`);
+      const desc = e.description;
+
+      // Unrecoverable chat errors — nothing to act on, skip silently
+      if (
+        (e.error_code === 400 && desc.includes('TOPIC_CLOSED')) ||
+        (e.error_code === 403 && (desc.includes('kicked') || desc.includes('blocked')))
+      ) {
+        return;
+      }
+
+      console.error(`[${e.method}] ${e.error_code}: ${desc}`);
       const chatType = err.ctx.chat?.type;
       const isGroup = chatType && GROUPS.includes(chatType);
-      if (e.error_code === 403 && isGroup && e.description.includes('rights')) {
+      if (e.error_code === 403 && isGroup && desc.includes('rights')) {
         const userId = err.ctx.from?.id;
         if (userId) {
           try {
