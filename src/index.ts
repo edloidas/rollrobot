@@ -1,4 +1,4 @@
-import { webhookCallback } from 'grammy';
+import { BotError, GrammyError, webhookCallback } from 'grammy';
 import { createBot } from './bot';
 import { config } from './config';
 
@@ -21,7 +21,17 @@ Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
     if (req.method === 'POST' && url.pathname === webhookPath) {
-      return handleUpdate(req);
+      try {
+        return await handleUpdate(req);
+      } catch (err) {
+        // ! Errors should already be logged by bot.catch — this catch
+        // ! only prevents Bun from dumping the full BotError object.
+        const e = err instanceof BotError ? err.error : err;
+        if (!(e instanceof GrammyError)) {
+          console.error('Webhook error:', e instanceof Error ? e.message : e);
+        }
+        return new Response('OK', { status: 200 });
+      }
     }
     if (url.pathname === '/health') {
       return new Response('OK');
