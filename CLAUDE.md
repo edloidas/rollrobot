@@ -41,20 +41,30 @@ Versioning follows [semver](https://semver.org/) with prerelease tags: `3.0.0-al
 
 The `release.yml` GitHub workflow triggers on `v*` tags, verifies the tag is on `master`, and creates a GitHub Release via `softprops/action-gh-release`.
 
+### Issue Labels
+
+Each issue gets one **main** label + 0–2 **supportive** labels.
+
+- **Main** (exactly one): `bug`, `feature`, `improvement`, `epic`
+- **Supportive** (optional): `UI/UX`, `DX`, `AI`, `wontfix`
+
 ### Issues
 
-- **Title**: `<type>: <description>`
+- **Title**: `<type>: <description>` — e.g. `feat: add inline named rolls`
 - Use `epic: <description>` for issues that aggregate sub-issues and describe a long-form implementation plan. Not used in commits.
 - Always assign the issue to the current user unless a different assignee is specified.
-- **Body**: concisely explain what and why, skip trivial details
+- **Body**:
 
   ```
   <4–8 sentence description: what, what's affected, how to reproduce, impact>
 
-  ##### Rationale
+  #### Rationale             ← optional
   <why this needs to be fixed or implemented>
 
-  <sub>Drafted with AI assistance</sub>
+  #### References            ← optional
+
+  #### Implementation Notes  ← optional
+  <any details, if already planned and described>
   ```
 
 ### Pull Requests
