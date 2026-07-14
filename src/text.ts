@@ -41,7 +41,7 @@ export const deprecatedText =
 export const errorText = "_Sorry, can't parse notation._";
 
 function escapeMarkdown(text: string): string {
-  return text.replace(/([*_`\[])/g, '\\$1');
+  return text.replace(/([*_`[])/g, '\\$1');
 }
 
 export function noPermissionText(chatName?: string): string {

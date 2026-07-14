@@ -60,14 +60,16 @@ export class TestBot {
       can_join_groups: true,
       can_read_all_group_messages: false,
       supports_inline_queries: true,
+      supports_join_request_queries: false,
       can_connect_to_business: false,
+      can_manage_bots: false,
       has_main_web_app: false,
       has_topics_enabled: false,
       allows_users_to_create_topics: false,
     };
 
     // Intercept outgoing API calls
-    this.bot.api.config.use((prev, method, payload) => {
+    this.bot.api.config.use((_prev, method, payload) => {
       if (method === 'sendMessage') {
         this.replies.push(payload);
         return { ok: true, result: { message_id: nextUpdateId() } } as any;
