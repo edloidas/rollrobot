@@ -1,4 +1,4 @@
-import type { Bot } from 'grammy';
+import type { Bot } from 'grammy/web';
 import { createBot } from '../src/bot';
 
 // ? Fake token that passes grammY validation (numeric:alphanumeric)

@@ -1,4 +1,4 @@
-import { Bot, type Context, GrammyError, HttpError } from 'grammy';
+import { Bot, type Context, GrammyError, HttpError } from 'grammy/web';
 import type { InlineQueryResultsButton } from 'grammy/types';
 import { rollReply } from './handlers/roll';
 import { fullReply } from './handlers/full';

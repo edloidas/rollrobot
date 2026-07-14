@@ -12,10 +12,11 @@ bun run validate    # Full check: typecheck + lint + format:check + test
 
 ## Constraints
 
-- Runtime: Bun
-- Language: TypeScript (relaxed — `any` allowed during migration)
+- Runtime: Cloudflare Workers (workerd)
+- Tooling and tests: Bun
+- Language: TypeScript (relaxed — `any` allowed)
 - Bot framework: grammY with webhook mode
-- Deployment: Railway
+- Deployment: Cloudflare Workers
 
 ## Git & GitHub
 
