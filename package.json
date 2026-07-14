@@ -17,7 +17,9 @@
   },
   "type": "module",
   "scripts": {
-    "start": "bun src/index.ts",
+    "worker:dev": "wrangler dev",
+    "worker:deploy": "wrangler deploy",
+    "telegram:configure": "bun scripts/configure-telegram.ts",
     "typecheck": "tsc --noEmit",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
@@ -36,6 +38,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "bun-types": "^1.3.10",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "wrangler": "^4.110.0"
   }
 }

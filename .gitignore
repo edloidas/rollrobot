@@ -3,6 +3,7 @@ node_modules/
 coverage/
 dist/
 temp/
+.wrangler/
 
 # AI
 .claude/settings.local.json
@@ -18,3 +19,5 @@ Desktop.ini
 *.sh
 *.bat
 *.cmd
+.dev.vars
+.env

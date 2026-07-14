@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "rollrobot",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-07-14",
+  "workers_dev": true,
+  "secrets": {
+    "required": ["TOKEN", "WEBHOOK_SECRET"]
+  },
+  "observability": {
+    "enabled": true
+  }
+}
