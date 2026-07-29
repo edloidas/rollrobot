@@ -1,12 +1,6 @@
-import {
-  parseAndRollSimple,
-  parseClassicRoll,
-  parseSimpleRoll,
-  parseWodRoll,
-  roll,
-} from 'roll-parser';
 import type { InlineQueryResult } from 'grammy/types';
-import { limit } from '../limiter';
+import { isRollParserError, roll, type RollResult } from 'roll-parser';
+import { ROLL_LIMITS } from '../limits';
 import { createFullResultMessage } from '../text';
 
 function createInputMessageContent(text: string) {
@@ -37,31 +31,35 @@ function createArticle(
 
 const ASSET_BASE = 'https://raw.githubusercontent.com/edloidas/rollrobot/master/assets';
 
+function tryRoll(notation: string): RollResult | null {
+  try {
+    return roll(notation, ROLL_LIMITS);
+  } catch (error) {
+    if (isRollParserError(error)) return null;
+    throw error;
+  }
+}
+
 function createRollArticle(notation: string): InlineQueryResult | null {
-  const title = 'Classic';
-  const result = roll(limit(parseClassicRoll(notation || 'd20') || parseSimpleRoll(notation)));
-  const message = result && createFullResultMessage(result);
-  return result && message
-    ? createArticle(title, result.notation, message, `${ASSET_BASE}/dnd-icon.png`)
+  const result = tryRoll(notation || 'd20');
+  return result
+    ? createArticle(
+        'Roll',
+        result.expression,
+        createFullResultMessage(result),
+        `${ASSET_BASE}/dnd-icon.png`,
+      )
     : null;
 }
 
-function createWodArticle(notation: string): InlineQueryResult | null {
-  const title = 'World of Darkness';
-  const result = roll(limit(parseWodRoll(notation || 'd10>6')));
-  const message = result && createFullResultMessage(result);
-  return result && message
-    ? createArticle(title, result.notation, message, `${ASSET_BASE}/wod-icon.png`)
-    : null;
-}
-
-function createRandomArticle(): InlineQueryResult | null {
-  const title = 'Random';
-  const result = parseAndRollSimple('100');
-  const message = result && createFullResultMessage(result);
-  return result && message
-    ? createArticle(title, result.notation, message, `${ASSET_BASE}/d20-icon.png`)
-    : null;
+function createRandomArticle(): InlineQueryResult {
+  const result = roll('d100');
+  return createArticle(
+    'Random',
+    result.expression,
+    createFullResultMessage(result),
+    `${ASSET_BASE}/d20-icon.png`,
+  );
 }
 
 export interface InlineQueryResponse {
@@ -72,13 +70,12 @@ export interface InlineQueryResponse {
 export function createInlineArticles(query = ''): InlineQueryResponse {
   const notation = query.trim() === 'd' ? '' : query.trim();
   const rollArticle = createRollArticle(notation);
-  const wodArticle = createWodArticle(notation);
   const randomArticle = createRandomArticle();
 
-  const results = [rollArticle, wodArticle, randomArticle].filter(
+  const results = [rollArticle, randomArticle].filter(
     (article): article is InlineQueryResult => article != null,
   );
-  const hasInvalidQuery = notation !== '' && rollArticle == null && wodArticle == null;
+  const hasInvalidQuery = notation !== '' && rollArticle == null;
 
   return { results, hasInvalidQuery };
 }

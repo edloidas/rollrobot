@@ -1,8 +1,12 @@
-import { parse, roll } from 'roll-parser';
+import { isRollParserError, roll } from 'roll-parser';
+import { ROLL_LIMITS } from '../limits';
 import { createResultMessage, errorText } from '../text';
-import { limit } from '../limiter';
 
 export function rollReply(notation: string): string {
-  const result = roll(limit(parse(notation)));
-  return createResultMessage(result) || errorText;
+  try {
+    return createResultMessage(roll(notation, ROLL_LIMITS));
+  } catch (error) {
+    if (isRollParserError(error)) return errorText;
+    throw error;
+  }
 }
