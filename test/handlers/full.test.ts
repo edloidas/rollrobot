@@ -40,4 +40,13 @@ describe('/full', () => {
     expect(await bot.send('/full 999d6')).toMatch(/^<i>.+<\/i>/);
     expect(await bot.send('/full 101d20')).toMatch(/^<i>.+<\/i>/);
   });
+
+  test('should support the /f shortcut', async () => {
+    expect(await bot.send('/f d20')).toMatch(pattern);
+    expect(await bot.send('/f')).toMatch(pattern);
+  });
+
+  test('should keep legacy shorthand working', async () => {
+    expect(await bot.send('/full 2 10 -1')).toMatch(pattern);
+  });
 });
