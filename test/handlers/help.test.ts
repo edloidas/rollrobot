@@ -16,4 +16,14 @@ describe('Help commands', () => {
   test('should reply with help text for /help', async () => {
     expect(await bot.send('/help')).toEqual(helpText);
   });
+
+  test('should link the playground and the notation reference', () => {
+    expect(helpText).toContain('https://roll-parser.edloidas.io/');
+    expect(helpText).toContain('https://roll-parser.edloidas.io/reference');
+  });
+
+  test('should not mention the author or the license', () => {
+    expect(helpText).not.toContain('@edloidas');
+    expect(helpText).not.toContain('MIT');
+  });
 });

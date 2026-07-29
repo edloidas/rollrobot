@@ -1,25 +1,31 @@
 import { escapeHtml } from './format';
 
-export const helpText = `Roll the dice like no one before. Generate random numbers by default RPG pattern (x)d(y)±(n).
+export const helpText = `Roll the dice like no one before — full RPG notation with keep/drop, exploding dice, rerolls, success pools, and checks.
 
-Bot recognizes several commands and can be used in inline mode:
+<b>Commands</b>
+/roll [notation] — roll and show the total (shortcut: /r)
+/full [notation] — roll with a die-by-die breakdown (shortcut: /f)
+/random — roll d100
+/help — this guide
 
-@rollrobot [notation] — inline request
-/roll [notation] — default roll
-/full [notation] — same to '/roll', but shows roll for each dice
-/random — 'd100' roll
+Inline: type @rollrobot [notation] in any chat, or pick a preset from the list.
 
-<b>Notation:</b>
-<code>[count]d[dice]±[modifier]</code>
-where ...
-  • <code>count</code> — number of rolls
-  • <code>dice</code> — dice type
-  • <code>modifier</code> — value, that will be added or subtracted from result
+<b>Notation</b>
+<code>2d20+5</code> — dice and arithmetic: + - * / and parentheses
+<code>4d6kh3</code> — keep the highest 3 (also kl, dh, dl)
+<code>d8!</code> — exploding dice
+<code>2d6r&lt;3</code> — reroll below 3 (ro — reroll once)
+<code>6d10&gt;=6f1</code> — count successes, subtract 1s as failures
+<code>1d20+7 vs 15</code> — check against a DC with degrees of success
+<code>4dF</code> — Fate dice, <code>d%</code> — percentile
 
-<b>Examples:</b>
-<code>/roll d20</code> ➜ result of 'd20'
-<code>/roll 4d8+3</code> ➜ result of '4d8+3'
-<code>/random</code> ➜ result of 'd100'`;
+Shorthand: <code>/roll 20</code> rolls d20, <code>/roll 2 10 -1</code> rolls 2d10-1.
+
+Try notation live in the playground:
+https://roll-parser.edloidas.io/
+
+Full notation reference:
+https://roll-parser.edloidas.io/reference`;
 
 export const deprecatedText =
   '<code>/sroll</code> and <code>/droll</code> commands are no longer supported. Use /help for more details.';
