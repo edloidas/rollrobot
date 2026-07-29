@@ -8,10 +8,10 @@ beforeEach(() => {
 });
 
 describe('Bot message options', () => {
-  test('should reply with Markdown parse mode', async () => {
+  test('should reply with HTML parse mode', async () => {
     await bot.send('/roll d20');
     const opts = bot.getLastReplyOptions();
-    expect(opts.parse_mode).toEqual('Markdown');
+    expect(opts.parse_mode).toEqual('HTML');
   });
 
   test('should include reply_parameters in group chats', async () => {
@@ -40,9 +40,9 @@ describe('Bot message options', () => {
   });
 
   test('should route @botname-suffixed commands', async () => {
-    const pattern = /`\([\d+-dDf!>]+\)` \*\d+\*/;
+    const pattern = /^<code>1d20<\/code> = <b>\d+<\/b>/;
     expect(await bot.send('/roll@testbot d20')).toMatch(pattern);
-    expect(await bot.send('/full@testbot d20')).toMatch(/`\([\d+-dDf!>]+\)` \*\d+\* `\[/);
-    expect(await bot.send('/random@testbot')).toMatch(/`\(1d100\)` \*\d{1,3}\*/);
+    expect(await bot.send('/full@testbot d20')).toMatch(pattern);
+    expect(await bot.send('/random@testbot')).toMatch(/^<code>1d100<\/code> = <b>\d{1,3}<\/b>$/);
   });
 });

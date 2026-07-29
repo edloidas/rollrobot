@@ -13,7 +13,12 @@ const GROUPS = ['group', 'supergroup'];
 function logRoll(ctx: Context, command: string, notation: string, reply: string): void {
   const name = ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name ?? 'unknown');
   const group = ctx.chat?.title ? ` [${ctx.chat.title}]` : '';
-  const result = reply.replace(/[`*_]/g, '');
+  const result = reply
+    .replace(/\n/g, ' ')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
   console.log(`${name}${group} /${command}: ${notation} | ${result}`);
 }
 
@@ -25,7 +30,7 @@ const INLINE_HELP_BUTTON: InlineQueryResultsButton = {
 function replyOptions(ctx: Context) {
   const isGroup = ctx.chat != null && GROUPS.includes(ctx.chat.type);
   return {
-    parse_mode: 'Markdown' as const,
+    parse_mode: 'HTML' as const,
     link_preview_options: { is_disabled: true },
     ...(isGroup
       ? { reply_parameters: { message_id: ctx.msgId, allow_sending_without_reply: true } }
@@ -63,7 +68,7 @@ export function createBot(token: string): Bot {
           try {
             const chatName = err.ctx.chat?.title;
             await err.ctx.api.sendMessage(userId, noPermissionText(chatName), {
-              parse_mode: 'Markdown',
+              parse_mode: 'HTML',
             });
           } catch {
             // User hasn't started the bot — nothing we can do

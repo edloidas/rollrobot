@@ -1,12 +1,12 @@
 import type { InlineQueryResult } from 'grammy/types';
 import { isRollParserError, roll, type RollResult } from 'roll-parser';
+import { formatDetailedResult } from '../format';
 import { ROLL_LIMITS } from '../limits';
-import { createFullResultMessage } from '../text';
 
 function createInputMessageContent(text: string) {
   return {
     message_text: text,
-    parse_mode: 'Markdown' as const,
+    parse_mode: 'HTML' as const,
     link_preview_options: { is_disabled: true },
   };
 }
@@ -46,7 +46,7 @@ function createRollArticle(notation: string): InlineQueryResult | null {
     ? createArticle(
         'Roll',
         result.expression,
-        createFullResultMessage(result),
+        formatDetailedResult(result),
         `${ASSET_BASE}/dnd-icon.png`,
       )
     : null;
@@ -57,7 +57,7 @@ function createRandomArticle(): InlineQueryResult {
   return createArticle(
     'Random',
     result.expression,
-    createFullResultMessage(result),
+    formatDetailedResult(result),
     `${ASSET_BASE}/d20-icon.png`,
   );
 }
