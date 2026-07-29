@@ -1,6 +1,6 @@
-import { parseAndRollSimple } from 'roll-parser';
+import { roll } from 'roll-parser';
+import { createResultMessage } from '../text';
 
 export function randomReply(): string {
-  const result = parseAndRollSimple('100');
-  return `\`(${result.notation})\` *${result.value}*`;
+  return createResultMessage(roll('d100'));
 }

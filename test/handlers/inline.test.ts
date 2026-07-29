@@ -26,73 +26,59 @@ describe('Inline queries', () => {
     const results = await bot.sendInline('d20');
     const base = 'https://raw.githubusercontent.com/edloidas/rollrobot/master/assets';
     expect(results[0].thumbnail_url).toBe(`${base}/dnd-icon.png`);
-    expect(results[1].thumbnail_url).toBe(`${base}/wod-icon.png`);
-    expect(results[2].thumbnail_url).toBe(`${base}/d20-icon.png`);
+    expect(results[1].thumbnail_url).toBe(`${base}/d20-icon.png`);
   });
 
   test('should return default articles for empty query', async () => {
     const results = await bot.sendInline('');
     expectArticles(results, [
-      { title: 'Classic', description: 'd20' },
-      { title: 'World of Darkness', description: 'd10>6' },
-      { title: 'Random', description: 'd100' },
+      { title: 'Roll', description: '1d20' },
+      { title: 'Random', description: '1d100' },
     ]);
   });
 
   test('should return default articles for whitespace-only query', async () => {
     const results = await bot.sendInline('    ');
     expectArticles(results, [
-      { title: 'Classic', description: 'd20' },
-      { title: 'World of Darkness', description: 'd10>6' },
-      { title: 'Random', description: 'd100' },
+      { title: 'Roll', description: '1d20' },
+      { title: 'Random', description: '1d100' },
     ]);
   });
 
   test('should return default articles for bare "d" query', async () => {
     const results = await bot.sendInline('d');
     expectArticles(results, [
-      { title: 'Classic', description: 'd20' },
-      { title: 'World of Darkness', description: 'd10>6' },
-      { title: 'Random', description: 'd100' },
+      { title: 'Roll', description: '1d20' },
+      { title: 'Random', description: '1d100' },
     ]);
   });
 
   test('should return only random article for invalid query', async () => {
     const results = await bot.sendInline('abc');
-    expectArticles(results, [{ title: 'Random', description: 'd100' }]);
-  });
-
-  test('should return Classic and Random for number-only notation', async () => {
-    const results = await bot.sendInline('10');
-    expectArticles(results, [
-      { title: 'Classic', description: 'd10' },
-      { title: 'Random', description: 'd100' },
-    ]);
+    expectArticles(results, [{ title: 'Random', description: '1d100' }]);
   });
 
   test('should return matching articles for valid notation', async () => {
     const results = await bot.sendInline('d20');
     expectArticles(results, [
-      { title: 'Classic', description: 'd20' },
-      { title: 'World of Darkness', description: 'd20>6' },
-      { title: 'Random', description: 'd100' },
+      { title: 'Roll', description: '1d20' },
+      { title: 'Random', description: '1d100' },
     ]);
   });
 
   test('should handle padded notation with whitespace', async () => {
     const results = await bot.sendInline('  11d11 ');
     expectArticles(results, [
-      { title: 'Classic', description: '11d11' },
-      { title: 'World of Darkness', description: '11d11>6' },
-      { title: 'Random', description: 'd100' },
+      { title: 'Roll', description: '11d11' },
+      { title: 'Random', description: '1d100' },
     ]);
   });
 
-  test('should return WoD and Random for WoD-only notation', async () => {
-    const results = await bot.sendInline('4d10>5');
+  test('should roll extended notation', async () => {
+    const results = await bot.sendInline('4d6kh3');
     expectArticles(results, [
-      { title: 'World of Darkness', description: '4d10>5' },
-      { title: 'Random', description: 'd100' },
+      { title: 'Roll', description: '4d6kh3' },
+      { title: 'Random', description: '1d100' },
     ]);
   });
 
@@ -119,28 +105,20 @@ describe('Inline queries', () => {
       expect(bot.inlineResults[0].button).toEqual(expectedButton);
     });
 
-    test('should not show help button for valid classic notation', async () => {
+    test('should not show help button for valid notation', async () => {
       await bot.sendInline('d20');
       expect(bot.inlineResults[0].button).toBeUndefined();
     });
 
-    test('should not show help button for valid WoD notation', async () => {
-      await bot.sendInline('4d10>5');
-      expect(bot.inlineResults[0].button).toBeUndefined();
-    });
-
-    test('should not show help button for number-only notation', async () => {
-      await bot.sendInline('10');
+    test('should not show help button for extended notation', async () => {
+      await bot.sendInline('2d20kh1+5');
       expect(bot.inlineResults[0].button).toBeUndefined();
     });
   });
 
-  test('should limit inline query roll values', async () => {
-    const results = await bot.sendInline('d9999999999');
-    expectArticles(results, [
-      { title: 'Classic', description: 'd999999999' },
-      { title: 'World of Darkness', description: 'd999999999>6' },
-      { title: 'Random', description: 'd100' },
-    ]);
+  test('should show help button when roll exceeds dice limit', async () => {
+    const results = await bot.sendInline('999d6');
+    expectArticles(results, [{ title: 'Random', description: '1d100' }]);
+    expect(bot.inlineResults[0].button).toEqual({ text: 'How to use', start_parameter: 'help' });
   });
 });

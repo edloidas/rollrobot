@@ -43,6 +43,6 @@ describe('Bot message options', () => {
     const pattern = /`\([\d+-dDf!>]+\)` \*\d+\*/;
     expect(await bot.send('/roll@testbot d20')).toMatch(pattern);
     expect(await bot.send('/full@testbot d20')).toMatch(/`\([\d+-dDf!>]+\)` \*\d+\* `\[/);
-    expect(await bot.send('/random@testbot')).toMatch(/`\(d100\)` \*\d{1,3}\*/);
+    expect(await bot.send('/random@testbot')).toMatch(/`\(1d100\)` \*\d{1,3}\*/);
   });
 });

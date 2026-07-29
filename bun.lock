@@ -6,7 +6,7 @@
       "name": "rollrobot",
       "dependencies": {
         "grammy": "^1.44.0",
-        "roll-parser": "^2.3.2",
+        "roll-parser": "3.0.0-beta.0",
       },
       "devDependencies": {
         "@biomejs/biome": "^2.5.3",
@@ -241,8 +241,6 @@
 
     "miniflare": ["miniflare@4.20260708.1", "", { "dependencies": { "@cspotcode/source-map-support": "0.8.1", "sharp": "0.34.5", "undici": "7.28.0", "workerd": "1.20260708.1", "ws": "8.21.0", "youch": "4.1.0-beta.10" }, "bin": { "miniflare": "bootstrap.js" } }, "sha512-c94O9zRDISdqO18EHt6l0iF/fWgWt8p18PJvRsA/L/NJZ9Cfke3s/F5Blg1XXF7WDutVRzWVWy8Vy4LaT5ifsA=="],
 
-    "minimist": ["minimist@1.2.8", "", {}, "sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA=="],
-
     "ms": ["ms@2.1.3", "", {}, "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="],
 
     "node-fetch": ["node-fetch@2.7.0", "", { "dependencies": { "whatwg-url": "^5.0.0" }, "peerDependencies": { "encoding": "^0.1.0" }, "optionalPeers": ["encoding"] }, "sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A=="],
@@ -251,7 +249,7 @@
 
     "pathe": ["pathe@2.0.3", "", {}, "sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w=="],
 
-    "roll-parser": ["roll-parser@2.3.2", "", { "dependencies": { "minimist": "^1.2.0" }, "bin": { "roll-parser": "bin/roll-parser.js" } }, "sha512-PTZdjsZJKA7BkF3WplWFak2EpIasfOvH+O5PRb4SyiRtss84T0I+BiCyqYf4Ooh/W5sR1eJ2snGaBnWji9ez9g=="],
+    "roll-parser": ["roll-parser@3.0.0-beta.0", "", { "bin": { "roll-parser": "dist/cli.js" } }, "sha512-d/A8402mUoc59p5ulMdTHVb9dkUaSHyrdk8hzC9oO8iIBcz1TWmRrALI9mKKqxlzG9ftcV1slsVh4Q4MbKjNig=="],
 
     "semver": ["semver@7.8.5", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA=="],
 

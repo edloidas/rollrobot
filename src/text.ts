@@ -1,3 +1,5 @@
+import type { RollResult } from 'roll-parser';
+
 export const helpText = `Roll the dice like no one before. Generate random numbers by default RPG pattern (x)d(y)±(n).
 
 Bot recognizes several commands and can be used in inline mode:
@@ -49,17 +51,14 @@ export function noPermissionText(chatName?: string): string {
   return `_I can't send messages ${where} — an admin needs to grant me the Send Messages permission._`;
 }
 
-export function createResultMessage(result: any): string | null {
-  if (result) {
-    return `\`(${result.notation})\` *${result.value}*`;
-  }
-  return null;
+export function createResultMessage(result: RollResult): string {
+  return `\`(${result.expression})\` *${result.total}*`;
 }
 
-export function createFullResultMessage(result: any): string | null {
-  if (result) {
-    const rolls = result.rolls.join();
-    return `\`(${result.notation})\` *${result.value}* \`[${rolls}]\``;
-  }
-  return null;
+export function createFullResultMessage(result: RollResult): string {
+  const rolls = result.rolls
+    .filter((die) => !die.modifiers.includes('meta'))
+    .map((die) => die.result)
+    .join();
+  return `\`(${result.expression})\` *${result.total}* \`[${rolls}]\``;
 }
