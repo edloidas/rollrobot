@@ -6,6 +6,7 @@ import { randomReply } from './handlers/random';
 import { helpReply } from './handlers/help';
 import { deprecatedReply } from './handlers/deprecated';
 import { createInlineArticles } from './handlers/inline';
+import { normalizeNotation } from './notation';
 import { noPermissionText } from './text';
 
 const GROUPS = ['group', 'supergroup'];
@@ -86,15 +87,15 @@ export function createBot(token: string): Bot {
     await ctx.reply(helpReply(), replyOptions(ctx));
   });
 
-  bot.command('roll', async (ctx) => {
-    const notation = (ctx.match as string) || 'd20';
+  bot.command(['roll', 'r'], async (ctx) => {
+    const notation = normalizeNotation((ctx.match as string) ?? '');
     const reply = rollReply(notation);
     logRoll(ctx, 'roll', notation, reply);
     await ctx.reply(reply, replyOptions(ctx));
   });
 
-  bot.command('full', async (ctx) => {
-    const notation = (ctx.match as string) || 'd20';
+  bot.command(['full', 'f'], async (ctx) => {
+    const notation = normalizeNotation((ctx.match as string) ?? '');
     const reply = fullReply(notation);
     logRoll(ctx, 'full', notation, reply);
     await ctx.reply(reply, replyOptions(ctx));

@@ -39,4 +39,15 @@ describe('/roll', () => {
     expect(await bot.send('/roll 999d6')).toMatch(/^<i>.+<\/i>/);
     expect(await bot.send('/roll 101d20')).toMatch(/^<i>.+<\/i>/);
   });
+
+  test('should support the /r shortcut', async () => {
+    expect(await bot.send('/r d20')).toMatch(/^<code>1d20<\/code> = <b>\d+<\/b>$/);
+    expect(await bot.send('/r')).toMatch(/^<code>1d20<\/code> = <b>\d+<\/b>$/);
+  });
+
+  test('should keep legacy shorthand working', async () => {
+    expect(await bot.send('/roll 20')).toMatch(/^<code>1d20<\/code> = <b>\d+<\/b>$/);
+    expect(await bot.send('/roll 2 10 -1')).toMatch(/^<code>2d10 - 1<\/code> = <b>-?\d+<\/b>$/);
+    expect(await bot.send('/roll 2 10 3')).toMatch(/^<code>2d10 \+ 3<\/code> = <b>\d+<\/b>$/);
+  });
 });
