@@ -12,40 +12,31 @@ Roll Robot is a telegram bot used for common "roll the dice" purposes which is w
 
 ## Description ##
 
-Roll the dice like no one before. Generate random numbers by default RPG pattern (x)d(y)±(n).
+Roll the dice like no one before. Full RPG dice notation powered by
+[roll-parser](https://github.com/edloidas/roll-parser) v3 — keep/drop, exploding dice,
+rerolls, success pools, and checks against a DC.
 
 Bot recognizes several commands and can be used in inline mode:
 
-@rollrobot [notation] -- inline request, recognizes both notations
-/roll [notation] -- default roll, recognizes both notations
-/full [notation] -- same to '/roll', but shows roll for each dice
+@rollrobot [notation] -- inline request, with compact and detailed results
+/roll [notation] -- roll and show the total (shortcut: /r)
+/full [notation] -- roll with a die-by-die breakdown (shortcut: /f)
 /random -- 'd100' roll
+/help -- notation guide and links
 
 #### Notation: ####
-1. Classic<br/>
-    `[count]d[dice]±[modifier]`
-2. World of Darkness<br/>
-    `[count]d[dice][!]>[success]f[fail]`
-3. Simplfied (classic, space separated)<br/>
-    `[count] [dice] [modifier]`
-4. Single-valued<br/>
-    `[dice]`
-where ...
-  * `count` -- number of rolls
-  * `dice` -- dice type
-  * `modifier` -- value, that will be added or subtracted from result
-  * `!` -- sign, indicating to repeat
-  * `success` -- minimum roll value, that counts as success
-  * `fail` -- maximum roll value, that counts as fail
+* `2d20+5` -- dice and arithmetic: `+ - * /` and parentheses
+* `4d6kh3` -- keep the highest 3 (also `kl`, `dh`, `dl`)
+* `d8!` -- exploding dice
+* `2d6r<3` -- reroll below 3 (`ro` -- reroll once)
+* `6d10>=6f1` -- count successes, subtract 1s as failures
+* `1d20+7 vs 15` -- check against a DC with degrees of success
+* `4dF` -- Fate dice, `d%` -- percentile
 
-#### Examples: ####
-`/roll 20` ➜ 'd20'<br/>
-`/roll 2 10 -1` ➜ result of '2d10-1'<br/>
-`/roll 4d8+3` ➜ result of '4d8+3'<br/>
-`/wod 6d10!>6f1` ➜ number of successes for '6d10!>6f1'<br/>
-`/random` ➜ 'd100'
+Legacy shorthand still works: `/roll 20` rolls 'd20', `/roll 2 10 -1` rolls '2d10-1'.
 
-[Rate](https://telegram.me/storebot?start=rollrobot) the bot, if you like it.
+Try notation live in the [playground](https://roll-parser.edloidas.io/), or read the
+full [notation reference](https://roll-parser.edloidas.io/reference).
 
 Your ideas on improvement are welcome.
 
