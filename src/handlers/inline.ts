@@ -1,7 +1,8 @@
 import type { InlineQueryResult } from 'grammy/types';
 import { isRollParserError, roll, type RollResult } from 'roll-parser';
-import { formatDetailedResult } from '../format';
+import { formatDetailedResult, formatResult } from '../format';
 import { ROLL_LIMITS } from '../limits';
+import { normalizeNotation } from '../notation';
 
 function createInputMessageContent(text: string) {
   return {
@@ -31,6 +32,19 @@ function createArticle(
 
 const ASSET_BASE = 'https://raw.githubusercontent.com/edloidas/rollrobot/master/assets';
 
+const D20_ICON = `${ASSET_BASE}/d20-icon.png`;
+const DND_ICON = `${ASSET_BASE}/dnd-icon.png`;
+const WOD_ICON = `${ASSET_BASE}/wod-icon.png`;
+
+// ? Doubles as a notation discovery surface — one preset per common pattern
+const PRESETS = [
+  { title: 'd20', notation: 'd20', icon: D20_ICON },
+  { title: 'Random', notation: 'd100', icon: D20_ICON },
+  { title: 'Advantage', notation: '2d20kh1', icon: DND_ICON },
+  { title: 'Ability Score', notation: '4d6kh3', icon: DND_ICON },
+  { title: 'Success Pool', notation: '5d10>=6f1', icon: WOD_ICON },
+] as const;
+
 function tryRoll(notation: string): RollResult | null {
   try {
     return roll(notation, ROLL_LIMITS);
@@ -40,26 +54,19 @@ function tryRoll(notation: string): RollResult | null {
   }
 }
 
-function createRollArticle(notation: string): InlineQueryResult | null {
-  const result = tryRoll(notation || 'd20');
-  return result
-    ? createArticle(
-        'Roll',
-        result.expression,
-        formatDetailedResult(result),
-        `${ASSET_BASE}/dnd-icon.png`,
-      )
-    : null;
+/** Compact and detailed articles sharing one result — the choice is about display, not a reroll. */
+function createQueryArticles(result: RollResult): InlineQueryResult[] {
+  return [
+    createArticle('Roll', result.expression, formatResult(result), D20_ICON),
+    createArticle('Roll with breakdown', result.expression, formatDetailedResult(result), DND_ICON),
+  ];
 }
 
-function createRandomArticle(): InlineQueryResult {
-  const result = roll('d100');
-  return createArticle(
-    'Random',
-    result.expression,
-    formatDetailedResult(result),
-    `${ASSET_BASE}/d20-icon.png`,
-  );
+function createPresetArticles(): InlineQueryResult[] {
+  return PRESETS.map(({ title, notation, icon }) => {
+    const result = roll(notation);
+    return createArticle(title, notation, formatDetailedResult(result), icon);
+  });
 }
 
 export interface InlineQueryResponse {
@@ -68,14 +75,15 @@ export interface InlineQueryResponse {
 }
 
 export function createInlineArticles(query = ''): InlineQueryResponse {
-  const notation = query.trim() === 'd' ? '' : query.trim();
-  const rollArticle = createRollArticle(notation);
-  const randomArticle = createRandomArticle();
+  const trimmed = query.trim();
+  const hasQuery = trimmed !== '' && trimmed !== 'd';
 
-  const results = [rollArticle, randomArticle].filter(
-    (article): article is InlineQueryResult => article != null,
-  );
-  const hasInvalidQuery = notation !== '' && rollArticle == null;
+  if (hasQuery) {
+    const result = tryRoll(normalizeNotation(trimmed));
+    if (result != null) {
+      return { results: createQueryArticles(result), hasInvalidQuery: false };
+    }
+  }
 
-  return { results, hasInvalidQuery };
+  return { results: createPresetArticles(), hasInvalidQuery: hasQuery };
 }
