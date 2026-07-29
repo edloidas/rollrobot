@@ -1,12 +1,12 @@
 import { isRollParserError, roll } from 'roll-parser';
+import { formatDetailedResult, formatError } from '../format';
 import { ROLL_LIMITS } from '../limits';
-import { createFullResultMessage, errorText } from '../text';
 
 export function fullReply(notation: string): string {
   try {
-    return createFullResultMessage(roll(notation, ROLL_LIMITS));
+    return formatDetailedResult(roll(notation, ROLL_LIMITS));
   } catch (error) {
-    if (isRollParserError(error)) return errorText;
+    if (isRollParserError(error)) return formatError(error, notation);
     throw error;
   }
 }

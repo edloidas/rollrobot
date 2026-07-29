@@ -1,64 +1,32 @@
-import type { RollResult } from 'roll-parser';
+import { escapeHtml } from './format';
 
 export const helpText = `Roll the dice like no one before. Generate random numbers by default RPG pattern (x)d(y)±(n).
 
 Bot recognizes several commands and can be used in inline mode:
 
-@rollrobot [notation] — inline request, recognizes both notations
-/roll [notation] — default roll, recognizes both notations
+@rollrobot [notation] — inline request
+/roll [notation] — default roll
 /full [notation] — same to '/roll', but shows roll for each dice
 /random — 'd100' roll
 
-*Notation:*
-*1.* Classic
-    \`[count]d[dice]±[modifier]\`
-*2.* World of Darkness
-    \`[count]d[dice][!]>[success]f[fail]\`
-*3.* Simplified (classic, space separated)
-    \`[count] [dice] [modifier]\`
-*4.* Single-valued
-    \`[dice]\`
+<b>Notation:</b>
+<code>[count]d[dice]±[modifier]</code>
 where ...
-  • \`count\` — number of rolls
-  • \`dice\` — dice type
-  • \`modifier\` — value, that will be added or subtracted from result
-  • \`!\` — sign, indicating to repeat
-  • \`success\` — minimum roll value, that counts as success
-  • \`fail\` — maximum roll value, that counts as fail
+  • <code>count</code> — number of rolls
+  • <code>dice</code> — dice type
+  • <code>modifier</code> — value, that will be added or subtracted from result
 
-*Examples:*
-\`/roll 20\` ➜ 'd20'
-\`/roll 2 10 -1\` ➜ result of '2d10-1'
-\`/roll 4d8+3\` ➜ result of '4d8+3'
-\`/roll 6d10!>6f1\` ➜ number of successes for '6d10!>6f1'
-\`/random\` ➜ 'd100'
-
-Your ideas on improvement are welcome.
-
-MIT © @edloidas`;
+<b>Examples:</b>
+<code>/roll d20</code> ➜ result of 'd20'
+<code>/roll 4d8+3</code> ➜ result of '4d8+3'
+<code>/random</code> ➜ result of 'd100'`;
 
 export const deprecatedText =
-  '`/sroll` and `/droll` commands are no longer supported. Use /help for more details.';
+  '<code>/sroll</code> and <code>/droll</code> commands are no longer supported. Use /help for more details.';
 
-export const errorText = "_Sorry, can't parse notation._";
-
-function escapeMarkdown(text: string): string {
-  return text.replace(/([*_`[])/g, '\\$1');
-}
+export const errorText = "<i>Sorry, can't parse notation.</i>";
 
 export function noPermissionText(chatName?: string): string {
-  const where = chatName ? `in *${escapeMarkdown(chatName)}*` : 'in this chat';
-  return `_I can't send messages ${where} — an admin needs to grant me the Send Messages permission._`;
-}
-
-export function createResultMessage(result: RollResult): string {
-  return `\`(${result.expression})\` *${result.total}*`;
-}
-
-export function createFullResultMessage(result: RollResult): string {
-  const rolls = result.rolls
-    .filter((die) => !die.modifiers.includes('meta'))
-    .map((die) => die.result)
-    .join();
-  return `\`(${result.expression})\` *${result.total}* \`[${rolls}]\``;
+  const where = chatName ? `in <b>${escapeHtml(chatName)}</b>` : 'in this chat';
+  return `<i>I can't send messages ${where} — an admin needs to grant me the Send Messages permission.</i>`;
 }
