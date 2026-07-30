@@ -72,13 +72,16 @@ Each issue gets one **main** label + 0–2 **supportive** labels.
 
 - **Title**: `<type>: <description> #<number>`
 - **Body**: concise, no emojis, separate all sections with one blank line
+- Multiple issues go on one `Closes` line: `Closes #1 #23 #456`
+- The session link is informational: one `<sub>`-wrapped line, last in the body
+- Never append a second generated footer, `---` rule, or promotional line — the
+  `<sub>` session line is the only attribution. Applies to PRs created from the
+  web too, where these instructions are the only source of truth.
 
   ```
   <summary of changes>
 
-  Closes #<number>
+  Closes #<issue1> #<issue2>
 
-  [Claude Code session](<link>)
-
-  <sub>Drafted with AI assistance</sub>
+  <sub>[Claude Code session](<link>)</sub>
   ```
