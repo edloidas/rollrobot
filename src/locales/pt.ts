@@ -37,8 +37,11 @@ Teste a notação no ${playground('playground')}, ou leia a ${reference('referê
   ],
 
   shortDescription:
-    'Role dados de RPG com notação completa — manter/descartar, dados explosivos, reservas de sucesso.',
+    'Dados de RPG em qualquer conversa — D&D, Pathfinder, World of Darkness, Shadowrun, Fate, Call of Cthulhu.',
 
-  description:
-    'Role os dados como ninguém. Notação de RPG completa: manter/descartar, dados explosivos, novas rolagens, reservas de sucessos e testes contra uma CD. Use /roll para o total, /full para o detalhe dado a dado, ou digite @rollrobot em qualquer conversa.',
+  description: `Notação de dados de RPG, rolada em qualquer conversa.
+
+4d6kh3 para atributos, 2d20kh1+7 com vantagem, 1d20+12 vs 20 para um teste de Pathfinder, 7d10>=6f1 para uma reserva de Storyteller, {1d8!, 1d6!}kh1 para Savage Worlds, 4dF para Fate, d% para Call of Cthulhu.
+
+/roll dá o total, /full o detalhe dado a dado, /help o guia de notação. Digite @rollrobot em qualquer conversa para rolar sem adicionar o bot.`,
 };

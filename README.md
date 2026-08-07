@@ -8,13 +8,18 @@ Roll Robot
 
 ## About ##
 
-Roll Robot is a telegram bot used for common "roll the dice" purposes which is working on group chats.
+Dice for tabletop RPGs in any chat — D&D, Pathfinder, World of Darkness, Shadowrun, Fate,
+Call of Cthulhu.
 
 ## Description ##
 
-Roll the dice like no one before. Full RPG dice notation powered by
+Dice notation for tabletop RPGs, rolled in any chat. Powered by
 [roll-parser](https://github.com/edloidas/roll-parser) v3 — keep/drop, exploding dice,
-rerolls, success pools, and checks against a DC.
+rerolls, min/max clamps, success pools, grouped rolls, and checks against a DC.
+
+`4d6kh3` for ability scores, `2d20kh1+7` with advantage, `1d20+12 vs 20` for a Pathfinder
+check, `7d10>=6f1` for a Storyteller pool, `{1d8!, 1d6!}kh1` for Savage Worlds, `4dF` for
+Fate, `d%` for Call of Cthulhu.
 
 Bot recognizes several commands and can be used in inline mode:
 
@@ -32,6 +37,7 @@ Bot recognizes several commands and can be used in inline mode:
 * `4d6min2` -- clamp each die to at least 2 (also `max`)
 * `6d10>=6f1` -- count successes, subtract 1s as failures
 * `1d20+7 vs 15` -- check against a DC with degrees of success
+* `{1d8!, 1d6!}kh1` -- grouped rolls: each sub-roll competes as one die
 * `4dF` -- Fate dice, `d%` -- percentile
 * `2d6+floor(1d4/2)` -- functions: `floor`, `ceil`, `round`, `abs`, `min`, `max`, `sqrt`, `pow`
 
