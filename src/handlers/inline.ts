@@ -1,5 +1,5 @@
 import type { InlineQueryResult } from 'grammy/types';
-import { isRollParserError, roll, type RollResult } from 'roll-parser';
+import { isNotationError, roll, type RollResult } from 'roll-parser';
 import { formatDetailedResult, formatResult } from '../format';
 import { ROLL_LIMITS } from '../limits';
 import { normalizeNotation } from '../notation';
@@ -49,7 +49,7 @@ function tryRoll(notation: string): RollResult | null {
   try {
     return roll(notation, ROLL_LIMITS);
   } catch (error) {
-    if (isRollParserError(error)) return null;
+    if (isNotationError(error)) return null;
     throw error;
   }
 }

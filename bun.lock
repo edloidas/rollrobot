@@ -6,7 +6,7 @@
       "name": "rollrobot",
       "dependencies": {
         "grammy": "^1.44.0",
-        "roll-parser": "3.0.0-beta.0",
+        "roll-parser": "3.0.0",
       },
       "devDependencies": {
         "@biomejs/biome": "^2.5.3",
@@ -249,7 +249,7 @@
 
     "pathe": ["pathe@2.0.3", "", {}, "sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w=="],
 
-    "roll-parser": ["roll-parser@3.0.0-beta.0", "", { "bin": { "roll-parser": "dist/cli.js" } }, "sha512-d/A8402mUoc59p5ulMdTHVb9dkUaSHyrdk8hzC9oO8iIBcz1TWmRrALI9mKKqxlzG9ftcV1slsVh4Q4MbKjNig=="],
+    "roll-parser": ["roll-parser@3.0.0", "", { "bin": { "roll-parser": "dist/cli/index.js" } }, "sha512-nLkPKIq50/X6DSkcAr6OHmBU7WqhSFsPynE+az+QJXkq81K3EjiYUhDy+AykaXbUYRkgZ5M9hM1uMOAXBo2Y0w=="],
 
     "semver": ["semver@7.8.5", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA=="],
 
