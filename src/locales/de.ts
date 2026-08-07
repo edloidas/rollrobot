@@ -37,8 +37,11 @@ Probiere die Notation im ${playground('Playground')} aus, oder lies die ${refere
   ],
 
   shortDescription:
-    'Rollenspiel-Würfel mit vollständiger Notation — Behalten/Verwerfen, explodierende Würfel, Erfolgspools.',
+    'Rollenspiel-Würfel in jedem Chat — D&D, Pathfinder, World of Darkness, Shadowrun, Fate, Call of Cthulhu.',
 
-  description:
-    'Würfle wie noch nie. Vollständige Rollenspiel-Notation: Behalten/Verwerfen, explodierende Würfel, Wiederholungswürfe, Erfolgspools und Proben gegen einen SG. Nutze /roll für die Summe, /full für die Aufschlüsselung pro Würfel, oder tippe @rollrobot in jedem Chat.',
+  description: `Würfelnotation für Pen-and-Paper-Rollenspiele, in jedem Chat.
+
+4d6kh3 für Attribute, 2d20kh1+7 mit Vorteil, 1d20+12 vs 20 für eine Pathfinder-Probe, 7d10>=6f1 für einen Storyteller-Pool, {1d8!, 1d6!}kh1 für Savage Worlds, 4dF für Fate, d% für Call of Cthulhu.
+
+/roll liefert die Summe, /full die Aufschlüsselung pro Würfel, /help die Notationsübersicht. Tippe @rollrobot in jedem Chat, um ohne Hinzufügen des Bots zu würfeln.`,
 };

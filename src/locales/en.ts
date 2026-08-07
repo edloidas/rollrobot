@@ -36,8 +36,12 @@ Try notation live in the ${playground('playground')}, or read the full ${referen
     { command: 'help', description: 'Notation guide and links' },
   ],
 
-  shortDescription: 'Roll RPG dice with full notation — keep/drop, exploding dice, success pools.',
+  shortDescription:
+    'Dice for tabletop RPGs in any chat — D&D, Pathfinder, World of Darkness, Shadowrun, Fate, Call of Cthulhu.',
 
-  description:
-    'Roll the dice like no one before. Full RPG notation: keep/drop, exploding dice, rerolls, success pools, and checks against a DC. Use /roll for the total, /full for a die-by-die breakdown, or type @rollrobot in any chat.',
+  description: `Dice notation for tabletop RPGs, rolled in any chat.
+
+4d6kh3 for ability scores, 2d20kh1+7 with advantage, 1d20+12 vs 20 for a Pathfinder check, 7d10>=6f1 for a Storyteller pool, {1d8!, 1d6!}kh1 for Savage Worlds, 4dF for Fate, d% for Call of Cthulhu.
+
+/roll gives the total, /full a die-by-die breakdown, /help the notation guide. Type @rollrobot in any chat to roll without adding the bot.`,
 };

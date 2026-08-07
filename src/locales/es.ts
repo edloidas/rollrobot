@@ -37,8 +37,11 @@ Comprueba la notación en vivo en el ${playground('área de pruebas')}, o consul
   ],
 
   shortDescription:
-    'Tira dados de rol con notación completa — mantener/descartar, dados explosivos, reservas de éxitos.',
+    'Dados de rol en cualquier chat — D&D, Pathfinder, World of Darkness, Shadowrun, Fate, Call of Cthulhu.',
 
-  description:
-    'Tira los dados como nadie. Notación de rol completa: mantener/descartar, dados explosivos, nuevas tiradas, reservas de éxitos y pruebas contra una CD. Usa /roll para el total, /full para el desglose dado a dado, o escribe @rollrobot en cualquier chat.',
+  description: `Notación de dados de rol, tirada en cualquier chat.
+
+4d6kh3 para características, 2d20kh1+7 con ventaja, 1d20+12 vs 20 para una prueba de Pathfinder, 7d10>=6f1 para una reserva de Storyteller, {1d8!, 1d6!}kh1 para Savage Worlds, 4dF para Fate, d% para Call of Cthulhu.
+
+/roll da el total, /full el desglose dado a dado, /help la guía de notación. Escribe @rollrobot en cualquier chat para tirar sin añadir el bot.`,
 };
