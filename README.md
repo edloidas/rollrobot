@@ -29,9 +29,11 @@ Bot recognizes several commands and can be used in inline mode:
 * `4d6kh3` -- keep the highest 3 (also `kl`, `dh`, `dl`)
 * `d8!` -- exploding dice
 * `2d6r<3` -- reroll below 3 (`ro` -- reroll once)
+* `4d6min2` -- clamp each die to at least 2 (also `max`)
 * `6d10>=6f1` -- count successes, subtract 1s as failures
 * `1d20+7 vs 15` -- check against a DC with degrees of success
 * `4dF` -- Fate dice, `d%` -- percentile
+* `2d6+floor(1d4/2)` -- functions: `floor`, `ceil`, `round`, `abs`, `min`, `max`, `sqrt`, `pow`
 
 Legacy shorthand still works: `/roll 20` rolls 'd20', `/roll 2 10 -1` rolls '2d10-1'.
 

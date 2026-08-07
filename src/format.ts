@@ -1,4 +1,4 @@
-import { DegreeOfSuccess, type RollParserError, type RollResult } from 'roll-parser';
+import { DegreeOfSuccess, getErrorSpan, type RollParserError, type RollResult } from 'roll-parser';
 
 // ! Telegram rejects messages over 4096 chars — detailed replies fall back
 //   to the compact form beyond this threshold
@@ -71,16 +71,16 @@ export function formatDetailedResult(result: RollResult): string {
   return detailed.length > MAX_DETAILED_LENGTH ? compact : detailed;
 }
 
-type ErrorSpan = { start: number; end: number };
+type CaretSpan = { start: number; end: number };
 
-/** Normalizes lexer/parser `position` and evaluator `start`/`end` into one span. */
-function resolveErrorSpan(error: RollParserError, length: number): ErrorSpan | null {
-  const { position, start, end } = error as { position?: number; start?: number; end?: number };
-  const from = position ?? start;
-  if (from == null || from >= length) return null;
+/** Clamps the parser's span to the echoed notation, so the carets always land on it. */
+function resolveCaretSpan(error: RollParserError, length: number): CaretSpan | null {
+  const span = getErrorSpan(error);
+  if (span == null || span.start >= length) return null;
 
-  const to = end != null ? Math.min(end, length) : from + 1;
-  return { start: Math.max(from, 0), end: Math.max(to, from + 1) };
+  const start = Math.max(span.start, 0);
+  const end = span.end != null ? Math.min(span.end, length) : start + 1;
+  return { start, end: Math.max(end, start + 1) };
 }
 
 /**
@@ -92,7 +92,7 @@ export function formatError(error: RollParserError, notation: string): string {
   const message = `<i>${escapeHtml(error.message)}.</i>`;
   if (notation === '' || notation.includes('\n')) return message;
 
-  const span = resolveErrorSpan(error, notation.length);
+  const span = resolveCaretSpan(error, notation.length);
   if (span == null) return `${message}\n<pre>${escapeHtml(notation)}</pre>`;
 
   const carets = `${' '.repeat(span.start)}${'^'.repeat(span.end - span.start)}`;

@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "grammy": "^1.44.0",
-    "roll-parser": "3.0.0-beta.0"
+    "roll-parser": "3.0.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.3",
