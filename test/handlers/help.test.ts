@@ -32,9 +32,17 @@ describe('Help commands', () => {
     expect(await bot.send('/help')).toEqual(helpText);
   });
 
-  test('should link the playground and the notation reference', () => {
-    expect(helpText).toContain('https://roll-parser.edloidas.io/');
-    expect(helpText).toContain('https://roll-parser.edloidas.io/reference');
+  test('should hide the playground and reference URLs behind link text', () => {
+    expect(helpText).toContain('<a href="https://roll-parser.edloidas.io/">playground</a>');
+    expect(helpText).toContain(
+      '<a href="https://roll-parser.edloidas.io/reference">notation reference</a>',
+    );
+  });
+
+  test('should not mention retired commands', () => {
+    for (const command of ['/sroll', '/droll', '/wod']) {
+      expect(helpText).not.toContain(command);
+    }
   });
 
   test('should only show notation the parser accepts', () => {

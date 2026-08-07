@@ -43,6 +43,6 @@ describe('Bot message options', () => {
     const pattern = /^<code>1d20<\/code> = <b>\d+<\/b>/;
     expect(await bot.send('/roll@testbot d20')).toMatch(pattern);
     expect(await bot.send('/full@testbot d20')).toMatch(pattern);
-    expect(await bot.send('/random@testbot')).toMatch(/^<code>1d100<\/code> = <b>\d{1,3}<\/b>$/);
+    expect(await bot.send('/random@testbot')).toMatch(/^<b>\d{1,3}<\/b>$/);
   });
 });

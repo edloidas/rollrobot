@@ -1,7 +1,13 @@
 import { describe, test, expect } from 'bun:test';
 import { isRollParserError, roll, type RollParserError } from 'roll-parser';
 import { createMockRng } from 'roll-parser/testing';
-import { escapeHtml, formatDetailedResult, formatError, formatResult } from '../src/format';
+import {
+  escapeHtml,
+  formatDetailedResult,
+  formatError,
+  formatResult,
+  formatTotal,
+} from '../src/format';
 
 function rollError(notation: string): RollParserError {
   try {
@@ -62,13 +68,13 @@ describe('formatResult', () => {
 describe('formatDetailedResult', () => {
   test('appends the die breakdown', () => {
     const result = roll('3d6', { rng: createMockRng([4, 2, 6]) });
-    expect(formatDetailedResult(result)).toBe('<code>3d6</code> = <b>12</b>\n3d6[4, 2, 6]');
+    expect(formatDetailedResult(result)).toBe('<code>3d6</code> = <b>12</b>\n[4, 2, 6]');
   });
 
   test('strikes through dropped dice', () => {
     const result = roll('4d6kh3', { rng: createMockRng([3, 6, 2, 5]) });
     expect(formatDetailedResult(result)).toBe(
-      '<code>4d6kh3</code> = <b>14</b>\n4d6[3, 6, <s>2</s>, 5]',
+      '<code>4d6kh3</code> = <b>14</b>\n[3, 6, <s>2</s>, 5]',
     );
   });
 
@@ -76,8 +82,30 @@ describe('formatDetailedResult', () => {
     const result = roll('5d10>=6f1', { rng: createMockRng([10, 2, 6, 1, 7]) });
     expect(formatDetailedResult(result)).toBe(
       '<code>5d10&gt;=6f1</code> = <b>3</b> successes, <b>1</b> failure\n' +
-        '5d10&gt;=6f1[<b>10</b>, 2, <b>6</b>, <u>1</u>, <b>7</b>]',
+        '[<b>10</b>, 2, <b>6</b>, <u>1</u>, <b>7</b>]',
     );
+  });
+
+  test('keeps arithmetic around the rolled values', () => {
+    const result = roll('2d10-1', { rng: createMockRng([7, 6]) });
+    expect(formatDetailedResult(result)).toBe('<code>2d10 - 1</code> = <b>12</b>\n[7, 6] - 1');
+  });
+
+  test('strips the notation of every dice group', () => {
+    const result = roll('2d6+1d4', { rng: createMockRng([6, 1, 3]) });
+    expect(formatDetailedResult(result)).toBe('<code>2d6 + 1d4</code> = <b>10</b>\n[6, 1] + [3]');
+  });
+
+  test('keeps exploded dice attached to their group', () => {
+    const result = roll('1d8!', { rng: createMockRng([8, 2]) });
+    expect(formatDetailedResult(result)).toBe('<code>1d8!</code> = <b>10</b>\n[8, 2]');
+  });
+});
+
+describe('formatTotal', () => {
+  test('shows the total alone', () => {
+    const result = roll('d100', { rng: createMockRng([48]) });
+    expect(formatTotal(result)).toBe('<b>48</b>');
   });
 });
 

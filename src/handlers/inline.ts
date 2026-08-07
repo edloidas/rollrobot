@@ -1,6 +1,6 @@
 import type { InlineQueryResult } from 'grammy/types';
 import { isNotationError, roll, type RollResult } from 'roll-parser';
-import { formatDetailedResult, formatResult } from '../format';
+import { formatDetailedResult, formatResult, formatTotal } from '../format';
 import { ROLL_LIMITS } from '../limits';
 import { normalizeNotation } from '../notation';
 
@@ -12,38 +12,23 @@ function createInputMessageContent(text: string) {
   };
 }
 
-function createArticle(
-  title: string,
-  description: string,
-  message: string,
-  thumbnailUrl: string,
-): InlineQueryResult {
+function createArticle(title: string, description: string, message: string): InlineQueryResult {
   return {
     type: 'article',
     id: crypto.randomUUID(),
     title,
     input_message_content: createInputMessageContent(message),
     description,
-    thumbnail_url: thumbnailUrl,
-    thumbnail_width: 64,
-    thumbnail_height: 64,
   };
 }
 
-const ASSET_BASE = 'https://raw.githubusercontent.com/edloidas/rollrobot/master/assets';
+const DEFAULT_NOTATION = 'd20';
+const RANDOM_NOTATION = 'd100';
 
-const D20_ICON = `${ASSET_BASE}/d20-icon.png`;
-const DND_ICON = `${ASSET_BASE}/dnd-icon.png`;
-const WOD_ICON = `${ASSET_BASE}/wod-icon.png`;
-
-// ? Doubles as a notation discovery surface — one preset per common pattern
-const PRESETS = [
-  { title: 'd20', notation: 'd20', icon: D20_ICON },
-  { title: 'Random', notation: 'd100', icon: D20_ICON },
-  { title: 'Advantage', notation: '2d20kh1', icon: DND_ICON },
-  { title: 'Ability Score', notation: '4d6kh3', icon: DND_ICON },
-  { title: 'Success Pool', notation: '5d10>=6f1', icon: WOD_ICON },
-] as const;
+// ? Titles mirror the commands, so the inline list doubles as command discovery
+const ROLL_TITLE = 'Roll';
+const FULL_TITLE = 'Full';
+const RANDOM_TITLE = 'Random';
 
 function tryRoll(notation: string): RollResult | null {
   try {
@@ -55,18 +40,23 @@ function tryRoll(notation: string): RollResult | null {
 }
 
 /** Compact and detailed articles sharing one result — the choice is about display, not a reroll. */
-function createQueryArticles(result: RollResult): InlineQueryResult[] {
+function createVariantArticles(result: RollResult, description: string): InlineQueryResult[] {
   return [
-    createArticle('Roll', result.expression, formatResult(result), D20_ICON),
-    createArticle('Roll with breakdown', result.expression, formatDetailedResult(result), DND_ICON),
+    createArticle(ROLL_TITLE, description, formatResult(result)),
+    createArticle(FULL_TITLE, description, formatDetailedResult(result)),
   ];
 }
 
+function createQueryArticles(result: RollResult): InlineQueryResult[] {
+  return createVariantArticles(result, result.expression);
+}
+
+/** Fallback list: the three commands, on their default notation. */
 function createPresetArticles(): InlineQueryResult[] {
-  return PRESETS.map(({ title, notation, icon }) => {
-    const result = roll(notation);
-    return createArticle(title, notation, formatDetailedResult(result), icon);
-  });
+  return [
+    ...createVariantArticles(roll(DEFAULT_NOTATION), DEFAULT_NOTATION),
+    createArticle(RANDOM_TITLE, RANDOM_NOTATION, formatTotal(roll(RANDOM_NOTATION))),
+  ];
 }
 
 export interface InlineQueryResponse {

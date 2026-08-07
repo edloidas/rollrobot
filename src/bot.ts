@@ -4,7 +4,6 @@ import { rollReply } from './handlers/roll';
 import { fullReply } from './handlers/full';
 import { randomReply } from './handlers/random';
 import { helpReply } from './handlers/help';
-import { deprecatedReply } from './handlers/deprecated';
 import { createInlineArticles } from './handlers/inline';
 import { normalizeNotation } from './notation';
 import { noPermissionText } from './text';
@@ -105,10 +104,6 @@ export function createBot(token: string): Bot {
     const reply = randomReply();
     logRoll(ctx, 'random', 'd100', reply);
     await ctx.reply(reply, replyOptions(ctx));
-  });
-
-  bot.command(['sroll', 'droll'], async (ctx) => {
-    await ctx.reply(deprecatedReply(), replyOptions(ctx));
   });
 
   bot.on('chosen_inline_result', (ctx) => {
