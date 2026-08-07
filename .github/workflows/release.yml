@@ -93,3 +93,5 @@ jobs:
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
         with:
           name: Rollrobot ${{ github.ref_name }}
+          # A semver prerelease tag carries a hyphen: v3.0.0-beta.0, v3.0.0-rc.1
+          prerelease: ${{ contains(github.ref_name, '-') }}
