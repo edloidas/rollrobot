@@ -1,5 +1,6 @@
 import { describe, test, expect, beforeEach } from 'bun:test';
 import { TestBot } from '../helpers';
+import { messages } from '../../src/i18n';
 
 let bot: TestBot;
 
@@ -77,6 +78,25 @@ describe('Inline queries', () => {
   test('should reply with the total alone for the random preset', async () => {
     const results = await bot.sendInline('');
     expect(results[2].input_message_content.message_text).toMatch(/^<b>\d{1,3}<\/b>$/);
+  });
+
+  test('should localize titles for the requesting user', async () => {
+    const ru = messages('ru').inline;
+    expectArticles(await bot.sendInline('d20', 'ru'), [{ title: ru.roll }, { title: ru.full }]);
+    expectArticles(await bot.sendInline('', 'ru'), [
+      { title: ru.roll },
+      { title: ru.full },
+      { title: ru.random },
+    ]);
+  });
+
+  test('should localize titles for a regional language tag', async () => {
+    const pt = messages('pt').inline;
+    expectArticles(await bot.sendInline('d20', 'pt-br'), [{ title: pt.roll }, { title: pt.full }]);
+  });
+
+  test('should fall back to English titles for unsupported languages', async () => {
+    expectArticles(await bot.sendInline('d20', 'ja'), [{ title: 'Roll' }, { title: 'Full' }]);
   });
 
   test('should handle padded notation with whitespace', async () => {

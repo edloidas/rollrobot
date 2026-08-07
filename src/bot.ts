@@ -5,6 +5,7 @@ import { fullReply } from './handlers/full';
 import { randomReply } from './handlers/random';
 import { helpReply } from './handlers/help';
 import { createInlineArticles } from './handlers/inline';
+import { resolveLocale } from './i18n';
 import { normalizeNotation } from './notation';
 import { noPermissionText } from './text';
 
@@ -83,7 +84,7 @@ export function createBot(token: string): Bot {
   });
 
   bot.command(['start', 'help'], async (ctx) => {
-    await ctx.reply(helpReply(), replyOptions(ctx));
+    await ctx.reply(helpReply(resolveLocale(ctx.from?.language_code)), replyOptions(ctx));
   });
 
   bot.command(['roll', 'r'], async (ctx) => {
@@ -113,7 +114,10 @@ export function createBot(token: string): Bot {
   });
 
   bot.on('inline_query', async (ctx) => {
-    const { results, hasInvalidQuery } = createInlineArticles(ctx.inlineQuery.query);
+    const { results, hasInvalidQuery } = createInlineArticles(
+      ctx.inlineQuery.query,
+      resolveLocale(ctx.from?.language_code),
+    );
     await ctx.answerInlineQuery(results, {
       cache_time: 0,
       is_personal: true,

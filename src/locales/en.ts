@@ -1,0 +1,43 @@
+import { playground, reference } from './links';
+import type { Messages } from './types';
+
+export const en: Messages = {
+  inline: { roll: 'Roll', full: 'Full', random: 'Random' },
+
+  help: `Roll the dice like no one before — full RPG notation with keep/drop, exploding dice, rerolls, success pools, and checks.
+
+<b>Commands</b>
+/roll [notation] — roll and show the total (shortcut: /r)
+/full [notation] — roll with a die-by-die breakdown (shortcut: /f)
+/random — roll d100 (<code>d%</code>)
+/help — this guide
+
+Inline: type @rollrobot [notation] in any chat, or pick a preset from the list.
+
+<b>Notation</b>
+<code>2d20+5</code> — dice and arithmetic: + - * / and parentheses
+<code>4d6kh3</code> — keep the highest 3 (also kl, dh, dl)
+<code>d8!</code> — exploding dice
+<code>2d6r&lt;3</code> — reroll below 3 (ro — reroll once)
+<code>4d6min2</code> — clamp each die to at least 2 (also max)
+<code>6d10&gt;=6f1</code> — count successes, subtract 1s as failures
+<code>1d20+7 vs 15</code> — check against a DC with degrees of success
+<code>4dF</code> — Fate dice, <code>d%</code> — percentile
+<code>2d6+floor(1d4/2)</code> — functions: floor, ceil, round, abs, min, max, sqrt, pow
+
+Shorthand: <code>/roll 20</code> rolls d20, <code>/roll 2 10 -1</code> rolls 2d10-1.
+
+Try notation live in the ${playground('playground')}, or read the full ${reference('notation reference')}.`,
+
+  commands: [
+    { command: 'roll', description: 'Roll dice — /roll 2d20kh1+5' },
+    { command: 'full', description: 'Roll with a breakdown — /full 4d6kh3' },
+    { command: 'random', description: 'Roll d100' },
+    { command: 'help', description: 'Notation guide and links' },
+  ],
+
+  shortDescription: 'Roll RPG dice with full notation — keep/drop, exploding dice, success pools.',
+
+  description:
+    'Roll the dice like no one before. Full RPG notation: keep/drop, exploding dice, rerolls, success pools, and checks against a DC. Use /roll for the total, /full for a die-by-die breakdown, or type @rollrobot in any chat.',
+};

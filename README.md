@@ -40,6 +40,12 @@ Legacy shorthand still works: `/roll 20` rolls 'd20', `/roll 2 10 -1` rolls '2d1
 Try notation live in the [playground](https://roll-parser.edloidas.io/), or read the
 full [notation reference](https://roll-parser.edloidas.io/reference).
 
+#### Languages: ####
+
+Inline titles, the command menu, and the notation guide follow your Telegram language:
+English, Spanish, Portuguese, German, Russian, Ukrainian, and Belarusian. Anything else
+falls back to English. Roll results are notation, so they read the same everywhere.
+
 Your ideas on improvement are welcome.
 
 ## Stack ##
