@@ -5,7 +5,7 @@ export const helpText = `Roll the dice like no one before — full RPG notation 
 <b>Commands</b>
 /roll [notation] — roll and show the total (shortcut: /r)
 /full [notation] — roll with a die-by-die breakdown (shortcut: /f)
-/random — roll d100
+/random — roll d100 (<code>d%</code>)
 /help — this guide
 
 Inline: type @rollrobot [notation] in any chat, or pick a preset from the list.
@@ -23,14 +23,7 @@ Inline: type @rollrobot [notation] in any chat, or pick a preset from the list.
 
 Shorthand: <code>/roll 20</code> rolls d20, <code>/roll 2 10 -1</code> rolls 2d10-1.
 
-Try notation live in the playground:
-https://roll-parser.edloidas.io/
-
-Full notation reference:
-https://roll-parser.edloidas.io/reference`;
-
-export const deprecatedText =
-  '<code>/sroll</code> and <code>/droll</code> commands are no longer supported. Use /help for more details.';
+Try notation live in the <a href="https://roll-parser.edloidas.io/">playground</a>, or read the full <a href="https://roll-parser.edloidas.io/reference">notation reference</a>.`;
 
 export const errorText = "<i>Sorry, can't parse notation.</i>";
 

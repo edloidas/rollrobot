@@ -28,6 +28,15 @@ function renderBreakdown(rendered: string): string {
     .replace(/__(.+?)__/g, '<u>$1</u>');
 }
 
+/**
+ * Drops the dice notation in front of each rolled group — `2d10[7, 1] - 1`
+ * becomes `[7, 1] - 1`. The notation is already on the compact line above,
+ * so repeating it only adds noise.
+ */
+function stripDiceNotation(rendered: string): string {
+  return rendered.replace(/\d*d[^\s[]*(?=\[)/g, '');
+}
+
 function pluralize(count: number, word: string): string {
   const suffix = word.endsWith('s') ? 'es' : 's';
   return `<b>${count}</b> ${word}${count === 1 ? '' : suffix}`;
@@ -56,6 +65,11 @@ export function formatResult(result: RollResult): string {
   return `<code>${escapeHtml(result.expression)}</code> = ${formatOutcome(result)}`;
 }
 
+/** Bare reply: the total alone, for rolls where the notation is implied by the command. */
+export function formatTotal(result: RollResult): string {
+  return `<b>${result.total}</b>`;
+}
+
 /**
  * Detailed reply: the compact line plus the per-die breakdown. The parser's
  * `rendered` string ends with an `= total` tail that duplicates the first
@@ -66,7 +80,7 @@ export function formatDetailedResult(result: RollResult): string {
 
   const tailIndex = result.rendered.lastIndexOf(' = ');
   const breakdown = tailIndex > 0 ? result.rendered.slice(0, tailIndex) : result.rendered;
-  const detailed = `${compact}\n${renderBreakdown(breakdown)}`;
+  const detailed = `${compact}\n${renderBreakdown(stripDiceNotation(breakdown))}`;
 
   return detailed.length > MAX_DETAILED_LENGTH ? compact : detailed;
 }

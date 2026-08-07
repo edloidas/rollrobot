@@ -7,14 +7,14 @@ beforeEach(() => {
   bot = new TestBot();
 });
 
+const pattern = /^<b>\d{1,3}<\/b>$/;
+
 describe('/random', () => {
-  test('should reply with d100 roll', async () => {
-    const pattern = /^<code>1d100<\/code> = <b>\d{1,3}<\/b>$/;
+  test('should reply with the d100 total alone', async () => {
     expect(await bot.send('/random')).toMatch(pattern);
   });
 
   test('should ignore extra arguments', async () => {
-    const pattern = /^<code>1d100<\/code> = <b>\d{1,3}<\/b>$/;
     expect(await bot.send('/random d100+1000')).toMatch(pattern);
   });
 });

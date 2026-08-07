@@ -7,7 +7,7 @@ beforeEach(() => {
   bot = new TestBot();
 });
 
-const pattern = /^<code>[^<]+<\/code> = <b>-?\d+<\/b>\n.+\[.+\]/;
+const pattern = /^<code>[^<]+<\/code> = <b>-?\d+<\/b>\n\[.+\]/;
 
 describe('/full', () => {
   test('should explain invalid input with the error span', async () => {

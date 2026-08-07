@@ -10,11 +10,9 @@ beforeEach(() => {
 const HELP_BUTTON = { text: 'How to use', start_parameter: 'help' };
 
 const PRESET_ARTICLES = [
-  { title: 'd20', description: 'd20' },
+  { title: 'Roll', description: 'd20' },
+  { title: 'Full', description: 'd20' },
   { title: 'Random', description: 'd100' },
-  { title: 'Advantage', description: '2d20kh1' },
-  { title: 'Ability Score', description: '4d6kh3' },
-  { title: 'Success Pool', description: '5d10>=6f1' },
 ];
 
 function expectArticles(results: any[], expected: { title: string; description?: string }[]) {
@@ -56,7 +54,7 @@ describe('Inline queries', () => {
     const results = await bot.sendInline('d20');
     expectArticles(results, [
       { title: 'Roll', description: '1d20' },
-      { title: 'Roll with breakdown', description: '1d20' },
+      { title: 'Full', description: '1d20' },
     ]);
   });
 
@@ -67,18 +65,25 @@ describe('Inline queries', () => {
     expect(detailed.startsWith(compact)).toBe(true);
   });
 
-  test('should include thumbnail URLs for query articles', async () => {
-    const results = await bot.sendInline('d20');
-    const base = 'https://raw.githubusercontent.com/edloidas/rollrobot/master/assets';
-    expect(results[0].thumbnail_url).toBe(`${base}/d20-icon.png`);
-    expect(results[1].thumbnail_url).toBe(`${base}/dnd-icon.png`);
+  test('should not attach thumbnails to any article', async () => {
+    for (const query of ['d20', '']) {
+      const results = await bot.sendInline(query);
+      for (const result of results) {
+        expect(result.thumbnail_url).toBeUndefined();
+      }
+    }
+  });
+
+  test('should reply with the total alone for the random preset', async () => {
+    const results = await bot.sendInline('');
+    expect(results[2].input_message_content.message_text).toMatch(/^<b>\d{1,3}<\/b>$/);
   });
 
   test('should handle padded notation with whitespace', async () => {
     const results = await bot.sendInline('  11d11 ');
     expectArticles(results, [
       { title: 'Roll', description: '11d11' },
-      { title: 'Roll with breakdown', description: '11d11' },
+      { title: 'Full', description: '11d11' },
     ]);
   });
 
@@ -86,7 +91,7 @@ describe('Inline queries', () => {
     const results = await bot.sendInline('4d6kh3');
     expectArticles(results, [
       { title: 'Roll', description: '4d6kh3' },
-      { title: 'Roll with breakdown', description: '4d6kh3' },
+      { title: 'Full', description: '4d6kh3' },
     ]);
   });
 
@@ -94,7 +99,7 @@ describe('Inline queries', () => {
     const results = await bot.sendInline('2 10 -1');
     expectArticles(results, [
       { title: 'Roll', description: '2d10 - 1' },
-      { title: 'Roll with breakdown', description: '2d10 - 1' },
+      { title: 'Full', description: '2d10 - 1' },
     ]);
   });
 

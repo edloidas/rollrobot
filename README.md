@@ -18,10 +18,10 @@ rerolls, success pools, and checks against a DC.
 
 Bot recognizes several commands and can be used in inline mode:
 
-@rollrobot [notation] -- inline request, with compact and detailed results
+@rollrobot [notation] -- inline request, with 'Roll' and 'Full' result variants
 /roll [notation] -- roll and show the total (shortcut: /r)
 /full [notation] -- roll with a die-by-die breakdown (shortcut: /f)
-/random -- 'd100' roll
+/random -- 'd100' ('d%') roll, total only
 /help -- notation guide and links
 
 #### Notation: ####
