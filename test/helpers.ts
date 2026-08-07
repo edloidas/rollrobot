@@ -17,7 +17,17 @@ function extractCommandEntity(text: string) {
   return [{ type: 'bot_command', offset: 0, length: match[0].length }];
 }
 
-function createMessageUpdate(text: string, chatType = 'private') {
+function createSender(languageCode?: string) {
+  return {
+    id: 1,
+    is_bot: false,
+    first_name: 'Test',
+    username: 'testuser',
+    ...(languageCode ? { language_code: languageCode } : {}),
+  };
+}
+
+function createMessageUpdate(text: string, chatType = 'private', languageCode?: string) {
   return {
     update_id: nextUpdateId(),
     message: {
@@ -25,20 +35,20 @@ function createMessageUpdate(text: string, chatType = 'private') {
       date: Math.floor(Date.now() / 1000),
       text,
       entities: extractCommandEntity(text),
-      from: { id: 1, is_bot: false, first_name: 'Test', username: 'testuser' },
+      from: createSender(languageCode),
       chat: { id: 1, type: chatType, first_name: 'Test' },
     },
   };
 }
 
-function createInlineQueryUpdate(query: string) {
+function createInlineQueryUpdate(query: string, languageCode?: string) {
   return {
     update_id: nextUpdateId(),
     inline_query: {
       id: String(nextUpdateId()),
       query,
       offset: '',
-      from: { id: 1, is_bot: false, first_name: 'Test', username: 'testuser' },
+      from: createSender(languageCode),
     },
   };
 }
@@ -87,16 +97,16 @@ export class TestBot {
     this.inlineResults = [];
   }
 
-  async send(text: string, chatType = 'private'): Promise<string> {
+  async send(text: string, chatType = 'private', languageCode?: string): Promise<string> {
     this.clear();
-    const update = createMessageUpdate(text, chatType);
+    const update = createMessageUpdate(text, chatType, languageCode);
     await this.bot.handleUpdate(update as any);
     return this.replies[0]?.text || '';
   }
 
-  async sendInline(query: string): Promise<any[]> {
+  async sendInline(query: string, languageCode?: string): Promise<any[]> {
     this.clear();
-    const update = createInlineQueryUpdate(query);
+    const update = createInlineQueryUpdate(query, languageCode);
     await this.bot.handleUpdate(update as any);
     return this.inlineResults[0]?.results || [];
   }

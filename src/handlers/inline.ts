@@ -1,6 +1,7 @@
 import type { InlineQueryResult } from 'grammy/types';
 import { isNotationError, roll, type RollResult } from 'roll-parser';
 import { formatDetailedResult, formatResult, formatTotal } from '../format';
+import { DEFAULT_LOCALE, type Locale, type Messages, messages } from '../i18n';
 import { ROLL_LIMITS } from '../limits';
 import { normalizeNotation } from '../notation';
 
@@ -25,11 +26,6 @@ function createArticle(title: string, description: string, message: string): Inl
 const DEFAULT_NOTATION = 'd20';
 const RANDOM_NOTATION = 'd100';
 
-// ? Titles mirror the commands, so the inline list doubles as command discovery
-const ROLL_TITLE = 'Roll';
-const FULL_TITLE = 'Full';
-const RANDOM_TITLE = 'Random';
-
 function tryRoll(notation: string): RollResult | null {
   try {
     return roll(notation, ROLL_LIMITS);
@@ -40,22 +36,26 @@ function tryRoll(notation: string): RollResult | null {
 }
 
 /** Compact and detailed articles sharing one result — the choice is about display, not a reroll. */
-function createVariantArticles(result: RollResult, description: string): InlineQueryResult[] {
+function createVariantArticles(
+  result: RollResult,
+  description: string,
+  titles: Messages['inline'],
+): InlineQueryResult[] {
   return [
-    createArticle(ROLL_TITLE, description, formatResult(result)),
-    createArticle(FULL_TITLE, description, formatDetailedResult(result)),
+    createArticle(titles.roll, description, formatResult(result)),
+    createArticle(titles.full, description, formatDetailedResult(result)),
   ];
 }
 
-function createQueryArticles(result: RollResult): InlineQueryResult[] {
-  return createVariantArticles(result, result.expression);
+function createQueryArticles(result: RollResult, titles: Messages['inline']): InlineQueryResult[] {
+  return createVariantArticles(result, result.expression, titles);
 }
 
 /** Fallback list: the three commands, on their default notation. */
-function createPresetArticles(): InlineQueryResult[] {
+function createPresetArticles(titles: Messages['inline']): InlineQueryResult[] {
   return [
-    ...createVariantArticles(roll(DEFAULT_NOTATION), DEFAULT_NOTATION),
-    createArticle(RANDOM_TITLE, RANDOM_NOTATION, formatTotal(roll(RANDOM_NOTATION))),
+    ...createVariantArticles(roll(DEFAULT_NOTATION), DEFAULT_NOTATION, titles),
+    createArticle(titles.random, RANDOM_NOTATION, formatTotal(roll(RANDOM_NOTATION))),
   ];
 }
 
@@ -64,16 +64,20 @@ export interface InlineQueryResponse {
   hasInvalidQuery: boolean;
 }
 
-export function createInlineArticles(query = ''): InlineQueryResponse {
+export function createInlineArticles(
+  query = '',
+  locale: Locale = DEFAULT_LOCALE,
+): InlineQueryResponse {
   const trimmed = query.trim();
   const hasQuery = trimmed !== '' && trimmed !== 'd';
+  const titles = messages(locale).inline;
 
   if (hasQuery) {
     const result = tryRoll(normalizeNotation(trimmed));
     if (result != null) {
-      return { results: createQueryArticles(result), hasInvalidQuery: false };
+      return { results: createQueryArticles(result, titles), hasInvalidQuery: false };
     }
   }
 
-  return { results: createPresetArticles(), hasInvalidQuery: hasQuery };
+  return { results: createPresetArticles(titles), hasInvalidQuery: hasQuery };
 }
