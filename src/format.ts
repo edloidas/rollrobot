@@ -25,8 +25,20 @@ const DEGREE_LABELS: Record<DegreeOfSuccess, string> = {
   [DegreeOfSuccess.CriticalFailure]: 'Critical Failure',
 };
 
+// ! Direction controls survive HTML escaping and reorder everything after them, so a reply
+//   could show text its sender never wrote. Excludes ZWNJ and ZWJ, which Persian needs.
+const BIDI_CONTROL = /\p{Bidi_Control}/gu;
+
+function nameControl(char: string): string {
+  return `U+${char.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0')}`;
+}
+
 export function escapeHtml(text: string): string {
-  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(BIDI_CONTROL, nameControl);
 }
 
 /**
@@ -204,6 +216,11 @@ export function formatDetailedResult(result: RollResult): string {
 
 type CaretSpan = { start: number; end: number };
 
+// ! Carets are placed by code-unit offset, so they only land right when every character is
+//   one code unit and one column, rendered where it is stored. Right-to-left runs,
+//   combining marks, and wide or astral characters break that; these scripts do not.
+const CARETABLE = /^[\x20-\x7e\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}]*$/u;
+
 /** Clamps the parser's span to the echoed notation, so the carets always land on it. */
 function resolveCaretSpan(error: RollParserError, length: number): CaretSpan | null {
   const span = getErrorSpan(error);
@@ -216,14 +233,15 @@ function resolveCaretSpan(error: RollParserError, length: number): CaretSpan | n
 
 /**
  * Error reply: the parser message plus the notation echoed in a `pre` block
- * with the offending span underlined by carets. Multiline notation skips the
- * echo — caret alignment only works on a single line.
+ * with the offending span underlined by carets. Notation the carets cannot be
+ * aligned against still gets its echo, just without the caret line. Multiline
+ * notation skips the echo outright — there is no single line to point at.
  */
 export function formatError(error: RollParserError, notation: string): string {
   const message = `<i>${escapeHtml(error.message)}.</i>`;
   if (notation === '' || notation.includes('\n')) return message;
 
-  const span = resolveCaretSpan(error, notation.length);
+  const span = CARETABLE.test(notation) ? resolveCaretSpan(error, notation.length) : null;
   if (span == null) return `${message}\n<pre>${escapeHtml(notation)}</pre>`;
 
   const carets = `${' '.repeat(span.start)}${'^'.repeat(span.end - span.start)}`;

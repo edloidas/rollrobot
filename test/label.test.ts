@@ -67,6 +67,10 @@ describe('extractLabel', () => {
     });
   });
 
+  test('leaves eastern numerals in the label alone', () => {
+    expect(extractLabel('2d6 «ضربهٔ ۳»')).toEqual({ notation: '2d6', label: 'ضربهٔ ۳' });
+  });
+
   test('trims whitespace around both halves', () => {
     expect(extractLabel('  2d6   "  spaced  "  ')).toEqual({ notation: '2d6', label: 'spaced' });
   });

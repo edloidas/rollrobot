@@ -2,6 +2,7 @@ import { be } from './locales/be';
 import { de } from './locales/de';
 import { en } from './locales/en';
 import { es } from './locales/es';
+import { fa } from './locales/fa';
 import { pt } from './locales/pt';
 import { ru } from './locales/ru';
 import type { Messages } from './locales/types';
@@ -11,7 +12,7 @@ export type { Messages } from './locales/types';
 
 export const DEFAULT_LOCALE = 'en';
 
-const MESSAGES = { en, es, pt, de, ru, uk, be } satisfies Record<string, Messages>;
+const MESSAGES = { en, es, pt, de, ru, uk, be, fa } satisfies Record<string, Messages>;
 
 export type Locale = keyof typeof MESSAGES;
 
