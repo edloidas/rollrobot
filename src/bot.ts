@@ -1,10 +1,17 @@
 import { Bot, type Context, GrammyError, HttpError } from 'grammy/web';
 import type { InlineQueryResultsButton } from 'grammy/types';
+import {
+  type AnalyticsEnv,
+  type Command,
+  resolveSurface,
+  trackCommand,
+  trackRoll,
+} from './analytics/track';
 import { rollReply } from './handlers/roll';
 import { fullReply } from './handlers/full';
-import { randomReply } from './handlers/random';
+import { RANDOM_NOTATION, randomReply } from './handlers/random';
 import { helpReply } from './handlers/help';
-import { createInlineArticles } from './handlers/inline';
+import { chosenInlineRoll, createInlineArticles } from './handlers/inline';
 import { type Locale, messages, resolveLocale } from './i18n';
 import { extractLabel } from './label';
 import { normalizeNotation } from './notation';
@@ -38,6 +45,10 @@ function inlineHelpButton(locale: Locale): InlineQueryResultsButton {
   return { text: messages(locale).inline.help, start_parameter: 'help' };
 }
 
+function trackContext(ctx: Context, command: Command) {
+  return { command, surface: resolveSurface(ctx.chat?.type), userId: ctx.from?.id };
+}
+
 function replyOptions(ctx: Context) {
   const isGroup = ctx.chat != null && GROUPS.includes(ctx.chat.type);
   return {
@@ -49,8 +60,12 @@ function replyOptions(ctx: Context) {
   };
 }
 
-export function createBot(token: string): Bot {
-  const bot = new Bot(token);
+export interface BotEnv extends AnalyticsEnv {
+  TOKEN: string;
+}
+
+export function createBot(env: BotEnv): Bot {
+  const bot = new Bot(env.TOKEN);
 
   bot.catch(async (err) => {
     const e = err.error;
@@ -93,38 +108,49 @@ export function createBot(token: string): Bot {
     }
   });
 
-  bot.command(['start', 'help'], async (ctx) => {
+  async function replyHelp(ctx: Context, command: 'start' | 'help'): Promise<void> {
     await ctx.reply(helpReply(resolveLocale(ctx.from?.language_code)), replyOptions(ctx));
-  });
+    await trackCommand(env, trackContext(ctx, command));
+  }
+
+  bot.command('start', (ctx) => replyHelp(ctx, 'start'));
+  bot.command('help', (ctx) => replyHelp(ctx, 'help'));
 
   bot.command(['roll', 'r'], async (ctx) => {
     const { notation: rest, label } = extractLabel((ctx.match as string) ?? '');
     const notation = normalizeNotation(rest);
-    const reply = rollReply(notation, label);
-    logRoll(ctx, 'roll', notation, reply);
-    await ctx.reply(reply, replyOptions(ctx));
+    const { text, result } = rollReply(notation, label);
+    logRoll(ctx, 'roll', notation, text);
+    await ctx.reply(text, replyOptions(ctx));
+    await trackRoll(env, trackContext(ctx, 'roll'), result);
   });
 
   bot.command(['full', 'f'], async (ctx) => {
     const { notation: rest, label } = extractLabel((ctx.match as string) ?? '');
     const notation = normalizeNotation(rest);
-    const reply = fullReply(notation, label);
-    logRoll(ctx, 'full', notation, reply);
-    await ctx.reply(reply, replyOptions(ctx));
+    const { text, result } = fullReply(notation, label);
+    logRoll(ctx, 'full', notation, text);
+    await ctx.reply(text, replyOptions(ctx));
+    await trackRoll(env, trackContext(ctx, 'full'), result);
   });
 
   bot.command('random', async (ctx) => {
     const { label } = extractLabel((ctx.match as string) ?? '');
-    const reply = randomReply(label);
-    logRoll(ctx, 'random', 'd100', reply);
-    await ctx.reply(reply, replyOptions(ctx));
+    const { text, result } = randomReply(label);
+    logRoll(ctx, 'random', RANDOM_NOTATION, text);
+    await ctx.reply(text, replyOptions(ctx));
+    await trackRoll(env, trackContext(ctx, 'random'), result);
   });
 
-  bot.on('chosen_inline_result', (ctx) => {
+  // ! Not `inline_query` — it fires per keystroke and would measure typing speed.
+  bot.on('chosen_inline_result', async (ctx) => {
     const name = senderName(ctx);
-    const query = ctx.chosenInlineResult.query || 'd20';
-    const variant = inlineVariant(ctx.chosenInlineResult.result_id);
-    console.log(`${name} [inline] ${variant}: ${query}`);
+    const { query, result_id } = ctx.chosenInlineResult;
+    const variant = inlineVariant(result_id);
+    console.log(`${name} [inline] ${variant}: ${query || 'd20'}`);
+
+    const context = { command: 'inline', surface: 'inline', userId: ctx.from?.id } as const;
+    await trackRoll(env, context, () => chosenInlineRoll(query, variant));
   });
 
   bot.on('inline_query', async (ctx) => {

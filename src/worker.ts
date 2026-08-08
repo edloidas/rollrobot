@@ -1,9 +1,12 @@
 import { BotError, GrammyError, webhookCallback } from 'grammy/web';
+import type { AnalyticsEngineDataset } from './analytics/track';
 import { createBot } from './bot';
 
 export interface Env {
   TOKEN: string;
   WEBHOOK_SECRET: string;
+  ANALYTICS?: AnalyticsEngineDataset;
+  ANALYTICS_SALT?: string;
 }
 
 const WEBHOOK_PATH = '/webhook';
@@ -16,7 +19,7 @@ function getUpdateHandler(env: Env): ReturnType<typeof webhookCallback> {
   if (!handleUpdate || token !== env.TOKEN || webhookSecret !== env.WEBHOOK_SECRET) {
     token = env.TOKEN;
     webhookSecret = env.WEBHOOK_SECRET;
-    handleUpdate = webhookCallback(createBot(env.TOKEN), 'cloudflare-mod', {
+    handleUpdate = webhookCallback(createBot(env), 'cloudflare-mod', {
       secretToken: env.WEBHOOK_SECRET,
     });
   }
