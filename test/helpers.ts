@@ -1,8 +1,25 @@
 import type { Bot } from 'grammy/web';
-import { createBot } from '../src/bot';
+import type { AnalyticsDataPoint, AnalyticsEngineDataset } from '../src/analytics/track';
+import { type BotEnv, createBot } from '../src/bot';
 
 // ? Fake token that passes grammY validation (numeric:alphanumeric)
-const FAKE_TOKEN = '0123456789:ABCdefGHIjklMNOpqrSTUvwxYZ';
+export const FAKE_TOKEN = '0123456789:ABCdefGHIjklMNOpqrSTUvwxYZ';
+
+export const FAKE_SALT = 'test-salt';
+
+export class FakeDataset implements AnalyticsEngineDataset {
+  points: AnalyticsDataPoint[] = [];
+
+  writeDataPoint(event: AnalyticsDataPoint): void {
+    this.points.push(event);
+  }
+}
+
+export class ThrowingDataset implements AnalyticsEngineDataset {
+  writeDataPoint(): void {
+    throw new Error('dataset unavailable');
+  }
+}
 
 let updateId = 0;
 
@@ -69,8 +86,8 @@ export class TestBot {
   replies: any[] = [];
   inlineResults: any[] = [];
 
-  constructor() {
-    this.bot = createBot(FAKE_TOKEN);
+  constructor(env: Partial<BotEnv> = {}) {
+    this.bot = createBot({ TOKEN: FAKE_TOKEN, ...env });
 
     // Provide fake bot info so handleUpdate works without calling bot.init()
     this.bot.botInfo = {

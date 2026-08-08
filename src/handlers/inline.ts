@@ -5,6 +5,7 @@ import { DEFAULT_LOCALE, type Locale, type Messages, messages } from '../i18n';
 import { extractLabel } from '../label';
 import { ROLL_LIMITS } from '../limits';
 import { normalizeNotation } from '../notation';
+import { RANDOM_NOTATION } from './random';
 
 function createInputMessageContent(text: string) {
   return {
@@ -33,7 +34,6 @@ function createArticle(
 }
 
 const DEFAULT_NOTATION = 'd20';
-const RANDOM_NOTATION = 'd100';
 
 function tryRoll(notation: string): RollResult | null {
   try {
@@ -78,21 +78,53 @@ export interface InlineQueryResponse {
   hasInvalidQuery: boolean;
 }
 
+interface QueryRoll {
+  result: RollResult;
+  label: string | null;
+}
+
+/** The roll a query stands for, or `null` when the presets are shown instead. */
+function resolveQueryRoll(query: string): QueryRoll | null {
+  const { notation, label } = extractLabel(query);
+  const hasQuery = notation !== '' && notation !== 'd';
+
+  // A label with no notation rolls the default, the same as a bare `/roll "attack"`
+  if (!hasQuery && label == null) return null;
+
+  const result = tryRoll(normalizeNotation(notation));
+  return result == null ? null : { result, label };
+}
+
+/**
+ * The roll behind a chosen inline result — its shape only, never its total: the
+ * update carries just the query, so this re-rolls and falls back to the preset
+ * the user saw when the query does not parse.
+ *
+ * ! Notation within a few dice of `maxDice` can cross the limit on one
+ *   evaluation and not the other, so its shape may disagree with what was sent.
+ */
+export function chosenInlineRoll(query: string, variant: string): RollResult {
+  if (variant === 'random') return roll(RANDOM_NOTATION);
+  return resolveQueryRoll(query)?.result ?? roll(DEFAULT_NOTATION);
+}
+
 export function createInlineArticles(
   query = '',
   locale: Locale = DEFAULT_LOCALE,
 ): InlineQueryResponse {
-  const { notation, label } = extractLabel(query);
-  const hasQuery = notation !== '' && notation !== 'd';
   const titles = messages(locale).inline;
+  const resolved = resolveQueryRoll(query);
 
-  // A label with no notation rolls the default, the same as a bare `/roll "attack"`
-  if (hasQuery || label != null) {
-    const result = tryRoll(normalizeNotation(notation));
-    if (result != null) {
-      return { results: createQueryArticles(result, titles, label), hasInvalidQuery: false };
-    }
+  if (resolved != null) {
+    return {
+      results: createQueryArticles(resolved.result, titles, resolved.label),
+      hasInvalidQuery: false,
+    };
   }
 
-  return { results: createPresetArticles(titles), hasInvalidQuery: hasQuery };
+  const { notation } = extractLabel(query);
+  return {
+    results: createPresetArticles(titles),
+    hasInvalidQuery: notation !== '' && notation !== 'd',
+  };
 }

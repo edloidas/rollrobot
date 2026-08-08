@@ -5,8 +5,9 @@
   "compatibility_date": "2026-07-14",
   "workers_dev": true,
   "secrets": {
-    "required": ["TOKEN", "WEBHOOK_SECRET"]
+    "required": ["TOKEN", "WEBHOOK_SECRET", "ANALYTICS_SALT"]
   },
+  "analytics_engine_datasets": [{ "binding": "ANALYTICS", "dataset": "rollrobot_events" }],
   "observability": {
     "enabled": true,
     "logs": {
