@@ -5,7 +5,7 @@ import { fullReply } from './handlers/full';
 import { randomReply } from './handlers/random';
 import { helpReply } from './handlers/help';
 import { createInlineArticles } from './handlers/inline';
-import { resolveLocale } from './i18n';
+import { type Locale, messages, resolveLocale } from './i18n';
 import { normalizeNotation } from './notation';
 import { noPermissionText } from './text';
 
@@ -23,10 +23,9 @@ function logRoll(ctx: Context, command: string, notation: string, reply: string)
   console.log(`${name}${group} /${command}: ${notation} | ${result}`);
 }
 
-const INLINE_HELP_BUTTON: InlineQueryResultsButton = {
-  text: 'How to use',
-  start_parameter: 'help',
-};
+function inlineHelpButton(locale: Locale): InlineQueryResultsButton {
+  return { text: messages(locale).inline.help, start_parameter: 'help' };
+}
 
 function replyOptions(ctx: Context) {
   const isGroup = ctx.chat != null && GROUPS.includes(ctx.chat.type);
@@ -114,14 +113,12 @@ export function createBot(token: string): Bot {
   });
 
   bot.on('inline_query', async (ctx) => {
-    const { results, hasInvalidQuery } = createInlineArticles(
-      ctx.inlineQuery.query,
-      resolveLocale(ctx.from?.language_code),
-    );
+    const locale = resolveLocale(ctx.from?.language_code);
+    const { results, hasInvalidQuery } = createInlineArticles(ctx.inlineQuery.query, locale);
     await ctx.answerInlineQuery(results, {
       cache_time: 0,
       is_personal: true,
-      ...(hasInvalidQuery ? { button: INLINE_HELP_BUTTON } : {}),
+      ...(hasInvalidQuery ? { button: inlineHelpButton(locale) } : {}),
     });
   });
 

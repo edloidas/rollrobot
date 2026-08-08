@@ -2,7 +2,7 @@ import { playground, reference } from './links';
 import type { Messages } from './types';
 
 export const ru: Messages = {
-  inline: { roll: 'Бросок', full: 'Разбор', random: 'Наугад' },
+  inline: { roll: 'Бросок', full: 'Разбор', random: 'Наугад', help: 'Как пользоваться' },
 
   help: `Бросай кубики как никто другой — полная ролевая нотация: оставить/отбросить, взрывающиеся кубики, перебросы, пулы успехов и проверки.
 

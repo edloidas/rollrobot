@@ -2,7 +2,7 @@ import { playground, reference } from './links';
 import type { Messages } from './types';
 
 export const en: Messages = {
-  inline: { roll: 'Roll', full: 'Full', random: 'Random' },
+  inline: { roll: 'Roll', full: 'Full', random: 'Random', help: 'How to use' },
 
   help: `Roll the dice like no one before — full RPG notation with keep/drop, exploding dice, rerolls, success pools, and checks.
 

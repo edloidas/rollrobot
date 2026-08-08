@@ -2,7 +2,7 @@ import { playground, reference } from './links';
 import type { Messages } from './types';
 
 export const es: Messages = {
-  inline: { roll: 'Tirada', full: 'Desglose', random: 'Aleatoria' },
+  inline: { roll: 'Tirada', full: 'Desglose', random: 'Aleatoria', help: 'Cómo se usa' },
 
   help: `Tira los dados como nadie — notación de rol completa con mantener/descartar, dados explosivos, nuevas tiradas, reservas de éxitos y pruebas.
 
