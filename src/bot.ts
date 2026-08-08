@@ -24,6 +24,12 @@ function logRoll(ctx: Context, command: string, notation: string, reply: string)
   console.log(`${name}${group} /${command}: ${notation} | ${result}`);
 }
 
+/** Result IDs are `<variant>:<uuid>`; unprefixed IDs predate that and cannot be attributed. */
+function inlineVariant(resultId: string): string {
+  const separator = resultId.indexOf(':');
+  return separator > 0 ? resultId.slice(0, separator) : 'unknown';
+}
+
 function inlineHelpButton(locale: Locale): InlineQueryResultsButton {
   return { text: messages(locale).inline.help, start_parameter: 'help' };
 }
@@ -113,7 +119,8 @@ export function createBot(token: string): Bot {
   bot.on('chosen_inline_result', (ctx) => {
     const name = ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name ?? 'unknown');
     const query = ctx.chosenInlineResult.query || 'd20';
-    console.log(`${name} [inline]: ${query}`);
+    const variant = inlineVariant(ctx.chosenInlineResult.result_id);
+    console.log(`${name} [inline] ${variant}: ${query}`);
   });
 
   bot.on('inline_query', async (ctx) => {
