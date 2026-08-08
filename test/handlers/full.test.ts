@@ -49,4 +49,14 @@ describe('/full', () => {
   test('should keep legacy shorthand working', async () => {
     expect(await bot.send('/full 2 10 -1')).toMatch(pattern);
   });
+
+  test('should quote the label above the breakdown', async () => {
+    const reply = await bot.send('/full 4d6kh3 "characteristics"');
+    expect(reply).toStartWith('<blockquote>characteristics</blockquote>\n');
+    expect(reply.slice(reply.indexOf('\n') + 1)).toMatch(pattern);
+  });
+
+  test('should leave error replies bare', async () => {
+    expect(await bot.send('/full xyz "my label"')).not.toContain('<blockquote>');
+  });
 });

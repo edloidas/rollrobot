@@ -27,6 +27,8 @@ Inline: type @rollrobot [notation] in any chat, or pick a preset from the list.
 
 Shorthand: <code>/roll 20</code> rolls d20, <code>/roll 2 10 -1</code> rolls 2d10-1.
 
+Name a roll by quoting it at the end: <code>/roll 2d20+1 "Perception"</code>.
+
 Try notation live in the ${playground('playground')}, or read the full ${reference('notation reference')}.`,
 
   commands: [

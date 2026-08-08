@@ -50,4 +50,49 @@ describe('/roll', () => {
     expect(await bot.send('/roll 2 10 -1')).toMatch(/^<code>2d10 - 1<\/code> = <b>-?\d+<\/b>$/);
     expect(await bot.send('/roll 2 10 3')).toMatch(/^<code>2d10 \+ 3<\/code> = <b>\d+<\/b>$/);
   });
+
+  describe('named rolls', () => {
+    test('should quote the label above the result', async () => {
+      expect(await bot.send('/roll 2d20+1 "My message"')).toMatch(
+        /^<blockquote>My message<\/blockquote>\n<code>2d20 \+ 1<\/code> = <b>\d+<\/b>$/,
+      );
+    });
+
+    test('should accept every supported quote pair', async () => {
+      for (const input of ['d20 "a"', "d20 'a'", 'd20 `a`', 'd20 “a”', 'd20 «a»']) {
+        expect(await bot.send(`/roll ${input}`)).toStartWith('<blockquote>a</blockquote>\n');
+      }
+    });
+
+    test('should roll the default when only a label is given', async () => {
+      expect(await bot.send('/roll "attack"')).toMatch(
+        /^<blockquote>attack<\/blockquote>\n<code>1d20<\/code> = <b>\d+<\/b>$/,
+      );
+    });
+
+    test('should keep the label out of the notation', async () => {
+      expect(await bot.send('/roll 2 10 -1 "shorthand"')).toMatch(
+        /^<blockquote>shorthand<\/blockquote>\n<code>2d10 - 1<\/code>/,
+      );
+    });
+
+    test('should escape HTML in the label', async () => {
+      expect(await bot.send('/roll d20 "<b>bold</b> & co"')).toStartWith(
+        '<blockquote>&lt;b&gt;bold&lt;/b&gt; &amp; co</blockquote>\n',
+      );
+    });
+
+    test('should leave error replies bare', async () => {
+      const reply = await bot.send('/roll xyz "my label"');
+      expect(reply).not.toContain('<blockquote>');
+      expect(reply).toMatch(/^<i>.+<\/i>/);
+      expect(reply).toContain('<pre>xyz');
+    });
+
+    test('should leave an unterminated quote to the parser', async () => {
+      const reply = await bot.send('/roll 4d6 "chars');
+      expect(reply).not.toContain('<blockquote>');
+      expect(reply).toMatch(/^<i>.+<\/i>/);
+    });
+  });
 });

@@ -27,6 +27,8 @@ export const uk: Messages = {
 
 Коротка форма: <code>/roll 20</code> кидає d20, <code>/roll 2 10 -1</code> кидає 2d10-1.
 
+Назви кидок, взявши назву в лапки в кінці: <code>/roll 2d20+1 "Уважність"</code>.
+
 Спробуй нотацію наживо в ${playground('пісочниці')} або відкрий ${reference('повний довідник')}.`,
 
   commands: [

@@ -1,10 +1,10 @@
 import { isNotationError, roll } from 'roll-parser';
-import { formatDetailedResult, formatError } from '../format';
+import { formatDetailedResult, formatError, withLabel } from '../format';
 import { ROLL_LIMITS } from '../limits';
 
-export function fullReply(notation: string): string {
+export function fullReply(notation: string, label?: string | null): string {
   try {
-    return formatDetailedResult(roll(notation, ROLL_LIMITS));
+    return withLabel(formatDetailedResult(roll(notation, ROLL_LIMITS)), label);
   } catch (error) {
     if (isNotationError(error)) return formatError(error, notation);
     throw error;

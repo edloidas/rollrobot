@@ -27,6 +27,8 @@ En línea: escribe @rollrobot [notación] en cualquier chat, o elige una opción
 
 Notación abreviada: <code>/roll 20</code> tira d20, <code>/roll 2 10 -1</code> tira 2d10-1.
 
+Nombra una tirada citándola al final: <code>/roll 2d20+1 "Percepción"</code>.
+
 Comprueba la notación en vivo en el ${playground('área de pruebas')}, o consulta la ${reference('referencia completa')}.`,
 
   commands: [

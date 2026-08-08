@@ -27,6 +27,8 @@ Inline: digite @rollrobot [notação] em qualquer conversa, ou escolha uma opç�
 
 Notação abreviada: <code>/roll 20</code> rola d20, <code>/roll 2 10 -1</code> rola 2d10-1.
 
+Nomeie uma rolagem citando-a no final: <code>/roll 2d20+1 "Percepção"</code>.
+
 Teste a notação no ${playground('playground')}, ou leia a ${reference('referência completa')}.`,
 
   commands: [
