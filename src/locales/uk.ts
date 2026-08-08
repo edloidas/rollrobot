@@ -2,7 +2,7 @@ import { playground, reference } from './links';
 import type { Messages } from './types';
 
 export const uk: Messages = {
-  inline: { roll: 'Кидок', full: 'Докладно', random: 'Випадковий' },
+  inline: { roll: 'Кидок', full: 'Докладно', random: 'Випадковий', help: 'Як користуватися' },
 
   help: `Кидай кубики як ніхто інший — повна рольова нотація: утримання/відкидання, вибухові кубики, перекидання, пул успіху і перевірки.
 

@@ -2,7 +2,7 @@ import { playground, reference } from './links';
 import type { Messages } from './types';
 
 export const be: Messages = {
-  inline: { roll: 'Кідок', full: 'Падрабязны', random: 'Выпадковы' },
+  inline: { roll: 'Кідок', full: 'Падрабязны', random: 'Выпадковы', help: 'Як карыстацца' },
 
   help: `Кідай кубікі як ніхто іншы — поўная ролевая натацыя: захаванне/скід, выбуховыя кубікі, перакіды, пулы поспехаў і праверкі.
 

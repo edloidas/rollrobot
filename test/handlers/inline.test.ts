@@ -8,7 +8,7 @@ beforeEach(() => {
   bot = new TestBot();
 });
 
-const HELP_BUTTON = { text: 'How to use', start_parameter: 'help' };
+const HELP_BUTTON = { text: messages('en').inline.help, start_parameter: 'help' };
 
 const PRESET_ARTICLES = [
   { title: 'Roll', description: 'd20' },
@@ -152,6 +152,19 @@ describe('Inline queries', () => {
     test('should not show help button for extended notation', async () => {
       await bot.sendInline('2d20kh1+5');
       expect(bot.inlineResults[0].button).toBeUndefined();
+    });
+
+    test('should localize the help button for the requesting user', async () => {
+      await bot.sendInline('abc', 'ru');
+      expect(bot.inlineResults[0].button).toEqual({
+        text: messages('ru').inline.help,
+        start_parameter: 'help',
+      });
+    });
+
+    test('should fall back to the English help button for unsupported languages', async () => {
+      await bot.sendInline('abc', 'ja');
+      expect(bot.inlineResults[0].button).toEqual(HELP_BUTTON);
     });
   });
 

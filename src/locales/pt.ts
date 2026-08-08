@@ -2,7 +2,7 @@ import { playground, reference } from './links';
 import type { Messages } from './types';
 
 export const pt: Messages = {
-  inline: { roll: 'Rolagem', full: 'Detalhada', random: 'Aleatória' },
+  inline: { roll: 'Rolagem', full: 'Detalhada', random: 'Aleatória', help: 'Como usar' },
 
   help: `Role os dados como ninguém — notação de RPG completa com manter/descartar, dados explosivos, novas rolagens, reservas de sucessos e testes.
 

@@ -2,7 +2,7 @@ import { playground, reference } from './links';
 import type { Messages } from './types';
 
 export const de: Messages = {
-  inline: { roll: 'Wurf', full: 'Aufschlüsselung', random: 'Zufallswurf' },
+  inline: { roll: 'Wurf', full: 'Aufschlüsselung', random: 'Zufallswurf', help: 'Anleitung' },
 
   help: `Würfle wie noch nie — vollständige Rollenspiel-Notation mit Behalten/Verwerfen, explodierenden Würfeln, Wiederholungswürfen, Erfolgspools und Proben.
 
