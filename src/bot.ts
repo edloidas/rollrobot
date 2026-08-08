@@ -11,7 +11,7 @@ import { rollReply } from './handlers/roll';
 import { fullReply } from './handlers/full';
 import { RANDOM_NOTATION, randomReply } from './handlers/random';
 import { helpReply } from './handlers/help';
-import { chosenInlineRoll, createInlineArticles } from './handlers/inline';
+import { chosenInlineRoll, createInlineArticles, DEFAULT_NOTATION } from './handlers/inline';
 import { type Locale, messages, resolveLocale } from './i18n';
 import { extractLabel } from './label';
 import { normalizeNotation } from './notation';
@@ -147,7 +147,8 @@ export function createBot(env: BotEnv): Bot {
     const name = senderName(ctx);
     const { query, result_id } = ctx.chosenInlineResult;
     const variant = inlineVariant(result_id);
-    console.log(`${name} [inline] ${variant}: ${query || 'd20'}`);
+    const notation = variant === 'random' ? RANDOM_NOTATION : query || DEFAULT_NOTATION;
+    console.log(`${name} [inline] ${variant}: ${notation}`);
 
     const context = { command: 'inline', surface: 'inline', userId: ctx.from?.id } as const;
     await trackRoll(env, context, () => chosenInlineRoll(query, variant));
