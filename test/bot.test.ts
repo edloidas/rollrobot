@@ -66,7 +66,11 @@ describe('Chosen inline results', () => {
   test('should log the chosen variant', async () => {
     expect(await chosenLog('roll:abc', 'd20')).toEqual('@testuser [inline] roll: d20');
     expect(await chosenLog('full:abc', 'd20')).toEqual('@testuser [inline] full: d20');
-    expect(await chosenLog('random:abc')).toEqual('@testuser [inline] random: d20');
+    expect(await chosenLog('random:abc')).toEqual('@testuser [inline] random: d100');
+  });
+
+  test('should log the default notation for an empty query', async () => {
+    expect(await chosenLog('roll:abc')).toEqual('@testuser [inline] roll: d20');
   });
 
   test('should log an unknown variant for unprefixed ids', async () => {

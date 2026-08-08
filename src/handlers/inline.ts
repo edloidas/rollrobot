@@ -33,7 +33,7 @@ function createArticle(
   };
 }
 
-const DEFAULT_NOTATION = 'd20';
+export const DEFAULT_NOTATION = 'd20';
 
 function tryRoll(notation: string): RollResult | null {
   try {
