@@ -51,6 +51,21 @@ describe('Inline queries', () => {
     expectArticles(results, PRESET_ARTICLES);
   });
 
+  test('should prefix preset article ids with their variant', async () => {
+    const results = await bot.sendInline('');
+    expect(results.map((r) => r.id.split(':')[0])).toEqual(['roll', 'full', 'random']);
+  });
+
+  test('should prefix query article ids with their variant', async () => {
+    const results = await bot.sendInline('d20');
+    expect(results.map((r) => r.id.split(':')[0])).toEqual(['roll', 'full']);
+  });
+
+  test('should keep article ids unique within a response', async () => {
+    const results = await bot.sendInline('');
+    expect(new Set(results.map((r) => r.id)).size).toEqual(results.length);
+  });
+
   test('should return compact and detailed articles for valid notation', async () => {
     const results = await bot.sendInline('d20');
     expectArticles(results, [

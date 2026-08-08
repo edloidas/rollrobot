@@ -53,6 +53,17 @@ function createInlineQueryUpdate(query: string, languageCode?: string) {
   };
 }
 
+function createChosenInlineResultUpdate(resultId: string, query: string) {
+  return {
+    update_id: nextUpdateId(),
+    chosen_inline_result: {
+      result_id: resultId,
+      query,
+      from: createSender(),
+    },
+  };
+}
+
 export class TestBot {
   bot: Bot;
   replies: any[] = [];
@@ -109,6 +120,12 @@ export class TestBot {
     const update = createInlineQueryUpdate(query, languageCode);
     await this.bot.handleUpdate(update as any);
     return this.inlineResults[0]?.results || [];
+  }
+
+  async sendChosenInline(resultId: string, query = ''): Promise<void> {
+    this.clear();
+    const update = createChosenInlineResultUpdate(resultId, query);
+    await this.bot.handleUpdate(update as any);
   }
 
   getLastReplyOptions(): any {

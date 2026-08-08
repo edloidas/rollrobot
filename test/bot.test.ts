@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach } from 'bun:test';
+import { describe, test, expect, beforeEach, afterEach, spyOn } from 'bun:test';
 import { TestBot } from './helpers';
 
 let bot: TestBot;
@@ -44,5 +44,32 @@ describe('Bot message options', () => {
     expect(await bot.send('/roll@testbot d20')).toMatch(pattern);
     expect(await bot.send('/full@testbot d20')).toMatch(pattern);
     expect(await bot.send('/random@testbot')).toMatch(/^<b>\d{1,3}<\/b>$/);
+  });
+});
+
+describe('Chosen inline results', () => {
+  let log: ReturnType<typeof spyOn<Console, 'log'>>;
+
+  beforeEach(() => {
+    log = spyOn(console, 'log').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    log.mockRestore();
+  });
+
+  async function chosenLog(resultId: string, query = ''): Promise<string> {
+    await bot.sendChosenInline(resultId, query);
+    return log.mock.calls.at(-1)?.[0] ?? '';
+  }
+
+  test('should log the chosen variant', async () => {
+    expect(await chosenLog('roll:abc', 'd20')).toEqual('@testuser [inline] roll: d20');
+    expect(await chosenLog('full:abc', 'd20')).toEqual('@testuser [inline] full: d20');
+    expect(await chosenLog('random:abc')).toEqual('@testuser [inline] random: d20');
+  });
+
+  test('should log an unknown variant for unprefixed ids', async () => {
+    expect(await chosenLog('abc', 'd20')).toEqual('@testuser [inline] unknown: d20');
   });
 });

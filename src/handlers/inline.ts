@@ -14,10 +14,18 @@ function createInputMessageContent(text: string) {
   };
 }
 
-function createArticle(title: string, description: string, message: string): InlineQueryResult {
+type InlineVariant = 'roll' | 'full' | 'random';
+
+function createArticle(
+  variant: InlineVariant,
+  title: string,
+  description: string,
+  message: string,
+): InlineQueryResult {
   return {
     type: 'article',
-    id: crypto.randomUUID(),
+    // Prefix exposes the chosen variant in `chosen_inline_result.result_id`
+    id: `${variant}:${crypto.randomUUID()}`,
     title,
     input_message_content: createInputMessageContent(message),
     description,
@@ -44,8 +52,8 @@ function createVariantArticles(
   label?: string | null,
 ): InlineQueryResult[] {
   return [
-    createArticle(titles.roll, description, withLabel(formatResult(result), label)),
-    createArticle(titles.full, description, withLabel(formatDetailedResult(result), label)),
+    createArticle('roll', titles.roll, description, withLabel(formatResult(result), label)),
+    createArticle('full', titles.full, description, withLabel(formatDetailedResult(result), label)),
   ];
 }
 
@@ -61,7 +69,7 @@ function createQueryArticles(
 function createPresetArticles(titles: Messages['inline']): InlineQueryResult[] {
   return [
     ...createVariantArticles(roll(DEFAULT_NOTATION), DEFAULT_NOTATION, titles),
-    createArticle(titles.random, RANDOM_NOTATION, formatTotal(roll(RANDOM_NOTATION))),
+    createArticle('random', titles.random, RANDOM_NOTATION, formatTotal(roll(RANDOM_NOTATION))),
   ];
 }
 
