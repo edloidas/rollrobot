@@ -181,6 +181,11 @@ export function formatTotal(result: RollResult): string {
   return `<b>${result.total}</b>`;
 }
 
+/** Puts the roll's name above it as a quote. Passing no label leaves the reply untouched. */
+export function withLabel(reply: string, label?: string | null): string {
+  return label ? `<blockquote>${escapeHtml(label)}</blockquote>\n${reply}` : reply;
+}
+
 /**
  * Detailed reply: the compact line plus the per-die breakdown. The parser's
  * `rendered` string ends with an `= total` tail that duplicates the first

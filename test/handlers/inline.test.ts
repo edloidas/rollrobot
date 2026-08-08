@@ -168,6 +168,52 @@ describe('Inline queries', () => {
     });
   });
 
+  describe('Named rolls', () => {
+    test('should quote the label in both article messages', async () => {
+      const results = await bot.sendInline('4d6 "characteristics"');
+      expectArticles(results, [
+        { title: 'Roll', description: '4d6' },
+        { title: 'Full', description: '4d6' },
+      ]);
+      for (const result of results) {
+        expect(result.input_message_content.message_text).toStartWith(
+          '<blockquote>characteristics</blockquote>\n',
+        );
+      }
+    });
+
+    test('should roll the default when only a label is given', async () => {
+      const results = await bot.sendInline('"attack"');
+      expectArticles(results, [
+        { title: 'Roll', description: '1d20' },
+        { title: 'Full', description: '1d20' },
+      ]);
+      expect(bot.inlineResults[0].button).toBeUndefined();
+    });
+
+    test('should fall back to presets with help button for an unterminated quote', async () => {
+      const results = await bot.sendInline('4d6 "chars');
+      expectArticles(results, PRESET_ARTICLES);
+      expect(bot.inlineResults[0].button).toEqual(HELP_BUTTON);
+    });
+
+    test('should fall back to presets when the notation is invalid', async () => {
+      const results = await bot.sendInline('xyz "label"');
+      expectArticles(results, PRESET_ARTICLES);
+      expect(bot.inlineResults[0].button).toEqual(HELP_BUTTON);
+      for (const result of results) {
+        expect(result.input_message_content.message_text).not.toContain('<blockquote>');
+      }
+    });
+
+    test('should escape HTML in the label', async () => {
+      const results = await bot.sendInline('d20 "<b>x</b>"');
+      expect(results[0].input_message_content.message_text).toStartWith(
+        '<blockquote>&lt;b&gt;x&lt;/b&gt;</blockquote>\n',
+      );
+    });
+  });
+
   test('should fall back to presets with help button above the dice limit', async () => {
     const results = await bot.sendInline('999d6');
     expectArticles(results, PRESET_ARTICLES);

@@ -27,6 +27,8 @@ export const be: Messages = {
 
 Кароткі запіс: <code>/roll 20</code> кідае d20, <code>/roll 2 10 -1</code> кідае 2d10-1.
 
+Назаві кідок, узяўшы назву ў двукоссі ў канцы: <code>/roll 2d20+1 "Уважлівасць"</code>.
+
 Паспрабуй натацыю ў ${playground('пясочніцы')} або адкрый ${reference('поўны даведнік')}.`,
 
   commands: [

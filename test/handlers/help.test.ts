@@ -2,19 +2,23 @@ import { describe, test, expect, beforeEach } from 'bun:test';
 import { roll } from 'roll-parser';
 import { TestBot } from '../helpers';
 import { messages, SUPPORTED_LOCALES } from '../../src/i18n';
+import { extractLabel } from '../../src/label';
 import { normalizeNotation } from '../../src/notation';
 
-/** Guide examples, run through the command shim so `/roll 2 10 -1` is checked as `2d10-1`. */
+/**
+ * Guide examples, run through the same shims the commands apply — so `/roll 2 10 -1`
+ * is checked as `2d10-1`, and a label example is checked with its quotes stripped.
+ * A translation that mangles a quote leaves it in the notation and fails here.
+ */
 function notationExamples(help: string): string[] {
-  return [...help.matchAll(/<code>(.+?)<\/code>/g)].map(([, example]) =>
-    normalizeNotation(
-      example
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&amp;/g, '&')
-        .replace(/^\/\w+\s*/, ''),
-    ),
-  );
+  return [...help.matchAll(/<code>(.+?)<\/code>/g)].map(([, example]) => {
+    const command = example
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/^\/\w+\s*/, '');
+    return normalizeNotation(extractLabel(command).notation);
+  });
 }
 
 let bot: TestBot;

@@ -17,4 +17,17 @@ describe('/random', () => {
   test('should ignore extra arguments', async () => {
     expect(await bot.send('/random d100+1000')).toMatch(pattern);
   });
+
+  test('should quote the label above the total', async () => {
+    expect(await bot.send('/random "Is this a good bot?"')).toMatch(
+      /^<blockquote>Is this a good bot\?<\/blockquote>\n<b>\d{1,3}<\/b>$/,
+    );
+  });
+
+  // The notation half stays ignored, as it is without a label
+  test('should keep the label when arguments precede it', async () => {
+    expect(await bot.send('/random d6 "note"')).toMatch(
+      /^<blockquote>note<\/blockquote>\n<b>\d{1,3}<\/b>$/,
+    );
+  });
 });

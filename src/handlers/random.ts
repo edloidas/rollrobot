@@ -1,6 +1,6 @@
 import { roll } from 'roll-parser';
-import { formatTotal } from '../format';
+import { formatTotal, withLabel } from '../format';
 
-export function randomReply(): string {
-  return formatTotal(roll('d100'));
+export function randomReply(label?: string | null): string {
+  return withLabel(formatTotal(roll('d100')), label);
 }

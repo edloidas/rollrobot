@@ -1,7 +1,8 @@
 import type { InlineQueryResult } from 'grammy/types';
 import { isNotationError, roll, type RollResult } from 'roll-parser';
-import { formatDetailedResult, formatResult, formatTotal } from '../format';
+import { formatDetailedResult, formatResult, formatTotal, withLabel } from '../format';
 import { DEFAULT_LOCALE, type Locale, type Messages, messages } from '../i18n';
+import { extractLabel } from '../label';
 import { ROLL_LIMITS } from '../limits';
 import { normalizeNotation } from '../notation';
 
@@ -40,15 +41,20 @@ function createVariantArticles(
   result: RollResult,
   description: string,
   titles: Messages['inline'],
+  label?: string | null,
 ): InlineQueryResult[] {
   return [
-    createArticle(titles.roll, description, formatResult(result)),
-    createArticle(titles.full, description, formatDetailedResult(result)),
+    createArticle(titles.roll, description, withLabel(formatResult(result), label)),
+    createArticle(titles.full, description, withLabel(formatDetailedResult(result), label)),
   ];
 }
 
-function createQueryArticles(result: RollResult, titles: Messages['inline']): InlineQueryResult[] {
-  return createVariantArticles(result, result.expression, titles);
+function createQueryArticles(
+  result: RollResult,
+  titles: Messages['inline'],
+  label: string | null,
+): InlineQueryResult[] {
+  return createVariantArticles(result, result.expression, titles, label);
 }
 
 /** Fallback list: the three commands, on their default notation. */
@@ -68,14 +74,15 @@ export function createInlineArticles(
   query = '',
   locale: Locale = DEFAULT_LOCALE,
 ): InlineQueryResponse {
-  const trimmed = query.trim();
-  const hasQuery = trimmed !== '' && trimmed !== 'd';
+  const { notation, label } = extractLabel(query);
+  const hasQuery = notation !== '' && notation !== 'd';
   const titles = messages(locale).inline;
 
-  if (hasQuery) {
-    const result = tryRoll(normalizeNotation(trimmed));
+  // A label with no notation rolls the default, the same as a bare `/roll "attack"`
+  if (hasQuery || label != null) {
+    const result = tryRoll(normalizeNotation(notation));
     if (result != null) {
-      return { results: createQueryArticles(result, titles), hasInvalidQuery: false };
+      return { results: createQueryArticles(result, titles, label), hasInvalidQuery: false };
     }
   }
 

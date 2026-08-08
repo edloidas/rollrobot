@@ -27,6 +27,8 @@ Inline: tippe @rollrobot [Notation] in jedem Chat, oder wähle einen Eintrag aus
 
 Kurzschreibweise: <code>/roll 20</code> würfelt d20, <code>/roll 2 10 -1</code> würfelt 2d10-1.
 
+Benenne einen Wurf, indem du ihn am Ende in Anführungszeichen setzt: <code>/roll 2d20+1 "Wahrnehmung"</code>.
+
 Probiere die Notation im ${playground('Playground')} aus, oder lies die ${reference('vollständige Notationsreferenz')}.`,
 
   commands: [

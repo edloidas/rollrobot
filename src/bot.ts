@@ -6,6 +6,7 @@ import { randomReply } from './handlers/random';
 import { helpReply } from './handlers/help';
 import { createInlineArticles } from './handlers/inline';
 import { type Locale, messages, resolveLocale } from './i18n';
+import { extractLabel } from './label';
 import { normalizeNotation } from './notation';
 import { noPermissionText } from './text';
 
@@ -87,21 +88,24 @@ export function createBot(token: string): Bot {
   });
 
   bot.command(['roll', 'r'], async (ctx) => {
-    const notation = normalizeNotation((ctx.match as string) ?? '');
-    const reply = rollReply(notation);
+    const { notation: rest, label } = extractLabel((ctx.match as string) ?? '');
+    const notation = normalizeNotation(rest);
+    const reply = rollReply(notation, label);
     logRoll(ctx, 'roll', notation, reply);
     await ctx.reply(reply, replyOptions(ctx));
   });
 
   bot.command(['full', 'f'], async (ctx) => {
-    const notation = normalizeNotation((ctx.match as string) ?? '');
-    const reply = fullReply(notation);
+    const { notation: rest, label } = extractLabel((ctx.match as string) ?? '');
+    const notation = normalizeNotation(rest);
+    const reply = fullReply(notation, label);
     logRoll(ctx, 'full', notation, reply);
     await ctx.reply(reply, replyOptions(ctx));
   });
 
   bot.command('random', async (ctx) => {
-    const reply = randomReply();
+    const { label } = extractLabel((ctx.match as string) ?? '');
+    const reply = randomReply(label);
     logRoll(ctx, 'random', 'd100', reply);
     await ctx.reply(reply, replyOptions(ctx));
   });
