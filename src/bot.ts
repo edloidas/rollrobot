@@ -12,8 +12,12 @@ import { noPermissionText } from './text';
 
 const GROUPS = ['group', 'supergroup'];
 
+function senderName(ctx: Context): string {
+  return ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name ?? 'unknown');
+}
+
 function logRoll(ctx: Context, command: string, notation: string, reply: string): void {
-  const name = ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name ?? 'unknown');
+  const name = senderName(ctx);
   const group = ctx.chat?.title ? ` [${ctx.chat.title}]` : '';
   const result = reply
     .replace(/\n/g, ' ')
@@ -117,7 +121,7 @@ export function createBot(token: string): Bot {
   });
 
   bot.on('chosen_inline_result', (ctx) => {
-    const name = ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name ?? 'unknown');
+    const name = senderName(ctx);
     const query = ctx.chosenInlineResult.query || 'd20';
     const variant = inlineVariant(ctx.chosenInlineResult.result_id);
     console.log(`${name} [inline] ${variant}: ${query}`);
