@@ -49,8 +49,9 @@ full [notation reference](https://roll-parser.edloidas.io/reference).
 #### Languages: ####
 
 Inline titles, the command menu, and the notation guide follow your Telegram language:
-English, Spanish, Portuguese, German, Russian, Ukrainian, and Belarusian. Anything else
-falls back to English. Roll results are notation, so they read the same everywhere.
+English, Spanish, Portuguese, German, Russian, Ukrainian, Belarusian, and Persian.
+Anything else falls back to English. Roll results are notation, so they read the same
+everywhere.
 
 Your ideas on improvement are welcome.
 

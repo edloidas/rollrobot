@@ -94,5 +94,13 @@ describe('/roll', () => {
       expect(reply).not.toContain('<blockquote>');
       expect(reply).toMatch(/^<i>.+<\/i>/);
     });
+
+    // ! Pins the split-then-fold order through the real command path — folding ahead of
+    //   `extractLabel` would renumber every Persian roll title.
+    test('should fold eastern numerals in the notation but not in the label', async () => {
+      const reply = await bot.send('/roll ۲d۶ «ضربهٔ ۳»');
+      expect(reply).toContain('<blockquote>ضربهٔ ۳</blockquote>');
+      expect(reply).toContain('<code>2d6</code>');
+    });
   });
 });

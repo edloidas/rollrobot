@@ -267,4 +267,49 @@ describe('formatError', () => {
     const message = formatError(rollError('2d6+\n&'), '2d6+\n&');
     expect(message).toMatch(/^<i>.+\.<\/i>$/);
   });
+
+  // Carets are placed by code-unit offset, which a right-to-left run reorders away from
+  test('drops the caret line for right-to-left notation, keeping the echo', () => {
+    expect(formatError(rollError('2d20 ضربه'), '2d20 ضربه')).toBe(
+      "<i>Unexpected character: 'ض'.</i>\n<pre>2d20 ضربه</pre>",
+    );
+    expect(formatError(rollError('2d20 בדיקה'), '2d20 בדיקה')).toBe(
+      "<i>Unexpected character: 'ב'.</i>\n<pre>2d20 בדיקה</pre>",
+    );
+  });
+
+  // A tab is not one column wide, so carets under it would land short
+  test('drops the caret line for tabs, keeping the echo', () => {
+    expect(formatError(rollError('2d6\t&'), '2d6\t&')).toBe(
+      "<i>Unexpected character: '&amp;'.</i>\n<pre>2d6\t&amp;</pre>",
+    );
+  });
+
+  // Cyrillic is single-column and single-code-unit, so offsets still line up. `в` sits on
+  // the `d` key, which makes this the likeliest typo a Russian-layout user makes.
+  test('keeps the caret line for single-width non-ASCII', () => {
+    const message = formatError(rollError('2в20'), '2в20');
+    expect(message).toMatch(/^<i>.+\.<\/i>\n<pre>2в20\n \^<\/pre>$/);
+  });
+
+  // ! An override reorders the reply without appearing in it, so it is named rather than
+  //   echoed — otherwise a roll could display text its sender never wrote.
+  test('names bidi controls instead of passing them through', () => {
+    const overridden = '2d20\u202Eabc';
+    const message = formatError(rollError(overridden), overridden);
+    expect(message).toContain('U+202E');
+    expect(message).not.toMatch(/\p{Bidi_Control}/u);
+  });
+});
+
+describe('escapeHtml direction controls', () => {
+  test('names every direction control it finds', () => {
+    expect(escapeHtml('a‮b‏c⁦d')).toBe('aU+202EbU+200FcU+2066d');
+  });
+
+  // Persian orthography depends on ZWNJ, which is not a direction control
+  test('leaves ZWNJ and ZWJ alone', () => {
+    expect(escapeHtml('می‌اندازد')).toBe('می‌اندازد');
+    expect(escapeHtml('a‍b')).toBe('a‍b');
+  });
 });
