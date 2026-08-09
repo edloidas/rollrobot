@@ -128,3 +128,63 @@ The setup command registers `message`, `inline_query`, and `chosen_inline_result
 updates. It preserves queued updates unless `DROP_PENDING_UPDATES=true` is explicitly
 set. Test private, group, supergroup, and inline requests after configuration, then
 monitor the Worker logs for errors.
+
+## Analytics ##
+
+Analytics Engine has no dashboard for custom datasets, so `bun run analytics` is the read
+path. It runs locally and never touches the Worker.
+
+Add a Cloudflare API token with **Account · Account Analytics · Read** to `.env`, alongside
+the account the dataset lives in:
+
+```dotenv
+CF_ACCOUNT_ID=replace-with-cloudflare-account-id
+CF_ANALYTICS_TOKEN=replace-with-account-analytics-read-token
+INLINE_FEEDBACK_PROBABILITY=100
+```
+
+`INLINE_FEEDBACK_PROBABILITY` is optional and records whatever BotFather's
+`/setinlinefeedback` is set to — the API cannot be asked, so the caveat prints the number
+only if it is declared here.
+
+```sh
+bun run analytics                     # full report over the last 30 days
+bun run analytics -- --days 7         # narrower window (max 92, the retention limit)
+bun run analytics -- --json           # the same report as data
+bun run analytics -- --snapshot       # freeze completed days into .analytics/
+bun run analytics -- doctor           # latest rows plus write-path assertions
+bun run analytics -- quota            # data points per day against the 100k/day allowance
+bun run analytics -- sql "SELECT 1"   # one-off query
+```
+
+### Reading the numbers
+
+Every table is tagged with how far it can be trusted, because none of the three failure
+modes are visible in the figures themselves:
+
+| Tag | Meaning |
+| --- | --- |
+| `exact` | Aggregated along the dataset index (`index1`), where the sampling correction is lossless. |
+| `estimated` | Sample-corrected off the index, so totals drift against each other — measured at +10%. |
+| `lower bound` | Distinct-user counts see only rows that survived sampling, and no weighted-distinct function exists to correct for it. A user whose only roll was sampled away is invisible. |
+
+Inline rolls are undercounted separately: they are recorded on `chosen_inline_result`, which
+Telegram delivers probabilistically according to BotFather's `/setinlinefeedback`. Set
+`INLINE_FEEDBACK_PROBABILITY` in `.env` to have the configured value printed with the caveat.
+
+**Game system signals are signals, not detections.** Recorded dice shapes drop numeric
+constants, so `4d6kh3` and `4d6kh1` arrive identical. A `strong` signal means a modifier or
+die makes the shape distinctive; `weak` means the shape merely fits the system and would fit
+a dozen others.
+
+### Snapshots
+
+The dataset retains 92 days, so `.analytics/` is the only durable history. `--snapshot`
+freezes each completed UTC day once and never rewrites it, so a day is only frozen after it
+has had two days to settle — data points are not queryable the instant they are written, and
+a day captured too eagerly would be permanently short. Days with no traffic are written as
+zeroes, because a gap left unwritten is indistinguishable from a day that was never captured.
+
+Snapshots hold aggregates only — no user hashes. They are meant to be committed, which on a
+public repository means publishing daily volume, notation mix, and observed-user counts; add
+`.analytics/` to `.gitignore` to keep the history local instead.

@@ -21,6 +21,7 @@
     "worker:deploy": "wrangler deploy",
     "worker:upload": "wrangler versions upload",
     "telegram:configure": "bun scripts/configure-telegram.ts",
+    "analytics": "bun scripts/analytics/index.ts",
     "typecheck": "tsc --noEmit",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
