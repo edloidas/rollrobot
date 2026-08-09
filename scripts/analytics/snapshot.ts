@@ -1,7 +1,6 @@
-import { existsSync, mkdirSync, readdirSync, renameSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync } from 'node:fs';
 import type { AnalyticsClient } from './client';
 import {
-  DAILY_NOTATION_LIMIT,
   fetchDailyBuckets,
   fetchDailyCommandSurface,
   fetchDailyNotation,
@@ -92,6 +91,46 @@ function existingDays(): Set<string> {
       .filter((name) => name.endsWith('.json') && !name.endsWith('.partial'))
       .map((name) => name.slice(0, -'.json'.length)),
   );
+}
+
+function tallyOf(value: unknown): Record<string, number> {
+  if (value == null || typeof value !== 'object') return {};
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).map(([key, n]) => [key, Number(n) || 0]),
+  );
+}
+
+/**
+ * Every frozen day on disk, oldest first. The only history that outlives the
+ * 92-day retention window, so a reader that wants more than the live window has
+ * to come through here.
+ *
+ * ! Numbers are coerced rather than trusted. These files are edited by hand and
+ *   survive across versions, and a string reaching a renderer would be formatted
+ *   and emitted as-is instead of being measured.
+ */
+export function readSnapshots(): DaySnapshot[] {
+  return [...existingDays()].sort().map((day) => {
+    const raw = JSON.parse(
+      readFileSync(`${SNAPSHOT_DIR}/${day}.json`, 'utf8'),
+    ) as Partial<DaySnapshot>;
+
+    return {
+      day,
+      capturedAt: String(raw.capturedAt ?? ''),
+      points: Number(raw.points) || 0,
+      rolls: Number(raw.rolls) || 0,
+      observedUsers: Number(raw.observedUsers) || 0,
+      commands: tallyOf(raw.commands),
+      surfaces: tallyOf(raw.surfaces),
+      buckets: tallyOf(raw.buckets),
+      notation: (Array.isArray(raw.notation) ? raw.notation : []).map((entry) => ({
+        term: String(entry?.term ?? ''),
+        modifiers: String(entry?.modifiers ?? ''),
+        n: Number(entry?.n) || 0,
+      })),
+    };
+  });
 }
 
 export interface SnapshotOutcome {
