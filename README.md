@@ -157,6 +157,18 @@ bun run analytics -- quota            # data points per day against the 100k/day
 bun run analytics -- sql "SELECT 1"   # one-off query
 ```
 
+The report renders as `table` (default), `json`, or `html`:
+
+```sh
+bun run analytics -- --format html --out .tmp/report.html
+```
+
+The page is self-contained — inline styles, hand-written SVG, no network access and no
+build step — and reads `.analytics/` when it is populated, so it can show more history than
+the live retention window. Charts are withheld rather than faked where the data cannot
+support them: a series shorter than three days renders as its table instead of a trend line,
+and a cohort with no eligible users reads `n/a` rather than `0%`.
+
 ### Reading the numbers
 
 Every table is tagged with how far it can be trusted, because none of the three failure

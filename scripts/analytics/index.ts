@@ -1,10 +1,14 @@
 import { parseArgs } from 'node:util';
 import { type AnalyticsClient, createClient } from './client';
+import { renderHtml } from './html';
 import { fetchLatestRows, fetchPointsPerDay } from './queries';
 import { buildReport, preamble, renderReport } from './report';
-import { RETENTION_DAYS, SNAPSHOT_DIR, writeSnapshots } from './snapshot';
+import { readSnapshots, RETENTION_DAYS, SNAPSHOT_DIR, writeSnapshots } from './snapshot';
 
 const DEFAULT_DAYS = 30;
+
+const FORMATS = ['table', 'json', 'html'] as const;
+type Format = (typeof FORMATS)[number];
 
 /** Free-plan write allowance, the ceiling the volume check is read against. */
 const DAILY_ALLOWANCE = 100_000;
@@ -19,7 +23,9 @@ Commands:
 
 Options:
   --days <n>         window in days (default ${DEFAULT_DAYS}, max ${RETENTION_DAYS})
-  --json             emit JSON instead of tables
+  --format <f>       ${FORMATS.join(' | ')} (default table); html needs --out
+  --out <path>       file to write the html report to
+  --json             shorthand for --format json
   --snapshot         freeze every complete day not yet in ${SNAPSHOT_DIR}/
 `;
 
@@ -104,6 +110,8 @@ async function main(): Promise<void> {
     args: Bun.argv.slice(2),
     options: {
       days: { type: 'string' },
+      format: { type: 'string' },
+      out: { type: 'string' },
       json: { type: 'boolean', default: false },
       snapshot: { type: 'boolean', default: false },
       help: { type: 'boolean', default: false },
@@ -121,17 +129,36 @@ async function main(): Promise<void> {
     throw new Error(`--days must be a positive number, got "${values.days}"`);
   }
 
+  const format = (values.format ?? (values.json ? 'json' : 'table')) as Format;
+  if (!FORMATS.includes(format)) {
+    throw new Error(`--format must be one of ${FORMATS.join(', ')}, got "${values.format}"`);
+  }
+  if (format === 'html' && !values.out) {
+    throw new Error('--format html needs --out, e.g. --out .tmp/report.html');
+  }
+
+  // Caveats belong on the page itself for html, and in the payload for json
+  const quiet = format !== 'table';
+
   const client = createClient();
   const [command, argument] = positionals;
+
+  // Only the report has enough shape to be worth a page; the rest are line output.
+  // Without the --snapshot arm here, --out would be demanded and then ignored.
+  if (format === 'html' && (command != null || values.snapshot)) {
+    throw new Error(
+      `--format html applies to the report, not "${command ?? '--snapshot'}"\n\n${USAGE}`,
+    );
+  }
 
   if (values.snapshot) {
     if (command != null) {
       throw new Error(`--snapshot takes no command, but got "${command}"\n\n${USAGE}`);
     }
 
-    printCaveats(values.json, 'err');
+    printCaveats(quiet, 'err');
     const outcome = await writeSnapshots(client);
-    print(values.json, outcome, () =>
+    print(quiet, outcome, () =>
       [
         `snapshots in ${SNAPSHOT_DIR}/`,
         `  wrote ${outcome.written.length}: ${outcome.written.join(' ') || '-'}`,
@@ -145,16 +172,23 @@ async function main(): Promise<void> {
   switch (command) {
     case undefined: {
       const report = await buildReport(client, days);
-      print(values.json, report, () => renderReport(report));
+      if (format === 'html') {
+        const out = values.out as string;
+        await Bun.write(out, renderHtml(report, readSnapshots()));
+        console.log(`Wrote ${out}`);
+        return;
+      }
+
+      print(format === 'json', report, () => renderReport(report));
       return;
     }
     case 'doctor':
-      return runDoctor(client, Number(argument ?? 20), values.json);
+      return runDoctor(client, Number(argument ?? 20), quiet);
     case 'quota':
-      return runQuota(client, days, values.json);
+      return runQuota(client, days, quiet);
     case 'sql': {
       if (!argument) throw new Error('sql needs a query, e.g. analytics sql "SELECT 1"');
-      printCaveats(values.json, 'err');
+      printCaveats(quiet, 'err');
       console.log(JSON.stringify(await client.query(argument), null, 2));
       return;
     }
