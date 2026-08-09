@@ -1,202 +1,139 @@
-Roll Robot
-==========
+<h1 align="center">Roll Robot</h1>
 
-[![https://telegram.me/rollrobot](https://img.shields.io/badge/💬%20Telegram-rollrobot-blue.svg)](https://telegram.me/rollrobot)
-[![https://telegram.me/edloidas](https://img.shields.io/badge/💬%20Telegram-edloidas-blue.svg)](https://telegram.me/edloidas)
+<p align="center">
+Dice notation for tabletop RPGs, rolled in any Telegram chat.
+</p>
 
-> A Telegram bot that can roll the dice like no one before.
+<p align="center">
+  <a href="https://telegram.me/rollrobot"><img src="https://img.shields.io/badge/Telegram-%40rollrobot-2ca5e0?logo=telegram&logoColor=white" alt="@rollrobot on Telegram"></a>
+  <a href="https://github.com/edloidas/rollrobot/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/edloidas/rollrobot/test.yml?branch=master&label=CI" alt="CI status"></a>
+  <a href="https://github.com/edloidas/rollrobot/blob/master/LICENSE"><img src="https://img.shields.io/github/license/edloidas/rollrobot?color=blue" alt="MIT license"></a>
+</p>
 
-## About ##
+<p align="center">
+  <a href="https://telegram.me/rollrobot"><strong>Open the bot</strong></a> ·
+  <a href="https://roll-parser.edloidas.io/"><strong>Playground</strong></a> ·
+  <a href="https://roll-parser.edloidas.io/reference"><strong>Notation Guide</strong></a> ·
+  <a href="DEPLOYMENT.md"><strong>Deployment</strong></a> ·
+  <a href="ANALYTICS.md"><strong>Analytics</strong></a>
+</p>
 
 Dice for tabletop RPGs in any chat — D&D, Pathfinder, World of Darkness, Shadowrun, Fate,
-Call of Cthulhu.
+Savage Worlds, Call of Cthulhu. Add [@rollrobot](https://telegram.me/rollrobot) to a group,
+or type `@rollrobot` in any chat to roll without adding it anywhere:
 
-## Description ##
+```
+/full 2d20+5
 
-Dice notation for tabletop RPGs, rolled in any chat. Powered by
-[roll-parser](https://github.com/edloidas/roll-parser) v3 — keep/drop, exploding dice,
-rerolls, min/max clamps, success pools, grouped rolls, and checks against a DC.
+2d20 + 5 = 32
+[20↑, 7] + 5
+```
 
-`4d6kh3` for ability scores, `2d20kh1+7` with advantage, `1d20+12 vs 20` for a Pathfinder
+Notation is parsed by [roll-parser](https://github.com/edloidas/roll-parser) v3 — keep/drop,
+exploding dice, rerolls, min/max clamps, success pools, grouped rolls, and checks against a
+DC. `4d6kh3` for ability scores, `2d20kh1+7` with advantage, `1d20+12 vs 20` for a Pathfinder
 check, `7d10>=6f1` for a Storyteller pool, `{1d8!, 1d6!}kh1` for Savage Worlds, `4dF` for
 Fate, `d%` for Call of Cthulhu.
 
-Bot recognizes several commands and can be used in inline mode:
+## Commands
 
-@rollrobot [notation] -- inline request, with 'Roll' and 'Full' result variants
-/roll [notation] -- roll and show the total (shortcut: /r)
-/full [notation] -- roll with a die-by-die breakdown (shortcut: /f)
-/random -- 'd100' ('d%') roll, total only
-/help -- notation guide and links
+| Command | Shortcut | Result |
+| --- | --- | --- |
+| `/roll [notation]` | `/r` | The normalized expression and its total |
+| `/full [notation]` | `/f` | The same, plus a die-by-die breakdown |
+| `/random` | | A `d100` roll, total only |
+| `/help` | | Notation guide and links |
 
-#### Notation: ####
-* `2d20+5` -- dice and arithmetic: `+ - * /` and parentheses
-* `4d6kh3` -- keep the highest 3 (also `kl`, `dh`, `dl`)
-* `d8!` -- exploding dice
-* `2d6r<3` -- reroll below 3 (`ro` -- reroll once)
-* `4d6min2` -- clamp each die to at least 2 (also `max`)
-* `6d10>=6f1` -- count successes, subtract 1s as failures
-* `1d20+7 vs 15` -- check against a DC with degrees of success
-* `{1d8!, 1d6!}kh1` -- grouped rolls: each sub-roll competes as one die
-* `4dF` -- Fate dice, `d%` -- percentile
-* `2d6+floor(1d4/2)` -- functions: `floor`, `ceil`, `round`, `abs`, `min`, `max`, `sqrt`, `pow`
+Omitting the notation rolls `d20`. In groups the bot replies to the message it was called
+from, so several people can roll at once without the thread coming apart.
 
-Legacy shorthand still works: `/roll 20` rolls 'd20', `/roll 2 10 -1` rolls '2d10-1'.
+Typing `@rollrobot [notation]` in any chat offers one roll under two headings, **Roll** and
+**Full** — the choice is about display, not a reroll. With no notation the list falls back to
+`d20` and `d100` presets. Results are personal and uncached, so every new query rolls afresh.
 
-Try notation live in the [playground](https://roll-parser.edloidas.io/), or read the
-full [notation reference](https://roll-parser.edloidas.io/reference).
+## Notation
 
-#### Languages: ####
+| Example | Meaning |
+| --- | --- |
+| `2d20+5` | Dice and arithmetic: `+ - * /` and parentheses |
+| `4d6kh3` | Keep the highest 3 — also `kl`, `dh`, `dl` |
+| `d8!` | Exploding dice |
+| `2d6r<3` | Reroll below 3 — `ro` rerolls once |
+| `4d6min2` | Clamp each die to at least 2 — also `max` |
+| `6d10>=6f1` | Count successes, subtract 1s as failures |
+| `1d20+7 vs 15` | Check against a DC, reported as a degree of success |
+| `{1d8!, 1d6!}kh1` | Grouped rolls — each sub-roll competes as one die |
+| `4dF` · `d%` | Fate dice · percentile |
+| `2d6+floor(1d4/2)` | Functions: `floor`, `ceil`, `round`, `abs`, `min`, `max`, `sqrt`, `pow` |
+
+A breakdown marks what the notation asked about: dropped dice are struck through, successes
+bold, failures underlined, and natural extremes carry `↑` or `↓`. The extremes are marked
+conservatively — only on a single-pool roll, only from d6 upward unless `cs`/`cf` names the
+threshold, and never on a die whose face a clamp or an explosion rewrote, which would
+otherwise report a critical nobody rolled.
+
+Rolls are capped at 100 dice and 100 explode or reroll iterations, which keeps replies well
+inside Telegram's 4096-character message limit. A breakdown that still runs past 3500
+characters is dropped in favour of the compact reply.
+
+**Naming a roll.** Quote a name at the end and it appears above the result:
+`/roll 2d20kh1+7 "Perception"`.
+
+**Legacy shorthand.** `/roll 20` rolls `d20` and `/roll 2 10 -1` rolls `2d10-1`, the way the
+pre-v3 bot did.
+
+Try notation live in the [playground](https://roll-parser.edloidas.io/), or read the full
+[notation reference](https://roll-parser.edloidas.io/reference).
+
+## Languages
 
 Inline titles, the command menu, and the notation guide follow your Telegram language:
-English, Spanish, Portuguese, German, Russian, Ukrainian, Belarusian, and Persian.
-Anything else falls back to English. Roll results are notation, so they read the same
-everywhere.
+English, Spanish, Portuguese, German, Russian, Ukrainian, Belarusian, and Persian. Anything
+else falls back to English. Roll results are notation, so they read the same everywhere.
+Arabic-Indic and Extended Arabic-Indic digits are folded to ASCII before parsing, as is the
+Arabic percent sign — `۲۰` rolls a `d20` and `د٪` is still a parse error, since only the
+digits are folded, never the letters. A quoted name keeps its own numerals.
 
-Your ideas on improvement are welcome.
+## Stack
 
-## Stack ##
+Cloudflare Workers, TypeScript, Bun, [grammY](https://grammy.dev) in webhook mode, and
+[roll-parser](https://github.com/edloidas/roll-parser). The Worker holds no state: it
+answers `GET /health` and authenticated Telegram updates at `POST /webhook`, and nothing
+else.
 
-Cloudflare Workers, TypeScript, Bun, [grammY](https://grammy.dev), and [roll-parser](https://github.com/edloidas/roll-parser).
+## Development
 
-## Deployment ##
-
-The bot runs on Cloudflare Workers using Telegram webhooks.
-
-Cloudflare requires these encrypted Worker secrets:
-
-| Key | Description |
-| --- | --- |
-| `TOKEN` | Token generated by BotFather. |
-| `WEBHOOK_SECRET` | Random value used to authenticate Telegram webhook requests. |
-| `ANALYTICS_SALT` | Random value used to hash Telegram user IDs before they reach analytics. |
-
-Rolls are recorded to the `rollrobot_events` Analytics Engine dataset — one data point per
-dice term, plus one per `/start` and `/help`. Nothing identifying is stored: the user ID is
-written as an HMAC-SHA256 digest, and the dataset is write-only from the Worker. Analytics
-must be enabled once per Cloudflare account before the first deploy, and the dataset itself
-is created implicitly on first write. Without the binding or the salt the bot still replies
-normally.
-
-The Worker exposes `GET /health` and accepts authenticated Telegram POST requests at
-`/webhook`. It does not register or modify the Telegram webhook during deployment.
-
-### Cloudflare setup
-
-Install the dependencies, authenticate Wrangler, generate a Telegram-compatible secret,
-and store the secrets in Cloudflare:
+Bun is the only toolchain. Install, then run the full check before committing:
 
 ```sh
 bun install
-bunx wrangler login
-openssl rand -hex 32
-bunx wrangler secret put TOKEN
-bunx wrangler secret put WEBHOOK_SECRET
-bunx wrangler secret put ANALYTICS_SALT
+bun run validate       # typecheck + lint + format check + tests
+bun run test:watch
 ```
 
-Create an ignored `.env` file in the repository root. Bun loads it automatically for
-`telegram:configure`, and Wrangler uses it for local Worker development:
+Commits follow [Conventional Commits](https://www.conventionalcommits.org/) with the issue
+number appended — `feat: add inline named rolls #12`. See [CLAUDE.md](CLAUDE.md) for the
+issue, branch, and release conventions.
 
-```dotenv
-TOKEN=0123456789:replace-with-telegram-bot-token
-WEBHOOK_SECRET=replace-with-a-random-webhook-secret
-ANALYTICS_SALT=replace-with-a-random-analytics-salt
-WEBHOOK_URL=https://rollrobot.<account-subdomain>.workers.dev/webhook
-```
+## Deployment
 
-Keep `.env` local. It does not upload secrets to Cloudflare; the `wrangler secret put`
-commands above are still required for the deployed Worker.
+The bot runs as a single Cloudflare Worker behind a Telegram webhook. Deploying it needs
+three Worker secrets and one `wrangler` command; registering the webhook is a separate,
+deliberate step. See [DEPLOYMENT.md](DEPLOYMENT.md).
 
-Run the Worker locally, then deploy it when `/health` and webhook authentication have
-been verified:
+## Analytics
 
-```sh
-bun run worker:dev
-bun run worker:deploy
-```
+Rolls are recorded to an Analytics Engine dataset — one data point per distinct dice term,
+plus one per `/start` and `/help`. User IDs are stored as HMAC-SHA256 digests and the dataset
+is write-only from the Worker; without the binding, nothing is recorded and the bot replies
+as usual. Reading the data is a local command, `bun run analytics`. See
+[ANALYTICS.md](ANALYTICS.md).
 
-After deployment, update `WEBHOOK_URL` in `.env` with the actual Worker URL and configure
-Telegram:
+## Contributing
 
-```sh
-bun run telegram:configure
-curl "https://api.telegram.org/bot<telegram-bot-token>/getWebhookInfo"
-```
+Bug reports, notation gaps, and pull requests are welcome — open an
+[issue](https://github.com/edloidas/rollrobot/issues) to start.
 
-The setup command registers `message`, `inline_query`, and `chosen_inline_result`
-updates. It preserves queued updates unless `DROP_PENDING_UPDATES=true` is explicitly
-set. Test private, group, supergroup, and inline requests after configuration, then
-monitor the Worker logs for errors.
+## License
 
-## Analytics ##
-
-Analytics Engine has no dashboard for custom datasets, so `bun run analytics` is the read
-path. It runs locally and never touches the Worker.
-
-Add a Cloudflare API token with **Account · Account Analytics · Read** to `.env`, alongside
-the account the dataset lives in:
-
-```dotenv
-CF_ACCOUNT_ID=replace-with-cloudflare-account-id
-CF_ANALYTICS_TOKEN=replace-with-account-analytics-read-token
-INLINE_FEEDBACK_PROBABILITY=100
-```
-
-`INLINE_FEEDBACK_PROBABILITY` is optional and records whatever BotFather's
-`/setinlinefeedback` is set to — the API cannot be asked, so the caveat prints the number
-only if it is declared here.
-
-```sh
-bun run analytics                     # full report over the last 30 days
-bun run analytics -- --days 7         # narrower window (max 92, the retention limit)
-bun run analytics -- --json           # the same report as data
-bun run analytics -- --snapshot       # freeze completed days into .analytics/
-bun run analytics -- doctor           # latest rows plus write-path assertions
-bun run analytics -- quota            # data points per day against the 100k/day allowance
-bun run analytics -- sql "SELECT 1"   # one-off query
-```
-
-The report renders as `table` (default), `json`, or `html`:
-
-```sh
-bun run analytics -- --format html --out .tmp/report.html
-```
-
-The page is self-contained — inline styles, hand-written SVG, no network access and no
-build step — and reads `.analytics/` when it is populated, so it can show more history than
-the live retention window. Charts are withheld rather than faked where the data cannot
-support them: a series shorter than three days renders as its table instead of a trend line,
-and a cohort with no eligible users reads `n/a` rather than `0%`.
-
-### Reading the numbers
-
-Every table is tagged with how far it can be trusted, because none of the three failure
-modes are visible in the figures themselves:
-
-| Tag | Meaning |
-| --- | --- |
-| `exact` | Aggregated along the dataset index (`index1`), where the sampling correction is lossless. |
-| `estimated` | Sample-corrected off the index, so totals drift against each other — measured at +10%. |
-| `lower bound` | Distinct-user counts see only rows that survived sampling, and no weighted-distinct function exists to correct for it. A user whose only roll was sampled away is invisible. |
-
-Inline rolls are undercounted separately: they are recorded on `chosen_inline_result`, which
-Telegram delivers probabilistically according to BotFather's `/setinlinefeedback`. Set
-`INLINE_FEEDBACK_PROBABILITY` in `.env` to have the configured value printed with the caveat.
-
-**Game system signals are signals, not detections.** Recorded dice shapes drop numeric
-constants, so `4d6kh3` and `4d6kh1` arrive identical. A `strong` signal means a modifier or
-die makes the shape distinctive; `weak` means the shape merely fits the system and would fit
-a dozen others.
-
-### Snapshots
-
-The dataset retains 92 days, so `.analytics/` is the only durable history. `--snapshot`
-freezes each completed UTC day once and never rewrites it, so a day is only frozen after it
-has had two days to settle — data points are not queryable the instant they are written, and
-a day captured too eagerly would be permanently short. Days with no traffic are written as
-zeroes, because a gap left unwritten is indistinguishable from a day that was never captured.
-
-Snapshots hold aggregates only — no user hashes. They are meant to be committed, which on a
-public repository means publishing daily volume, notation mix, and observed-user counts; add
-`.analytics/` to `.gitignore` to keep the history local instead.
+[MIT](LICENSE) © [Mikita Taukachou](https://edloidas.io)

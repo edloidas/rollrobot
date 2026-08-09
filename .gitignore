@@ -10,6 +10,8 @@ temp/
 .claude/settings.local.json
 .claude/plans/
 .claude/notes/
+.codex/
+.mcp.json
 
 # Files
 npm-debug.log
