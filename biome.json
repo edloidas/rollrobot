@@ -11,8 +11,12 @@
     "rules": {
       "preset": "recommended",
       "style": {
-        "noNonNullAssertion": "warn",
-        "useConst": "error"
+        "noNonNullAssertion": "error",
+        "useConst": "error",
+        "noNestedTernary": "error",
+        "noDefaultExport": "error",
+        "useImportType": "error",
+        "useConsistentArrayType": { "level": "error", "options": { "syntax": "shorthand" } }
       },
       "suspicious": {
         "noExplicitAny": "off",
@@ -45,5 +49,27 @@
       "!**/dist",
       "!**/coverage"
     ]
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["src/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNodejsModules": "error"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/worker.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    }
+  ]
 }
