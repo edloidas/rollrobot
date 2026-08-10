@@ -22,12 +22,13 @@ export const ru: Messages = {
 <code>4d6min2</code> — поднять каждый кубик минимум до 2 (также max)
 <code>6d10&gt;=6f1</code> — подсчёт успехов, единицы вычитаются как провалы
 <code>1d20+7 vs 15</code> — проверка против сложности со степенями успеха
-<code>4dF</code> — кубики Fate, <code>d%</code> — процентный кубик
+<code>4dF</code> — кубики Fate
+<code>d%</code> — процентный кубик
 <code>2d6+floor(1d4/2)</code> — функции: floor, ceil, round, abs, min, max, sqrt, pow
 
 Короткая запись: <code>/roll 20</code> бросает d20, <code>/roll 2 10 -1</code> бросает 2d10-1.
 
-Назови бросок, взяв название в кавычки в конце: <code>/roll 2d20+1 "Внимательность"</code>.
+Назови бросок, взяв название в кавычки в конце: <code>/roll 2d20+1 "Восприятие"</code>.
 
 Попробуй нотацию в ${playground('песочнице')} или открой ${reference('полный справочник по нотации')}.`,
 
@@ -43,7 +44,13 @@ export const ru: Messages = {
 
   description: `Нотация кубиков для настольных ролевых игр — в любом чате.
 
-4d6kh3 для характеристик, 2d20kh1+7 с преимуществом, 1d20+12 vs 20 для проверки в Pathfinder, 7d10>=6f1 для пула Storyteller, {1d8!, 1d6!}kh1 для Savage Worlds, 4dF для Fate, d% для Call of Cthulhu.
+4d6kh3 для характеристик
+2d20kh1+7 с преимуществом
+1d20+12 vs 20 для проверки в Pathfinder
+7d10>=6f1 для пула Storyteller
+{1d8!, 1d6!}kh1 для Savage Worlds
+4dF для Fate
+d% для Call of Cthulhu
 
 /roll даёт сумму, /full — разбор по кубикам, /help — справку по нотации. Напиши @rollrobot в любом чате, чтобы бросить кубики без добавления бота.`,
 };

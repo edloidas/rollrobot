@@ -22,7 +22,8 @@ Inline: digite @rollrobot [notação] em qualquer conversa, ou escolha uma opç�
 <code>4d6min2</code> — fixa cada dado em pelo menos 2 (também max)
 <code>6d10&gt;=6f1</code> — conta sucessos, subtrai os 1s como falhas
 <code>1d20+7 vs 15</code> — teste contra uma CD com graus de sucesso
-<code>4dF</code> — dados Fate, <code>d%</code> — percentual
+<code>4dF</code> — dados Fate
+<code>d%</code> — dado percentual
 <code>2d6+floor(1d4/2)</code> — funções: floor, ceil, round, abs, min, max, sqrt, pow
 
 Notação abreviada: <code>/roll 20</code> rola d20, <code>/roll 2 10 -1</code> rola 2d10-1.
@@ -43,7 +44,13 @@ Teste a notação no ${playground('playground')}, ou leia a ${reference('referê
 
   description: `Notação de dados de RPG, rolada em qualquer conversa.
 
-4d6kh3 para atributos, 2d20kh1+7 com vantagem, 1d20+12 vs 20 para um teste de Pathfinder, 7d10>=6f1 para uma reserva de Storyteller, {1d8!, 1d6!}kh1 para Savage Worlds, 4dF para Fate, d% para Call of Cthulhu.
+4d6kh3 para atributos
+2d20kh1+7 com vantagem
+1d20+12 vs 20 para um teste de Pathfinder
+7d10>=6f1 para uma reserva de Storyteller
+{1d8!, 1d6!}kh1 para Savage Worlds
+4dF para Fate
+d% para Call of Cthulhu
 
 /roll dá o total, /full o detalhe dado a dado, /help o guia de notação. Digite @rollrobot em qualquer conversa para rolar sem adicionar o bot.`,
 };

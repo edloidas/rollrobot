@@ -28,7 +28,8 @@ Inline: @rollrobot را در هر گفت‌وگو همراه با نمادگذا
 <code>4d6min2</code> — حداقل مقدار هر تاس دو می‌شود، همچنین (max)
 <code>6d10&gt;=6f1</code> — شمارش موفقیت‌ها، یک‌ها به‌عنوان شکست کم می‌شوند
 <code>1d20+7 vs 15</code> — چک در برابر درجهٔ سختی، با درجات موفقیت
-<code>4dF</code> — تاس Fate، <code>d%</code> — تاس درصدی
+<code>4dF</code> — تاس Fate
+<code>d%</code> — تاس درصدی
 <code>2d6+floor(1d4/2)</code> — توابع: floor, ceil, round, abs, min, max, sqrt, pow
 
 <code>/roll 20</code> — کوتاه‌نویسی، همان d20
@@ -56,7 +57,8 @@ Inline: @rollrobot را در هر گفت‌وگو همراه با نمادگذا
 1d20+12 vs 20 برای چک در Pathfinder
 7d10>=6f1 برای مجموعهٔ تاس Storyteller
 {1d8!, 1d6!}kh1 برای Savage Worlds
-4dF برای Fate، d% برای Call of Cthulhu
+4dF برای Fate
+d% برای Call of Cthulhu
 
 /roll — مجموع را می‌دهد
 /full — جزئیات هر تاس
