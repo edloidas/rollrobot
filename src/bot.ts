@@ -23,7 +23,12 @@ function senderName(ctx: Context): string {
   return ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name ?? 'unknown');
 }
 
-function logRoll(ctx: Context, command: string, notation: string, reply: string): void {
+/** Echoes the request as typed: normalized notation followed by its quoted label, if any. */
+function formatRequest(notation: string, label: string | null): string {
+  return label == null ? notation : `${notation} "${label}"`.trim();
+}
+
+function logRoll(ctx: Context, command: string, request: string, reply: string): void {
   const name = senderName(ctx);
   const group = ctx.chat?.title ? ` [${ctx.chat.title}]` : '';
   const result = reply
@@ -32,7 +37,7 @@ function logRoll(ctx: Context, command: string, notation: string, reply: string)
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&amp;/g, '&');
-  console.log(`${name}${group} /${command}: ${notation} | ${result}`);
+  console.log(`${name}${group} /${command} ${request} | ${result}`);
 }
 
 /** Result IDs are `<variant>:<uuid>`; unprefixed IDs predate that and cannot be attributed. */
@@ -120,7 +125,7 @@ export function createBot(env: BotEnv): Bot {
     const { notation: rest, label } = extractLabel((ctx.match as string) ?? '');
     const notation = normalizeNotation(rest);
     const { text, result } = rollReply(notation, label);
-    logRoll(ctx, 'roll', notation, text);
+    logRoll(ctx, 'roll', formatRequest(notation, label), text);
     await ctx.reply(text, replyOptions(ctx));
     await trackRoll(env, trackContext(ctx, 'roll'), result);
   });
@@ -129,7 +134,7 @@ export function createBot(env: BotEnv): Bot {
     const { notation: rest, label } = extractLabel((ctx.match as string) ?? '');
     const notation = normalizeNotation(rest);
     const { text, result } = fullReply(notation, label);
-    logRoll(ctx, 'full', notation, text);
+    logRoll(ctx, 'full', formatRequest(notation, label), text);
     await ctx.reply(text, replyOptions(ctx));
     await trackRoll(env, trackContext(ctx, 'full'), result);
   });
@@ -137,7 +142,7 @@ export function createBot(env: BotEnv): Bot {
   bot.command('random', async (ctx) => {
     const { label } = extractLabel((ctx.match as string) ?? '');
     const { text, result } = randomReply(label);
-    logRoll(ctx, 'random', RANDOM_NOTATION, text);
+    logRoll(ctx, 'random', formatRequest(RANDOM_NOTATION, label), text);
     await ctx.reply(text, replyOptions(ctx));
     await trackRoll(env, trackContext(ctx, 'random'), result);
   });
@@ -147,8 +152,9 @@ export function createBot(env: BotEnv): Bot {
     const name = senderName(ctx);
     const { query, result_id } = ctx.chosenInlineResult;
     const variant = inlineVariant(result_id);
-    const notation = variant === 'random' ? RANDOM_NOTATION : query || DEFAULT_NOTATION;
-    console.log(`${name} [inline] ${variant}: ${notation}`);
+    const { notation: queried, label } = extractLabel(query);
+    const notation = variant === 'random' ? RANDOM_NOTATION : queried || DEFAULT_NOTATION;
+    console.log(`${name} [inline] ${variant} ${formatRequest(notation, label)}`);
 
     const context = { command: 'inline', surface: 'inline', userId: ctx.from?.id } as const;
     await trackRoll(env, context, () => chosenInlineRoll(query, variant));

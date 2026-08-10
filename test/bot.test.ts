@@ -64,17 +64,64 @@ describe('Chosen inline results', () => {
   }
 
   test('should log the chosen variant', async () => {
-    expect(await chosenLog('roll:abc', 'd20')).toEqual('@testuser [inline] roll: d20');
-    expect(await chosenLog('full:abc', 'd20')).toEqual('@testuser [inline] full: d20');
-    expect(await chosenLog('random:abc')).toEqual('@testuser [inline] random: d100');
+    expect(await chosenLog('roll:abc', 'd20')).toEqual('@testuser [inline] roll d20');
+    expect(await chosenLog('full:abc', 'd20')).toEqual('@testuser [inline] full d20');
+    expect(await chosenLog('random:abc')).toEqual('@testuser [inline] random d100');
   });
 
   test('should log the default notation for an empty query', async () => {
-    expect(await chosenLog('roll:abc')).toEqual('@testuser [inline] roll: d20');
+    expect(await chosenLog('roll:abc')).toEqual('@testuser [inline] roll d20');
   });
 
   test('should log an unknown variant for unprefixed ids', async () => {
-    expect(await chosenLog('abc', 'd20')).toEqual('@testuser [inline] unknown: d20');
+    expect(await chosenLog('abc', 'd20')).toEqual('@testuser [inline] unknown d20');
+  });
+
+  test('should log the label of a queried roll', async () => {
+    expect(await chosenLog('roll:abc', '2d20+1 "Perception"')).toEqual(
+      '@testuser [inline] roll 2d20+1 "Perception"',
+    );
+    expect(await chosenLog('full:abc', '«Атака»')).toEqual('@testuser [inline] full d20 "Атака"');
+    expect(await chosenLog('random:abc', '"Fate"')).toEqual(
+      '@testuser [inline] random d100 "Fate"',
+    );
+  });
+});
+
+describe('Command logging', () => {
+  let log: ReturnType<typeof spyOn<Console, 'log'>>;
+
+  beforeEach(() => {
+    log = spyOn(console, 'log').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    log.mockRestore();
+  });
+
+  async function commandLog(text: string, chatType = 'private'): Promise<string> {
+    await bot.send(text, chatType);
+    return log.mock.calls.at(-1)?.[0] ?? '';
+  }
+
+  test('should log the request as typed', async () => {
+    expect(await commandLog('/roll 2d20+1')).toMatch(
+      /^@testuser \/roll 2d20\+1 \| 2d20 \+ 1 = \d+$/,
+    );
+    expect(await commandLog('/full 2d6')).toMatch(/^@testuser \/full 2d6 \| /);
+    expect(await commandLog('/random')).toMatch(/^@testuser \/random d100 \| \d+$/);
+  });
+
+  test('should quote the label after the notation', async () => {
+    expect(await commandLog('/roll 2d20+1 "Perception"')).toMatch(
+      /^@testuser \/roll 2d20\+1 "Perception" \| Perception 2d20 \+ 1 = \d+$/,
+    );
+    expect(await commandLog('/random «Судьба»')).toMatch(/^@testuser \/random d100 "Судьба" \| /);
+  });
+
+  test('should log the normalized notation of shorthand and empty input', async () => {
+    expect(await commandLog('/roll')).toMatch(/^@testuser \/roll d20 \| /);
+    expect(await commandLog('/roll 2 10 -1')).toMatch(/^@testuser \/roll 2d10-1 \| /);
   });
 });
 
