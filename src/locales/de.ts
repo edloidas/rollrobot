@@ -22,7 +22,8 @@ Inline: tippe @rollrobot [Notation] in jedem Chat, oder wähle einen Eintrag aus
 <code>4d6min2</code> — jeden Würfel auf mindestens 2 anheben (auch max)
 <code>6d10&gt;=6f1</code> — Erfolge zählen, 1er als Fehlschläge abziehen
 <code>1d20+7 vs 15</code> — Probe gegen einen SG mit Erfolgsgraden
-<code>4dF</code> — Fate-Würfel, <code>d%</code> — Prozentwürfel
+<code>4dF</code> — Fate-Würfel
+<code>d%</code> — Prozentwürfel
 <code>2d6+floor(1d4/2)</code> — Funktionen: floor, ceil, round, abs, min, max, sqrt, pow
 
 Kurzschreibweise: <code>/roll 20</code> würfelt d20, <code>/roll 2 10 -1</code> würfelt 2d10-1.
@@ -43,7 +44,13 @@ Probiere die Notation im ${playground('Playground')} aus, oder lies die ${refere
 
   description: `Würfelnotation für Pen-and-Paper-Rollenspiele, in jedem Chat.
 
-4d6kh3 für Attribute, 2d20kh1+7 mit Vorteil, 1d20+12 vs 20 für eine Pathfinder-Probe, 7d10>=6f1 für einen Storyteller-Pool, {1d8!, 1d6!}kh1 für Savage Worlds, 4dF für Fate, d% für Call of Cthulhu.
+4d6kh3 für Attribute
+2d20kh1+7 mit Vorteil
+1d20+12 vs 20 für eine Pathfinder-Probe
+7d10>=6f1 für einen Storyteller-Pool
+{1d8!, 1d6!}kh1 für Savage Worlds
+4dF für Fate
+d% für Call of Cthulhu
 
 /roll liefert die Summe, /full die Aufschlüsselung pro Würfel, /help die Notationsübersicht. Tippe @rollrobot in jedem Chat, um ohne Hinzufügen des Bots zu würfeln.`,
 };
