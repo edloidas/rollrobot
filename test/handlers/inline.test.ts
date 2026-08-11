@@ -90,9 +90,11 @@ describe('Inline queries', () => {
     }
   });
 
-  test('should reply with the total alone for the random preset', async () => {
+  test('should reply with the d100 notation and total for the random preset', async () => {
     const results = await bot.sendInline('');
-    expect(results[2].input_message_content.message_text).toMatch(/^<b>\d{1,3}<\/b>$/);
+    expect(results[2].input_message_content.message_text).toMatch(
+      /^<code>1d100<\/code> = <b>\d{1,3}<\/b>$/,
+    );
   });
 
   test('should localize titles for the requesting user', async () => {

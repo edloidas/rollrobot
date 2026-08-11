@@ -1,13 +1,7 @@
 import { describe, test, expect } from 'bun:test';
 import { isRollParserError, roll, type RollParserError } from 'roll-parser';
 import { createMockRng } from 'roll-parser/testing';
-import {
-  escapeHtml,
-  formatDetailedResult,
-  formatError,
-  formatResult,
-  formatTotal,
-} from '../src/format';
+import { escapeHtml, formatDetailedResult, formatError, formatResult } from '../src/format';
 
 function rollError(notation: string): RollParserError {
   try {
@@ -237,13 +231,6 @@ describe('formatDetailedResult', () => {
   test('marks dice in sorted order', () => {
     const result = roll('4d6s', { rng: createMockRng([3, 6, 1, 5]) });
     expect(formatDetailedResult(result)).toBe('<code>4d6s</code> = <b>15</b>\n[1↓, 3, 5, 6↑]');
-  });
-});
-
-describe('formatTotal', () => {
-  test('shows the total alone', () => {
-    const result = roll('d100', { rng: createMockRng([48]) });
-    expect(formatTotal(result)).toBe('<b>48</b>');
   });
 });
 

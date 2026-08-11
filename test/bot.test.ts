@@ -43,7 +43,7 @@ describe('Bot message options', () => {
     const pattern = /^<code>1d20<\/code> = <b>\d+<\/b>/;
     expect(await bot.send('/roll@testbot d20')).toMatch(pattern);
     expect(await bot.send('/full@testbot d20')).toMatch(pattern);
-    expect(await bot.send('/random@testbot')).toMatch(/^<b>\d{1,3}<\/b>$/);
+    expect(await bot.send('/random@testbot')).toMatch(/^<code>1d100<\/code> = <b>\d{1,3}<\/b>$/);
   });
 });
 
@@ -109,7 +109,7 @@ describe('Command logging', () => {
       /^@testuser \/roll 2d20\+1 \| 2d20 \+ 1 = \d+$/,
     );
     expect(await commandLog('/full 2d6')).toMatch(/^@testuser \/full 2d6 \| /);
-    expect(await commandLog('/random')).toMatch(/^@testuser \/random d100 \| \d+$/);
+    expect(await commandLog('/random')).toMatch(/^@testuser \/random d100 \| 1d100 = \d+$/);
   });
 
   test('should quote the label after the notation', async () => {
