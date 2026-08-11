@@ -1,6 +1,6 @@
 import type { InlineQueryResult } from 'grammy/types';
 import { isNotationError, roll, type RollResult } from 'roll-parser';
-import { formatDetailedResult, formatResult, formatTotal, withLabel } from '../format';
+import { formatDetailedResult, formatResult, withLabel } from '../format';
 import { DEFAULT_LOCALE, type Locale, type Messages, messages } from '../i18n';
 import { extractLabel } from '../label';
 import { ROLL_LIMITS } from '../limits';
@@ -69,7 +69,7 @@ function createQueryArticles(
 function createPresetArticles(titles: Messages['inline']): InlineQueryResult[] {
   return [
     ...createVariantArticles(roll(DEFAULT_NOTATION), DEFAULT_NOTATION, titles),
-    createArticle('random', titles.random, RANDOM_NOTATION, formatTotal(roll(RANDOM_NOTATION))),
+    createArticle('random', titles.random, RANDOM_NOTATION, formatResult(roll(RANDOM_NOTATION))),
   ];
 }
 

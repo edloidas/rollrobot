@@ -188,11 +188,6 @@ export function formatResult(result: RollResult): string {
   return `<code>${escapeHtml(result.expression)}</code> = ${formatOutcome(result)}`;
 }
 
-/** Bare reply: the total alone, for rolls where the notation is implied by the command. */
-export function formatTotal(result: RollResult): string {
-  return `<b>${result.total}</b>`;
-}
-
 /** Puts the roll's name above it as a quote. Passing no label leaves the reply untouched. */
 export function withLabel(reply: string, label?: string | null): string {
   return label ? `<blockquote>${escapeHtml(label)}</blockquote>\n${reply}` : reply;
