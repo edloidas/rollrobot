@@ -2,7 +2,14 @@ import { playground, reference } from './links';
 import type { Messages } from './types';
 
 export const pt: Messages = {
-  inline: { roll: 'Rolagem', full: 'Detalhada', random: 'Aleatória', help: 'Como usar' },
+  inline: {
+    roll: 'Rolagem',
+    full: 'Detalhada',
+    random: 'Aleatória',
+    ask: 'Pergunta',
+    answer: 'Responde Yes ou No',
+    help: 'Como usar',
+  },
 
   help: `Role os dados como ninguém — notação de RPG completa com manter/descartar, dados explosivos, novas rolagens, reservas de sucessos e testes.
 
@@ -10,6 +17,7 @@ export const pt: Messages = {
 /roll [notação] — rola e mostra o total (atalho: /r)
 /full [notação] — rola com o detalhe dado a dado (atalho: /f)
 /random — rola d100 (<code>d%</code>)
+/ask [pergunta] — responde Yes ou No (atalho: /a)
 /help — este guia
 
 Inline: digite @rollrobot [notação] em qualquer conversa, ou escolha uma opção da lista.
@@ -36,6 +44,7 @@ Teste a notação no ${playground('playground')}, ou leia a ${reference('referê
     { command: 'roll', description: 'Role dados — /roll 2d20kh1+5' },
     { command: 'full', description: 'Role com detalhe — /full 4d6kh3' },
     { command: 'random', description: 'Role d100' },
+    { command: 'ask', description: 'Responde Yes ou No — /ask Vamos atacar?' },
     { command: 'help', description: 'Guia de notação e links' },
   ],
 
@@ -52,5 +61,5 @@ Teste a notação no ${playground('playground')}, ou leia a ${reference('referê
 4dF para Fate
 d% para Call of Cthulhu
 
-/roll dá o total, /full o detalhe dado a dado, /help o guia de notação. Digite @rollrobot em qualquer conversa para rolar sem adicionar o bot.`,
+/roll dá o total, /full o detalhe dado a dado, /ask um Yes ou No, /help o guia de notação. Digite @rollrobot em qualquer conversa para rolar sem adicionar o bot.`,
 };

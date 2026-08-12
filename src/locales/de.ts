@@ -2,7 +2,14 @@ import { playground, reference } from './links';
 import type { Messages } from './types';
 
 export const de: Messages = {
-  inline: { roll: 'Wurf', full: 'Aufschlüsselung', random: 'Zufallswurf', help: 'Anleitung' },
+  inline: {
+    roll: 'Wurf',
+    full: 'Aufschlüsselung',
+    random: 'Zufallswurf',
+    ask: 'Frage',
+    answer: 'Antwortet Yes oder No',
+    help: 'Anleitung',
+  },
 
   help: `Würfle wie noch nie — vollständige Rollenspiel-Notation mit Behalten/Verwerfen, explodierenden Würfeln, Wiederholungswürfen, Erfolgspools und Proben.
 
@@ -10,6 +17,7 @@ export const de: Messages = {
 /roll [Notation] — würfelt und zeigt die Summe (Kurzform: /r)
 /full [Notation] — würfelt mit Aufschlüsselung pro Würfel (Kurzform: /f)
 /random — würfelt d100 (<code>d%</code>)
+/ask [Frage] — antwortet Yes oder No (Kurzform: /a)
 /help — diese Anleitung
 
 Inline: tippe @rollrobot [Notation] in jedem Chat, oder wähle einen Eintrag aus der Liste.
@@ -36,6 +44,7 @@ Probiere die Notation im ${playground('Playground')} aus, oder lies die ${refere
     { command: 'roll', description: 'Würfeln — /roll 2d20kh1+5' },
     { command: 'full', description: 'Würfeln mit Aufschlüsselung — /full 4d6kh3' },
     { command: 'random', description: 'Würfeln — d100' },
+    { command: 'ask', description: 'Antwortet Yes oder No — /ask Angreifen?' },
     { command: 'help', description: 'Notationsanleitung und Links' },
   ],
 
@@ -52,5 +61,5 @@ Probiere die Notation im ${playground('Playground')} aus, oder lies die ${refere
 4dF für Fate
 d% für Call of Cthulhu
 
-/roll liefert die Summe, /full die Aufschlüsselung pro Würfel, /help die Notationsübersicht. Tippe @rollrobot in jedem Chat, um ohne Hinzufügen des Bots zu würfeln.`,
+/roll liefert die Summe, /full die Aufschlüsselung pro Würfel, /ask ein Yes oder No, /help die Notationsübersicht. Tippe @rollrobot in jedem Chat, um ohne Hinzufügen des Bots zu würfeln.`,
 };

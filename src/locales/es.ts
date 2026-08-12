@@ -2,7 +2,14 @@ import { playground, reference } from './links';
 import type { Messages } from './types';
 
 export const es: Messages = {
-  inline: { roll: 'Tirada', full: 'Desglose', random: 'Aleatoria', help: 'Cómo se usa' },
+  inline: {
+    roll: 'Tirada',
+    full: 'Desglose',
+    random: 'Aleatoria',
+    ask: 'Pregunta',
+    answer: 'Responde Yes o No',
+    help: 'Cómo se usa',
+  },
 
   help: `Tira los dados como nadie — notación de rol completa con mantener/descartar, dados explosivos, nuevas tiradas, reservas de éxitos y pruebas.
 
@@ -10,6 +17,7 @@ export const es: Messages = {
 /roll [notación] — tira y muestra el total (atajo: /r)
 /full [notación] — tira con el desglose dado a dado (atajo: /f)
 /random — tira d100 (<code>d%</code>)
+/ask [pregunta] — responde Yes o No (atajo: /a)
 /help — esta guía
 
 En línea: escribe @rollrobot [notación] en cualquier chat, o elige una opción de la lista.
@@ -36,6 +44,7 @@ Comprueba la notación en vivo en el ${playground('área de pruebas')}, o consul
     { command: 'roll', description: 'Tira dados — /roll 2d20kh1+5' },
     { command: 'full', description: 'Tira con desglose — /full 4d6kh3' },
     { command: 'random', description: 'Tira d100' },
+    { command: 'ask', description: 'Responde Yes o No — /ask ¿Atacamos?' },
     { command: 'help', description: 'Guía de notación y enlaces' },
   ],
 
@@ -52,5 +61,5 @@ Comprueba la notación en vivo en el ${playground('área de pruebas')}, o consul
 4dF para Fate
 d% para Call of Cthulhu
 
-/roll da el total, /full el desglose dado a dado, /help la guía de notación. Escribe @rollrobot en cualquier chat para tirar sin añadir el bot.`,
+/roll da el total, /full el desglose dado a dado, /ask un Yes o No, /help la guía de notación. Escribe @rollrobot en cualquier chat para tirar sin añadir el bot.`,
 };

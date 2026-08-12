@@ -2,7 +2,14 @@ import { playground, reference } from './links';
 import type { Messages } from './types';
 
 export const uk: Messages = {
-  inline: { roll: 'Кидок', full: 'Докладно', random: 'Випадковий', help: 'Як користуватися' },
+  inline: {
+    roll: 'Кидок',
+    full: 'Докладно',
+    random: 'Випадковий',
+    ask: 'Питання',
+    answer: 'Відповідає Yes або No',
+    help: 'Як користуватися',
+  },
 
   help: `Кидай кубики як ніхто інший — повна рольова нотація: утримання/відкидання, вибухові кубики, перекидання, пул успіху і перевірки.
 
@@ -10,6 +17,7 @@ export const uk: Messages = {
 /roll [нотація] — кидок і сума (скорочення: /r)
 /full [нотація] — кидок з розбором по кубиках (скорочення: /f)
 /random — кидок d100 (<code>d%</code>)
+/ask [питання] — відповідь Yes або No (скорочення: /a)
 /help — ця довідка
 
 Інлайн: напиши @rollrobot [нотація] у будь-якому чаті або вибери варіант зі списку.
@@ -36,6 +44,7 @@ export const uk: Messages = {
     { command: 'roll', description: 'Кидок кубиків — /roll 2d20kh1+5' },
     { command: 'full', description: 'Кидок з розбором — /full 4d6kh3' },
     { command: 'random', description: 'Кидок d100' },
+    { command: 'ask', description: 'Відповідь Yes або No — /ask Атакуємо?' },
     { command: 'help', description: 'Довідка з нотації та посилання' },
   ],
 
@@ -52,5 +61,5 @@ export const uk: Messages = {
 4dF для Fate
 d% для Call of Cthulhu
 
-/roll дає суму, /full — розбір по кубиках, /help — довідку з нотації. Напиши @rollrobot у будь-якому чаті, щоб кинути кубики без додавання бота.`,
+/roll дає суму, /full — розбір по кубиках, /ask — Yes або No, /help — довідку з нотації. Напиши @rollrobot у будь-якому чаті, щоб кинути кубики без додавання бота.`,
 };

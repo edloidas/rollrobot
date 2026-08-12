@@ -2,7 +2,14 @@ import { playground, reference } from './links';
 import type { Messages } from './types';
 
 export const en: Messages = {
-  inline: { roll: 'Roll', full: 'Full', random: 'Random', help: 'How to use' },
+  inline: {
+    roll: 'Roll',
+    full: 'Full',
+    random: 'Random',
+    ask: 'Ask',
+    answer: 'Answers Yes or No',
+    help: 'How to use',
+  },
 
   help: `Roll the dice like no one before — full RPG notation with keep/drop, exploding dice, rerolls, success pools, and checks.
 
@@ -10,6 +17,7 @@ export const en: Messages = {
 /roll [notation] — roll and show the total (shortcut: /r)
 /full [notation] — roll with a die-by-die breakdown (shortcut: /f)
 /random — roll d100 (<code>d%</code>)
+/ask [question] — answer Yes or No (shortcut: /a)
 /help — this guide
 
 Inline: type @rollrobot [notation] in any chat, or pick a preset from the list.
@@ -36,6 +44,7 @@ Try notation live in the ${playground('playground')}, or read the full ${referen
     { command: 'roll', description: 'Roll dice — /roll 2d20kh1+5' },
     { command: 'full', description: 'Roll with a breakdown — /full 4d6kh3' },
     { command: 'random', description: 'Roll d100' },
+    { command: 'ask', description: 'Answer Yes or No — /ask Should we attack?' },
     { command: 'help', description: 'Notation guide and links' },
   ],
 
@@ -52,5 +61,5 @@ Try notation live in the ${playground('playground')}, or read the full ${referen
 4dF for Fate
 d% for Call of Cthulhu
 
-/roll gives the total, /full a die-by-die breakdown, /help the notation guide. Type @rollrobot in any chat to roll without adding the bot.`,
+/roll gives the total, /full a die-by-die breakdown, /ask a Yes or No, /help the notation guide. Type @rollrobot in any chat to roll without adding the bot.`,
 };

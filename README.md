@@ -42,14 +42,21 @@ Fate, `d%` for Call of Cthulhu.
 | `/roll [notation]` | `/r` | The normalized expression and its total |
 | `/full [notation]` | `/f` | The same, plus a die-by-die breakdown |
 | `/random` | | A `d100` roll, total only |
+| `/ask [question]` | `/a` | The question quoted, and `Yes` or `No` under it |
 | `/help` | | Notation guide and links |
 
 Omitting the notation rolls `d20`. In groups the bot replies to the message it was called
 from, so several people can roll at once without the thread coming apart.
 
+`/ask` takes the whole line as its question, so it never fails to parse — quotes, notation and
+punctuation are all part of the question rather than syntax. The answer stays English in every
+language: the sender's interface language is a poor guess at the language of the chat.
+
 Typing `@rollrobot [notation]` in any chat offers one roll under two headings, **Roll** and
 **Full** — the choice is about display, not a reroll. With no notation the list falls back to
-`d20` and `d100` presets. Results are personal and uncached, so every new query rolls afresh.
+`d20` and `d100` presets. Anything that is not notation for a named die also offers **Ask**,
+leading the list when the query does not roll and trailing it when it does. Results are
+personal and uncached, so every new query rolls afresh.
 
 ## Notation
 

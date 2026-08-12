@@ -29,10 +29,16 @@ const MAX_LABEL_LENGTH = 100;
 
 const ELLIPSIS = '…';
 
+/** Truncates to `max` code points, the last of them an ellipsis. Counted in code points so a
+ * cap on escaped output holds: escaping expands per character, not per UTF-16 unit. */
+export function capText(text: string, max: number): string {
+  const points = [...text];
+  if (points.length <= max) return text;
+  return points.slice(0, max - 1).join('') + ELLIPSIS;
+}
+
 function capLabel(label: string): string {
-  const points = [...label];
-  if (points.length <= MAX_LABEL_LENGTH) return label;
-  return points.slice(0, MAX_LABEL_LENGTH - 1).join('') + ELLIPSIS;
+  return capText(label, MAX_LABEL_LENGTH);
 }
 
 export interface LabelledInput {
