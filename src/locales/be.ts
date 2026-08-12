@@ -2,7 +2,14 @@ import { playground, reference } from './links';
 import type { Messages } from './types';
 
 export const be: Messages = {
-  inline: { roll: 'Кідок', full: 'Падрабязны', random: 'Выпадковы', help: 'Як карыстацца' },
+  inline: {
+    roll: 'Кідок',
+    full: 'Падрабязны',
+    random: 'Выпадковы',
+    ask: 'Пытанне',
+    answer: 'Адказвае Yes або No',
+    help: 'Як карыстацца',
+  },
 
   help: `Кідай кубікі як ніхто іншы — поўная ролевая натацыя: захаванне/скід, выбуховыя кубікі, перакіды, пулы поспехаў і праверкі.
 
@@ -10,6 +17,7 @@ export const be: Messages = {
 /roll [натацыя] — кідок і сума (скарот: /r)
 /full [натацыя] — кідок з разборам па кубіках (скарот: /f)
 /random — кідок d100 (<code>d%</code>)
+/ask [пытанне] — адказ Yes або No (скарот: /a)
 /help — гэтая даведка
 
 Інлайн: напішы @rollrobot [натацыя] ў любым чаце або абяры варыянт са спіса.
@@ -36,6 +44,7 @@ export const be: Messages = {
     { command: 'roll', description: 'Кідок кубікаў — /roll 2d20kh1+5' },
     { command: 'full', description: 'Кідок з разборам — /full 4d6kh3' },
     { command: 'random', description: 'Кідок d100' },
+    { command: 'ask', description: 'Адказ Yes або No — /ask Атакуем?' },
     { command: 'help', description: 'Даведка па натацыі і спасылкі' },
   ],
 
@@ -52,5 +61,5 @@ export const be: Messages = {
 4dF для Fate
 d% для Call of Cthulhu
 
-/roll дае суму, /full — разбор па кубіках, /help — даведку па натацыі. Напішы @rollrobot у любым чаце, каб кінуць кубікі без дадавання бота.`,
+/roll дае суму, /full — разбор па кубіках, /ask — Yes або No, /help — даведку па натацыі. Напішы @rollrobot у любым чаце, каб кінуць кубікі без дадавання бота.`,
 };

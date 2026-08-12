@@ -8,7 +8,14 @@ import type { Messages } from './types';
 //   splits `2d10-1` in two. All of it assumes the client resolves direction per line.
 
 export const fa: Messages = {
-  inline: { roll: 'پرتاب', full: 'جزئیات', random: 'پرتاب تصادفی', help: 'راهنما' },
+  inline: {
+    roll: 'پرتاب',
+    full: 'جزئیات',
+    random: 'پرتاب تصادفی',
+    ask: 'پرسش',
+    answer: 'پاسخ Yes یا No',
+    help: 'راهنما',
+  },
 
   help: `مثل هیچ‌کس دیگری تاس بینداز — نمادگذاری کامل بازی‌های نقش‌آفرینی: نگه‌داشتن و کنار گذاشتن، تاس انفجاری، پرتاب مجدد، شمارش موفقیت‌ها و چک در برابر درجهٔ سختی.
 
@@ -16,6 +23,7 @@ export const fa: Messages = {
 /roll 2d20+5 — پرتاب و نمایش مجموع، میان‌بر /r
 /full 4d6kh3 — پرتاب با جزئیات هر تاس، میان‌بر /f
 /random — پرتاب تاس d100 (<code>d%</code>)
+/ask — پاسخ Yes یا No، میان‌بر /a
 /help — همین راهنما
 
 Inline: @rollrobot را در هر گفت‌وگو همراه با نمادگذاری بنویس، یا از فهرست انتخاب کن
@@ -44,6 +52,7 @@ Inline: @rollrobot را در هر گفت‌وگو همراه با نمادگذا
     { command: 'roll', description: '/roll 2d20kh1+5 — پرتاب تاس' },
     { command: 'full', description: '/full 4d6kh3 — پرتاب با جزئیات' },
     { command: 'random', description: '/random — پرتاب تاس d100' },
+    { command: 'ask', description: '/ask — پاسخ Yes یا No' },
     { command: 'help', description: 'راهنمای نمادگذاری و پیوندها' },
   ],
 
@@ -62,6 +71,7 @@ d% برای Call of Cthulhu
 
 /roll — مجموع را می‌دهد
 /full — جزئیات هر تاس
+/ask — پاسخ Yes یا No
 /help — راهنمای نمادگذاری
 
 @rollrobot را در هر گفت‌وگو بنویس تا بدون افزودن ربات تاس بیندازی`,

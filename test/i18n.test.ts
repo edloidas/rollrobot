@@ -67,7 +67,13 @@ describe('messages', () => {
       });
 
       test('lists the same commands as English', () => {
-        expect(entry.commands.map((c) => c.command)).toEqual(['roll', 'full', 'random', 'help']);
+        expect(entry.commands.map((c) => c.command)).toEqual([
+          'roll',
+          'full',
+          'random',
+          'ask',
+          'help',
+        ]);
         for (const { description } of entry.commands) {
           expect(description.length).toBeGreaterThan(0);
           expect(description.length).toBeLessThanOrEqual(256);
@@ -106,7 +112,7 @@ describe('messages', () => {
       });
 
       test('advertises only the current commands', () => {
-        for (const command of ['/roll', '/full', '/random', '/help']) {
+        for (const command of ['/roll', '/full', '/random', '/ask', '/help']) {
           expect(entry.help).toContain(command);
         }
         for (const retired of ['/sroll', '/droll', '/wod']) {
@@ -123,7 +129,7 @@ describe('fa', () => {
 
   // `@` strands at the far end of a mention the same way `/` does on a command, so a line
   // carrying either needs the Latin anchor
-  const NOTATION_LINE = /\/(roll|full|random|help|r|f)\b|\d*d[\d%F]|@\w/;
+  const NOTATION_LINE = /\/(roll|full|random|ask|help|r|f|a)\b|\d*d[\d%F]|@\w/;
 
   test('uses Persian letter forms rather than Arabic ones', () => {
     for (const text of allText(entry)) {

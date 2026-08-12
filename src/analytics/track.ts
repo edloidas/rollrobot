@@ -21,7 +21,7 @@ export interface AnalyticsEnv {
   ANALYTICS_SALT?: string;
 }
 
-export type Command = 'roll' | 'full' | 'random' | 'inline' | 'help' | 'start';
+export type Command = 'roll' | 'full' | 'random' | 'ask' | 'inline' | 'help' | 'start';
 
 export type Surface = 'private' | 'group' | 'supergroup' | 'channel' | 'inline' | 'unknown';
 

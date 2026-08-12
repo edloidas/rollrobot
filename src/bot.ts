@@ -8,6 +8,7 @@ import {
   trackRoll,
 } from './analytics/track';
 import { rollReply } from './handlers/roll';
+import { askReply } from './handlers/ask';
 import { fullReply } from './handlers/full';
 import { RANDOM_NOTATION, randomReply } from './handlers/random';
 import { helpReply } from './handlers/help';
@@ -28,16 +29,22 @@ function formatRequest(notation: string, label: string | null): string {
   return label == null ? notation : `${notation} "${label}"`.trim();
 }
 
+// ! User text reaches the log verbatim, and a newline in it would forge a second entry that
+//   reads like a genuine one — reachable through a question and through a roll's label alike.
+function oneLine(text: string): string {
+  return text.replace(/\s*\n\s*/g, ' ');
+}
+
 function logRoll(ctx: Context, command: string, request: string, reply: string): void {
   const name = senderName(ctx);
   const group = ctx.chat?.title ? ` [${ctx.chat.title}]` : '';
-  const result = reply
-    .replace(/\n/g, ' ')
+  const result = oneLine(reply)
     .replace(/<[^>]+>/g, '')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&amp;/g, '&');
-  console.log(`${name}${group} /${command} ${request} | ${result}`);
+  const parts = [`${name}${group}`, `/${command}`, oneLine(request), '|', result];
+  console.log(parts.filter((part) => part !== '').join(' '));
 }
 
 /** Result IDs are `<variant>:<uuid>`; unprefixed IDs predate that and cannot be attributed. */
@@ -139,6 +146,13 @@ export function createBot(env: BotEnv): Bot {
     await trackRoll(env, trackContext(ctx, 'full'), result);
   });
 
+  bot.command(['ask', 'a'], async (ctx) => {
+    const { text, question } = askReply((ctx.match as string) ?? '');
+    logRoll(ctx, 'ask', question ?? '', text);
+    await ctx.reply(text, replyOptions(ctx));
+    await trackCommand(env, trackContext(ctx, 'ask'));
+  });
+
   bot.command('random', async (ctx) => {
     const { label } = extractLabel((ctx.match as string) ?? '');
     const { text, result } = randomReply(label);
@@ -152,6 +166,15 @@ export function createBot(env: BotEnv): Bot {
     const name = senderName(ctx);
     const { query, result_id } = ctx.chosenInlineResult;
     const variant = inlineVariant(result_id);
+
+    // An answer has no dice shape to record, and the roll path's `?? roll(DEFAULT_NOTATION)`
+    // fallback would invent a phantom d20 term for it
+    if (variant === 'ask') {
+      console.log(`${name} [inline] ask ${oneLine(query)}`);
+      await trackCommand(env, { command: 'ask', surface: 'inline', userId: ctx.from?.id });
+      return;
+    }
+
     const { notation: queried, label } = extractLabel(query);
     const notation = variant === 'random' ? RANDOM_NOTATION : queried || DEFAULT_NOTATION;
     console.log(`${name} [inline] ${variant} ${formatRequest(notation, label)}`);

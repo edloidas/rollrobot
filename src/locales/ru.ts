@@ -2,7 +2,14 @@ import { playground, reference } from './links';
 import type { Messages } from './types';
 
 export const ru: Messages = {
-  inline: { roll: 'Бросок', full: 'Разбор', random: 'Наугад', help: 'Как пользоваться' },
+  inline: {
+    roll: 'Бросок',
+    full: 'Разбор',
+    random: 'Наугад',
+    ask: 'Вопрос',
+    answer: 'Отвечает Yes или No',
+    help: 'Как пользоваться',
+  },
 
   help: `Бросай кубики как никто другой — полная ролевая нотация: оставить/отбросить, взрывающиеся кубики, перебросы, пулы успехов и проверки.
 
@@ -10,6 +17,7 @@ export const ru: Messages = {
 /roll [нотация] — бросок с суммой (сокращение: /r)
 /full [нотация] — бросок с разбором по кубикам (сокращение: /f)
 /random — бросок d100 (<code>d%</code>)
+/ask [вопрос] — ответ Yes или No (сокращение: /a)
 /help — эта справка
 
 Инлайн: напиши @rollrobot [нотация] в любом чате или выбери вариант из списка.
@@ -36,6 +44,7 @@ export const ru: Messages = {
     { command: 'roll', description: 'Бросок кубиков — /roll 2d20kh1+5' },
     { command: 'full', description: 'Бросок с разбором — /full 4d6kh3' },
     { command: 'random', description: 'Бросок d100' },
+    { command: 'ask', description: 'Ответ Yes или No — /ask Атакуем?' },
     { command: 'help', description: 'Справка по нотации и ссылки' },
   ],
 
@@ -52,5 +61,5 @@ export const ru: Messages = {
 4dF для Fate
 d% для Call of Cthulhu
 
-/roll даёт сумму, /full — разбор по кубикам, /help — справку по нотации. Напиши @rollrobot в любом чате, чтобы бросить кубики без добавления бота.`,
+/roll даёт сумму, /full — разбор по кубикам, /ask — Yes или No, /help — справку по нотации. Напиши @rollrobot в любом чате, чтобы бросить кубики без добавления бота.`,
 };

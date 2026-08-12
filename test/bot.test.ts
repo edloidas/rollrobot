@@ -77,6 +77,19 @@ describe('Chosen inline results', () => {
     expect(await chosenLog('abc', 'd20')).toEqual('@testuser [inline] unknown d20');
   });
 
+  test('should log a chosen answer without re-resolving the query as notation', async () => {
+    expect(await chosenLog('ask:abc', 'will it rain')).toEqual(
+      '@testuser [inline] ask will it rain',
+    );
+    expect(await chosenLog('ask:abc', '2d6')).toEqual('@testuser [inline] ask 2d6');
+  });
+
+  test('should keep a chosen answer on one log line', async () => {
+    expect(await chosenLog('ask:abc', 'north\nor south')).toEqual(
+      '@testuser [inline] ask north or south',
+    );
+  });
+
   test('should log the label of a queried roll', async () => {
     expect(await chosenLog('roll:abc', '2d20+1 "Perception"')).toEqual(
       '@testuser [inline] roll 2d20+1 "Perception"',
@@ -122,6 +135,24 @@ describe('Command logging', () => {
   test('should log the normalized notation of shorthand and empty input', async () => {
     expect(await commandLog('/roll')).toMatch(/^@testuser \/roll d20 \| /);
     expect(await commandLog('/roll 2 10 -1')).toMatch(/^@testuser \/roll 2d10-1 \| /);
+  });
+
+  test('should log the question and the answer', async () => {
+    expect(await commandLog('/ask Should we attack?')).toMatch(
+      /^@testuser \/ask Should we attack\? \| Should we attack\? (Yes ✅|No ❌)$/,
+    );
+  });
+
+  test('should log an answer to no question without a gap', async () => {
+    expect(await commandLog('/ask')).toMatch(/^@testuser \/ask \| (Yes ✅|No ❌)$/);
+  });
+
+  // ! A newline reaching the log verbatim would forge a second entry that reads like a real one
+  test('should collapse a multi-line question onto one line', async () => {
+    expect(await commandLog('/ask north\nor south?')).toMatch(
+      /^@testuser \/ask north or south\? \| north or south\? (Yes ✅|No ❌)$/,
+    );
+    expect(await commandLog('/roll 2d6 "a\nb"')).toMatch(/^@testuser \/roll 2d6 "a b" \| /);
   });
 });
 
@@ -171,6 +202,22 @@ describe('Analytics tracking', () => {
 
     await tracked.sendChosenInline('random:abc');
     expect(dataset.points.at(-1)?.blobs?.[1]).toEqual('1d100');
+  });
+
+  test('should record /ask with no dice term, keeping the d2 out of dice rows', async () => {
+    await tracked.send('/ask Should we attack?');
+
+    expect(dataset.points).toHaveLength(1);
+    expect(dataset.points[0].indexes).toEqual(['ask']);
+    expect(dataset.points[0].blobs?.slice(0, 4)).toEqual(['ask', '', '', 'private']);
+  });
+
+  test('should record a chosen answer as ask rather than a phantom roll', async () => {
+    await tracked.sendChosenInline('ask:abc', 'will it rain');
+
+    expect(dataset.points).toHaveLength(1);
+    expect(dataset.points[0].indexes).toEqual(['ask']);
+    expect(dataset.points[0].blobs?.slice(0, 4)).toEqual(['ask', '', '', 'inline']);
   });
 
   test('should not record inline queries, which fire per keystroke', async () => {

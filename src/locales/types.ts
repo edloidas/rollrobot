@@ -4,8 +4,12 @@ export interface CommandText {
 }
 
 export interface Messages {
-  /** Inline result titles mirroring the commands they stand for, plus the help button above them. */
-  inline: { roll: string; full: string; random: string; help: string };
+  /**
+   * Inline result titles mirroring the commands they stand for, plus `answer` — the one
+   * description line the list carries, since an answer has no notation to echo — and the
+   * help button above them.
+   */
+  inline: { roll: string; full: string; random: string; ask: string; answer: string; help: string };
   help: string;
   commands: CommandText[];
   /** Profile blurb shown in search — Telegram caps it at 120 characters. */

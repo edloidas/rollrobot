@@ -5,6 +5,7 @@ import { DEFAULT_LOCALE, type Locale, type Messages, messages } from '../i18n';
 import { extractLabel } from '../label';
 import { ROLL_LIMITS } from '../limits';
 import { normalizeNotation } from '../notation';
+import { askReply } from './ask';
 import { RANDOM_NOTATION } from './random';
 
 function createInputMessageContent(text: string) {
@@ -15,7 +16,7 @@ function createInputMessageContent(text: string) {
   };
 }
 
-type InlineVariant = 'roll' | 'full' | 'random';
+type InlineVariant = 'roll' | 'full' | 'random' | 'ask';
 
 function createArticle(
   variant: InlineVariant,
@@ -108,23 +109,63 @@ export function chosenInlineRoll(query: string, variant: string): RollResult {
   return resolveQueryRoll(query)?.result ?? roll(DEFAULT_NOTATION);
 }
 
+/** Names a die outright — `2d6`, `d%`, `4dF` — as opposed to the bare-number shorthand. */
+const EXPLICIT_DIE = /d/i;
+
+/**
+ * Whether the query reads as a question rather than a roll, and so earns an `Ask` article.
+ *
+ * The die-marker test is deliberately gated behind a successful parse: `Should I text her?`
+ * carries a `d` in "Should" and has to stay a question. Shorthand notation is left as a
+ * question too — `2024` and `1 2` roll `d2024` and `1d2`, but neither is a die anyone named.
+ *
+ * ! A quoted question is why the parse alone cannot decide this. `"Should I text her?"`, and
+ *   the `“…”` / `«…»` pairs mobile keyboards substitute, parse today as a `d20` labelled with
+ *   the question — so hiding `Ask` whenever a roll parsed would hide it exactly where a
+ *   question is likeliest.
+ */
+function isQuestion(query: string, resolved: QueryRoll | null, notation: string): boolean {
+  const asked = query.trim();
+  // Nothing, or a lone `d`, is notation being typed rather than a question — the two cases
+  // `resolveQueryRoll` also declines to roll on
+  if (asked === '' || asked === 'd') return false;
+  return resolved == null || !EXPLICIT_DIE.test(notation);
+}
+
+/** Trailing when the query rolled on notation of its own; there the question is the aside. */
+function isAskTrailing(resolved: QueryRoll | null, notation: string): boolean {
+  return resolved != null && notation !== '' && notation !== 'd';
+}
+
 export function createInlineArticles(
   query = '',
   locale: Locale = DEFAULT_LOCALE,
 ): InlineQueryResponse {
   const titles = messages(locale).inline;
+  const { notation } = extractLabel(query);
   const resolved = resolveQueryRoll(query);
 
-  if (resolved != null) {
-    return {
-      results: createQueryArticles(resolved.result, titles, resolved.label),
-      hasInvalidQuery: false,
-    };
-  }
+  const rolls =
+    resolved != null
+      ? createQueryArticles(resolved.result, titles, resolved.label)
+      : createPresetArticles(titles);
 
-  const { notation } = extractLabel(query);
+  const ask = isQuestion(query, resolved, notation)
+    ? createArticle('ask', titles.ask, titles.answer, askReply(query).text)
+    : null;
+
   return {
-    results: createPresetArticles(titles),
-    hasInvalidQuery: notation !== '' && notation !== 'd',
+    results: ask == null ? rolls : askArticles(rolls, ask, resolved, notation),
+    // ! Left on the parse alone, so a question still raises the help button
+    hasInvalidQuery: resolved == null && notation !== '' && notation !== 'd',
   };
+}
+
+function askArticles(
+  rolls: InlineQueryResult[],
+  ask: InlineQueryResult,
+  resolved: QueryRoll | null,
+  notation: string,
+): InlineQueryResult[] {
+  return isAskTrailing(resolved, notation) ? [...rolls, ask] : [ask, ...rolls];
 }

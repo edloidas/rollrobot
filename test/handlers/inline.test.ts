@@ -16,6 +16,10 @@ const PRESET_ARTICLES = [
   { title: 'Random', description: 'd100' },
 ];
 
+const ASK_ARTICLE = { title: 'Ask', description: 'Answers Yes or No' };
+
+const ANSWER = /^(<b>Yes<\/b> ✅|<b>No<\/b> ❌)$/;
+
 function expectArticles(results: any[], expected: { title: string; description?: string }[]) {
   expect(results.length).toEqual(expected.length);
   for (let i = 0; i < expected.length; i++) {
@@ -46,9 +50,9 @@ describe('Inline queries', () => {
     expectArticles(results, PRESET_ARTICLES);
   });
 
-  test('should return preset articles for invalid query', async () => {
+  test('should lead with the ask article for a query that is not notation', async () => {
     const results = await bot.sendInline('abc');
-    expectArticles(results, PRESET_ARTICLES);
+    expectArticles(results, [ASK_ARTICLE, ...PRESET_ARTICLES]);
   });
 
   test('should prefix preset article ids with their variant', async () => {
@@ -137,6 +141,7 @@ describe('Inline queries', () => {
     expectArticles(results, [
       { title: 'Roll', description: '2d10 - 1' },
       { title: 'Full', description: '2d10 - 1' },
+      ASK_ARTICLE,
     ]);
   });
 
@@ -199,9 +204,11 @@ describe('Inline queries', () => {
       }
     });
 
+    // A quoted string on its own is a question as readily as it is a roll name, so it gets both
     test('should roll the default when only a label is given', async () => {
       const results = await bot.sendInline('"attack"');
       expectArticles(results, [
+        ASK_ARTICLE,
         { title: 'Roll', description: '1d20' },
         { title: 'Full', description: '1d20' },
       ]);
@@ -210,15 +217,16 @@ describe('Inline queries', () => {
 
     test('should fall back to presets with help button for an unterminated quote', async () => {
       const results = await bot.sendInline('4d6 "chars');
-      expectArticles(results, PRESET_ARTICLES);
+      expectArticles(results, [ASK_ARTICLE, ...PRESET_ARTICLES]);
       expect(bot.inlineResults[0].button).toEqual(HELP_BUTTON);
     });
 
     test('should fall back to presets when the notation is invalid', async () => {
       const results = await bot.sendInline('xyz "label"');
-      expectArticles(results, PRESET_ARTICLES);
+      expectArticles(results, [ASK_ARTICLE, ...PRESET_ARTICLES]);
       expect(bot.inlineResults[0].button).toEqual(HELP_BUTTON);
-      for (const result of results) {
+      // The presets carry no label; only the ask article quotes anything
+      for (const result of results.slice(1)) {
         expect(result.input_message_content.message_text).not.toContain('<blockquote>');
       }
     });
@@ -233,7 +241,88 @@ describe('Inline queries', () => {
 
   test('should fall back to presets with help button above the dice limit', async () => {
     const results = await bot.sendInline('999d6');
-    expectArticles(results, PRESET_ARTICLES);
+    expectArticles(results, [ASK_ARTICLE, ...PRESET_ARTICLES]);
     expect(bot.inlineResults[0].button).toEqual(HELP_BUTTON);
+  });
+
+  describe('Ask article', () => {
+    function titles(results: any[]): string[] {
+      return results.map((result) => result.title);
+    }
+
+    function askText(results: any[]): string {
+      return results.find((result) => result.title === ASK_ARTICLE.title).input_message_content
+        .message_text;
+    }
+
+    // Nothing typed yet, and a lone `d` is notation on its way in
+    test('should be absent until something is asked', async () => {
+      for (const query of ['', '   ', 'd']) {
+        expect(titles(await bot.sendInline(query))).not.toContain(ASK_ARTICLE.title);
+      }
+    });
+
+    test('should be absent for notation that names a die', async () => {
+      for (const query of ['d20', '2d20+5', '4dF', 'd%', '4d6kh3', '2d6 "Attack"']) {
+        expect(titles(await bot.sendInline(query))).not.toContain(ASK_ARTICLE.title);
+      }
+    });
+
+    // `2024` rolls a d2024 and `1 2` a 1d2, but neither is a die anyone named
+    test('should trail the roll for bare-number shorthand', async () => {
+      for (const query of ['2024', '1 2', '2 10 -1']) {
+        expect(titles(await bot.sendInline(query))).toEqual(['Roll', 'Full', ASK_ARTICLE.title]);
+      }
+    });
+
+    test('should lead for text that is not notation', async () => {
+      for (const query of ['will it rain tomorrow', '去', '?', 'should I text her']) {
+        expect(titles(await bot.sendInline(query))[0]).toEqual(ASK_ARTICLE.title);
+      }
+    });
+
+    // A `d` inside a word must not read as a die: "Should" carries one
+    test('should lead for a quoted question, which parses as a labelled d20', async () => {
+      for (const query of ['"Should I text her?"', '«Стоит ли?»', '“Should we?”']) {
+        const results = await bot.sendInline(query);
+        expect(titles(results)).toEqual([ASK_ARTICLE.title, 'Roll', 'Full']);
+      }
+    });
+
+    test('should quote the question above a Yes or No', async () => {
+      const results = await bot.sendInline('will it rain');
+      const [quote, answer] = askText(results).split('\n');
+      expect(quote).toEqual('<blockquote>will it rain</blockquote>');
+      expect(answer).toMatch(ANSWER);
+    });
+
+    test('should answer both ways across many queries', async () => {
+      const answers = new Set<string>();
+      for (let i = 0; i < 200; i++) {
+        answers.add(askText(await bot.sendInline('coin')).split('\n')[1]);
+      }
+      expect(answers.size).toEqual(2);
+    });
+
+    test('should escape HTML in the question', async () => {
+      const results = await bot.sendInline('<b>now</b>?');
+      expect(askText(results)).toStartWith('<blockquote>&lt;b&gt;now&lt;/b&gt;?</blockquote>\n');
+    });
+
+    test('should prefix its id with the ask variant', async () => {
+      const results = await bot.sendInline('will it rain');
+      expect(results[0].id.split(':')[0]).toEqual('ask');
+    });
+
+    test('should localize its title and description', async () => {
+      const ru = messages('ru').inline;
+      const results = await bot.sendInline('буде дождь', 'ru');
+      expect(results[0]).toMatchObject({ title: ru.ask, description: ru.answer });
+    });
+
+    test('should leave the help button in place', async () => {
+      await bot.sendInline('will it rain');
+      expect(bot.inlineResults[0].button).toEqual(HELP_BUTTON);
+    });
   });
 });
