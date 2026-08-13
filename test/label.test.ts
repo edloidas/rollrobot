@@ -44,10 +44,36 @@ describe('extractLabel', () => {
     expect(extractLabel('')).toEqual({ notation: '', label: null });
   });
 
-  test('leaves an unterminated quote in the notation', () => {
-    expect(extractLabel('4d6 "chars')).toEqual({ notation: '4d6 "chars', label: null });
-    expect(extractLabel('4d6 "')).toEqual({ notation: '4d6 "', label: null });
-    expect(extractLabel('"')).toEqual({ notation: '"', label: null });
+  test('accepts an unterminated opening quote', () => {
+    expect(extractLabel('4d6 "chars')).toEqual({ notation: '4d6', label: 'chars' });
+    expect(extractLabel('d2 “Customers wear Chockers')).toEqual({
+      notation: 'd2',
+      label: 'Customers wear Chockers',
+    });
+    expect(extractLabel('2d6 «атака')).toEqual({ notation: '2d6', label: 'атака' });
+  });
+
+  test('drops a quote left with nothing to open', () => {
+    expect(extractLabel('4d6 "')).toEqual({ notation: '4d6', label: null });
+    expect(extractLabel('"')).toEqual({ notation: '', label: null });
+  });
+
+  // Without a closer, only a quote after a space reads as an opener — otherwise
+  // `2d6 s'more` would split into the sort modifier `2d6 s` labelled `more`
+  test('leaves a mid-word apostrophe in the notation', () => {
+    expect(extractLabel("2d6 s'more")).toEqual({ notation: "2d6 s'more", label: null });
+    expect(extractLabel("2d6 don't")).toEqual({ notation: "2d6 don't", label: null });
+  });
+
+  // The mis-split `d20 it` / `s a trap` used to reach the parser and error there
+  test('leaves input whole when no split parses', () => {
+    expect(extractLabel("d20 it's a trap'")).toEqual({ notation: "d20 it's a trap'", label: null });
+  });
+
+  // Two keyboards, two quote families — the closer does not accept this opener,
+  // so the split only happens because the unterminated candidate is tried next
+  test('splits a mismatched quote pair', () => {
+    expect(extractLabel('2d6 ‘attack”')).toEqual({ notation: '2d6', label: 'attack”' });
   });
 
   test('reports a label with no notation', () => {

@@ -215,8 +215,23 @@ describe('Inline queries', () => {
       expect(bot.inlineResults[0].button).toBeUndefined();
     });
 
-    test('should fall back to presets with help button for an unterminated quote', async () => {
+    test('should name the roll from an unterminated quote', async () => {
       const results = await bot.sendInline('4d6 "chars');
+      expectArticles(results, [
+        { title: 'Roll', description: '4d6' },
+        { title: 'Full', description: '4d6' },
+      ]);
+      for (const result of results) {
+        expect(result.input_message_content.message_text).toStartWith(
+          '<blockquote>chars</blockquote>\n',
+        );
+      }
+      expect(bot.inlineResults[0].button).toBeUndefined();
+    });
+
+    // No closer, so the apostrophe is not read as an opener — `2d6 don` would not parse
+    test('should fall back to presets for an unquoted apostrophe', async () => {
+      const results = await bot.sendInline("2d6 don't");
       expectArticles(results, [ASK_ARTICLE, ...PRESET_ARTICLES]);
       expect(bot.inlineResults[0].button).toEqual(HELP_BUTTON);
     });

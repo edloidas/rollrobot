@@ -89,8 +89,14 @@ describe('/roll', () => {
       expect(reply).toContain('<pre>xyz');
     });
 
-    test('should leave an unterminated quote to the parser', async () => {
+    test('should name the roll from an unterminated quote', async () => {
       const reply = await bot.send('/roll 4d6 "chars');
+      expect(reply).toContain('<blockquote>chars</blockquote>');
+      expect(reply).toContain('<code>4d6</code>');
+    });
+
+    test('should leave an unquoted apostrophe to the parser', async () => {
+      const reply = await bot.send("/roll 2d6 don't");
       expect(reply).not.toContain('<blockquote>');
       expect(reply).toMatch(/^<i>.+<\/i>/);
     });
