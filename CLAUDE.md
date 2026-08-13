@@ -72,7 +72,8 @@ Each issue gets one **main** label + 0–2 **supportive** labels.
 
 - **Title**: `<type>: <description> #<number>`
 - **Body**: concise, no emojis, separate all sections with one blank line
-- Multiple issues go on one `Closes` line: `Closes #1 #23 #456`
+- One `Closes #<issue>` per line. The keyword is what closes an issue, so a bare
+  number after the first (`Closes #1 #23`) links but never closes
 - Never append a generated footer, `---` rule, session link, `<sub>` attribution,
   or promotional line. Applies to PRs created from the web too, where these
   instructions are the only source of truth.
@@ -80,5 +81,8 @@ Each issue gets one **main** label + 0–2 **supportive** labels.
   ```
   <summary of changes>
 
-  Closes #<issue1> #<issue2>
+  Closes #<issue1>
+  Closes #<issue2>
   ```
+
+- After merging, check that every referenced issue actually closed
