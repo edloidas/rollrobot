@@ -33,6 +33,11 @@ function foldNumerals(input: string): string {
  *
  * ? Kept to what a keyboard or an autocorrect actually produces. Typographic curios
  * — `∗`, `·`, `‒`, the fullwidth forms — are errors nobody has hit.
+ *
+ * `к` (from «кубик») and its transliterated cousin `д` are how the Cyrillic locales
+ * write a die — `2к6`, `к20`. Digits are shared across layouts, so the letter arrives
+ * from the wrong alphabet unnoticed. Cyrillic `к` (U+043A) is not Latin `k` (U+006B),
+ * so the `k` / `kh` / `kl` keep-modifiers are untouched.
  */
 const CHARACTER_FOLDS: Record<string, string | undefined> = {
   '÷': '/',
@@ -40,6 +45,10 @@ const CHARACTER_FOLDS: Record<string, string | undefined> = {
   '−': '-',
   '–': '-',
   '—': '-',
+  к: 'd',
+  К: 'd',
+  д: 'd',
+  Д: 'd',
 };
 
 // Built from the keys so the two cannot drift apart. Safe as a character class only

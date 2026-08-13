@@ -55,6 +55,22 @@ describe('normalizeNotation', () => {
     expect(normalizeNotation('2d6×2')).toBe('2d6*2');
   });
 
+  // «кубик» — how the Cyrillic locales write a die, typed without noticing the letter
+  // came from the other layout
+  test('folds cyrillic dice specifiers to d', () => {
+    expect(normalizeNotation('2к6')).toBe('2d6');
+    expect(normalizeNotation('к20')).toBe('d20');
+    expect(normalizeNotation('2К6')).toBe('2d6');
+    expect(normalizeNotation('2д6')).toBe('2d6');
+    expect(normalizeNotation('2Д6+1')).toBe('2d6+1');
+  });
+
+  // Cyrillic `к` is U+043A, Latin `k` is U+006B — the keep modifiers are a different letter
+  test('leaves the latin keep modifiers alone', () => {
+    expect(normalizeNotation('4к6kh3')).toBe('4d6kh3');
+    expect(normalizeNotation('2к20kl1')).toBe('2d20kl1');
+  });
+
   test('passes dice notation through untouched', () => {
     expect(normalizeNotation('d20')).toBe('d20');
     expect(normalizeNotation('4d6kh3')).toBe('4d6kh3');
