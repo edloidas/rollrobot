@@ -108,5 +108,12 @@ describe('/roll', () => {
       expect(reply).toContain('<blockquote>ضربهٔ ۳</blockquote>');
       expect(reply).toContain('<code>2d6</code>');
     });
+
+    // ! Same order, one alphabet further: folding first would turn «проверка» into `провер d а`
+    test('should fold cyrillic dice specifiers but not the label', async () => {
+      const reply = await bot.send('/roll 1к20 «проверка»');
+      expect(reply).toContain('<blockquote>проверка</blockquote>');
+      expect(reply).toContain('<code>1d20</code>');
+    });
   });
 });
