@@ -24,15 +24,49 @@ function foldNumerals(input: string): string {
 }
 
 /**
+ * Characters the parser rejects, mapped to the operator they were meant to be.
+ *
+ * The dash family is the one that matters: iOS and macOS rewrite `-` into `–` or `—`
+ * without telling anyone, so `2d6 – 1` is an error the user cannot see the cause of.
+ * `÷` and `×` are deliberate, but they sit on the same symbol page a phone offers
+ * instead of `/` and `*`.
+ *
+ * ? Kept to what a keyboard or an autocorrect actually produces. Typographic curios
+ * — `∗`, `·`, `‒`, the fullwidth forms — are errors nobody has hit.
+ */
+const CHARACTER_FOLDS: Record<string, string | undefined> = {
+  '÷': '/',
+  '×': '*',
+  '−': '-',
+  '–': '-',
+  '—': '-',
+};
+
+// Built from the keys so the two cannot drift apart. Safe as a character class only
+// because no key is a `-`, `]` or `^`
+const FOLDED = new RegExp(`[${Object.keys(CHARACTER_FOLDS).join('')}]`, 'g');
+
+/**
+ * Folds operator lookalikes to the ASCII the grammar accepts.
+ *
+ * ! Notation only, same as `foldNumerals` — `extractLabel` runs first at every call
+ * site, and a label is prose where a `–` is a `–`.
+ */
+function foldCharacters(input: string): string {
+  return input.replace(FOLDED, (char) => CHARACTER_FOLDS[char] ?? char);
+}
+
+/**
  * Rewrites pre-v3 shorthand into dice notation: a bare number rolls a die
  * with that many sides (`20` → `d20`), and the space-separated simplified
  * form becomes classic notation (`2 10 -1` → `2d10-1`). Anything else is
  * passed through for the parser to judge. Empty input defaults to `d20`.
  *
- * Eastern numerals are folded first, so the shorthand rules see `۲۰` as `20`.
+ * Characters are folded first, so the shorthand rules see `۲۰` as `20` and `۲ ۱۰ −۱`
+ * as a signed modifier.
  */
 export function normalizeNotation(input: string): string {
-  const trimmed = foldNumerals(input.trim());
+  const trimmed = foldCharacters(foldNumerals(input)).trim();
   if (trimmed === '') return 'd20';
 
   if (BARE_NUMBER.test(trimmed)) return `d${trimmed}`;

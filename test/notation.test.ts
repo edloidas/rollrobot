@@ -40,6 +40,21 @@ describe('normalizeNotation', () => {
     expect(normalizeNotation('d٪')).toBe('d%');
   });
 
+  // iOS and macOS substitute these for `-` on their own, so the user never sees why
+  // `2d6 – 1` failed
+  test('folds the dash family to a minus', () => {
+    expect(normalizeNotation('2d6 − 1')).toBe('2d6 - 1');
+    expect(normalizeNotation('2d6 – 1')).toBe('2d6 - 1');
+    expect(normalizeNotation('2d6 — 1')).toBe('2d6 - 1');
+    expect(normalizeNotation('2 10 −1')).toBe('2d10-1');
+  });
+
+  // The symbol page a phone offers instead of `/` and `*`
+  test('folds math symbols to their operators', () => {
+    expect(normalizeNotation('2d6÷2')).toBe('2d6/2');
+    expect(normalizeNotation('2d6×2')).toBe('2d6*2');
+  });
+
   test('passes dice notation through untouched', () => {
     expect(normalizeNotation('d20')).toBe('d20');
     expect(normalizeNotation('4d6kh3')).toBe('4d6kh3');
