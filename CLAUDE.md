@@ -39,6 +39,8 @@ Versioning follows [semver](https://semver.org/) with prerelease tags: `3.0.0-al
 3. Commit: `release: v<version>`
 4. Tag: `git tag -a v<version> -m "v<version>"`
 5. Push: `git push && git push --tags`
+6. If `commands`, `description` or `shortDescription` changed in any locale, run
+   `bun run telegram:configure` — nothing else pushes them, so the command menu goes stale
 
 The `release.yml` GitHub workflow triggers on `v*` tags, verifies the tag is on `master`, and creates a GitHub Release via `softprops/action-gh-release`.
 

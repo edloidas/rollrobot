@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach } from 'bun:test';
 import { TestBot } from '../helpers';
 import { messages } from '../../src/i18n';
+import { MAX_PICK_ITEMS } from '../../src/limits';
 
 let bot: TestBot;
 
@@ -17,6 +18,8 @@ const PRESET_ARTICLES = [
 ];
 
 const ASK_ARTICLE = { title: 'Ask', description: 'Answers Yes or No' };
+
+const PICK_TITLE = 'Pick (beta)';
 
 const ANSWER = /^(<b>Yes<\/b> ✅|<b>No<\/b> ❌)$/;
 
@@ -338,6 +341,111 @@ describe('Inline queries', () => {
     test('should leave the help button in place', async () => {
       await bot.sendInline('will it rain');
       expect(bot.inlineResults[0].button).toEqual(HELP_BUTTON);
+    });
+  });
+
+  describe('Pick article', () => {
+    /** Article titles for a query, in order. */
+    async function titles(query: string): Promise<string[]> {
+      return (await bot.sendInline(query)).map((result: any) => result.title);
+    }
+
+    test('should lead the list for an explicitly separated query', async () => {
+      expect(await titles('Rock | Paper | Scissors')).toEqual([
+        PICK_TITLE,
+        ...PRESET_ARTICLES.map((article) => article.title),
+      ]);
+    });
+
+    test('should prefix its id with the variant', async () => {
+      const results = await bot.sendInline('Rock | Paper');
+      expect(results[0].id.split(':')[0]).toEqual('pick');
+    });
+
+    test('should describe the pool it split', async () => {
+      const results = await bot.sendInline('Rock | Paper | Scissors');
+      expect(results[0].description).toEqual('Rock · Paper · Scissors');
+    });
+
+    // Nothing sits above an inline message to give it context, so it carries the pool
+    test('should echo the pool under the winner', async () => {
+      const results = await bot.sendInline('Rock | Paper');
+      const message = results[0].input_message_content.message_text;
+      expect(message).toContain('<i>Rock · Paper</i>');
+      expect(['Rock', 'Paper']).toContain(message.match(/<b>(.*)<\/b>/)?.[1]);
+    });
+
+    test('should carry a trailing label', async () => {
+      const results = await bot.sendInline('Sword | Bow "Which weapon?"');
+      expect(results[0].input_message_content.message_text).toStartWith(
+        '<blockquote>Which weapon?</blockquote>',
+      );
+    });
+
+    test('should displace the ask article', async () => {
+      const results = await bot.sendInline('Rock | Paper');
+      expect(results.map((r: any) => r.title)).not.toContain(ASK_ARTICLE.title);
+    });
+
+    // ! The button must survive a pick: half-typed notation and a list are indistinguishable
+    //   until the notation is finished, so suppressing it hides the button on `{1d8!, 1d6`
+    test('should leave the help button in place', async () => {
+      await bot.sendInline('Rock | Paper');
+      expect(bot.inlineResults[0].button).toEqual(HELP_BUTTON);
+    });
+
+    describe('must not fire on half-typed notation', () => {
+      for (const query of ['{1d8!, 1d6', 'max(1d6, 1d8', '@{a|b', '{2d6, 3d8']) {
+        test(`should not offer a pick for ${query}`, async () => {
+          expect(await titles(query)).not.toContain(PICK_TITLE);
+          expect(bot.inlineResults[0].button).toEqual(HELP_BUTTON);
+        });
+      }
+    });
+
+    test('should offer a comma list that is not notation', async () => {
+      expect(await titles('tea, coffee, water')).toContain(PICK_TITLE);
+    });
+
+    // ! A separator alone must never trigger a pick — commas are valid inside group pools
+    //   and function arguments, and `@{…}` accepts every separator this bot splits on
+    describe('must never shred valid notation', () => {
+      const NOTATION = [
+        '{1d8!, 1d6!}kh1',
+        '{2d6, 2d8}kh1',
+        '{1d6, 1d8, 1d10, 1d12}kh2',
+        'max(1d6, 1d8)',
+        'min(1, 2, 3, 4, 5)',
+        'pow(2, 8)',
+        '2d6+floor(1d4/2)',
+        '@{a|b}',
+        // Parses, but busts maxDice — so a `resolved == null` gate would have shredded it
+        '{200d8!, 1d6!}kh1',
+        // Separators living inside a label, where they are prose
+        '2d6 "a | b"',
+        '2d6 "attack, twice"',
+        '{2d6, 3d8}kh1 "big, pool"',
+      ];
+
+      for (const query of NOTATION) {
+        test(`should not offer a pick for ${query}`, async () => {
+          expect(await titles(query)).not.toContain(PICK_TITLE);
+        });
+      }
+    });
+
+    // The space fallback is too loose inline: it would split every question into options
+    describe('must not fire on the space fallback', () => {
+      for (const query of ['Should I text her?', 'Alice Bob Carol', 'will it rain']) {
+        test(`should not offer a pick for ${query}`, async () => {
+          expect(await titles(query)).not.toContain(PICK_TITLE);
+        });
+      }
+    });
+
+    test('should not offer a pick past the item limit', async () => {
+      const options = Array.from({ length: MAX_PICK_ITEMS + 1 }, (_, i) => `o${i}`);
+      expect(await titles(options.join(' | '))).not.toContain(PICK_TITLE);
     });
   });
 });

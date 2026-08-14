@@ -4,6 +4,14 @@ import { TestBot } from '../helpers';
 import { messages, SUPPORTED_LOCALES } from '../../src/i18n';
 import { extractLabel } from '../../src/label';
 import { normalizeNotation } from '../../src/notation';
+import { pickReply } from '../../src/handlers/pick';
+
+/** Every `<code>` block in the guide, unescaped. */
+function codeBlocks(help: string): string[] {
+  return [...help.matchAll(/<code>(.+?)<\/code>/g)].map(([, example]) =>
+    example.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
+  );
+}
 
 /**
  * Guide examples, run through the same shims the commands apply — so `/roll 2 10 -1`
@@ -11,14 +19,16 @@ import { normalizeNotation } from '../../src/notation';
  * A translation that mangles a quote leaves it in the notation and fails here.
  */
 function notationExamples(help: string): string[] {
-  return [...help.matchAll(/<code>(.+?)<\/code>/g)].map(([, example]) => {
-    const command = example
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&amp;/g, '&')
-      .replace(/^\/\w+\s*/, '');
-    return normalizeNotation(extractLabel(command).notation);
-  });
+  return codeBlocks(help)
+    .filter((example) => !example.startsWith('/pick'))
+    .map((example) => normalizeNotation(extractLabel(example.replace(/^\/\w+\s*/, '')).notation));
+}
+
+/** Pick examples carry option lists rather than notation, so they are checked as lists. */
+function pickExamples(help: string): string[] {
+  return codeBlocks(help)
+    .filter((example) => example.startsWith('/pick'))
+    .map((example) => example.replace(/^\/pick\s*/, ''));
 }
 
 let bot: TestBot;
@@ -58,6 +68,15 @@ describe('Help commands', () => {
       expect(examples.length).toBeGreaterThan(0);
       for (const notation of examples) {
         expect(() => roll(notation)).not.toThrow();
+      }
+    });
+
+    // A translator who drops a separator leaves an example that cannot pick anything
+    test(`should only show pick examples that split in ${locale}`, () => {
+      const examples = pickExamples(messages(locale).help);
+      expect(examples.length).toBeGreaterThan(0);
+      for (const options of examples) {
+        expect(pickReply(options, locale).choice).not.toBeNull();
       }
     });
   }

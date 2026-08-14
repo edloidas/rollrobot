@@ -7,3 +7,7 @@ export const ROLL_LIMITS: RollOptions = {
   maxExplodeIterations: 100,
   maxRerollIterations: 100,
 };
+
+// ! A longer list is rejected rather than trimmed — keeping the first hundred would bias
+//   every pick toward the head of the list while still looking like it worked.
+export const MAX_PICK_ITEMS = 100;

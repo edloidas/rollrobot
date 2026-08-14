@@ -1,9 +1,9 @@
 # Analytics
 
 Every roll is recorded to the `rollrobot_events` Analytics Engine dataset — one data point
-per *distinct* dice term, capped at 20 per roll, plus one per `/start`, `/help` and `/ask`.
-An answer records no dice term — the `d2` behind it is an implementation detail, not a roll
-anyone asked for. Repeated
+per *distinct* dice term, capped at 20 per roll, plus one per `/start`, `/help`, `/ask` and
+`/pick`. Neither an answer nor a pick records a dice term — the `d2` and `dN` behind them are
+implementation details, not rolls anyone asked for. Repeated
 shapes collapse, so `2d6+2d6` records a single `2d6`. Nothing identifying is stored: the
 Telegram user ID is written as an HMAC-SHA256 digest keyed by `ANALYTICS_SALT`, and the
 dataset is write-only from the Worker.

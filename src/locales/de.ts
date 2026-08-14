@@ -7,8 +7,15 @@ export const de: Messages = {
     full: 'Aufschlüsselung',
     random: 'Zufallswurf',
     ask: 'Frage',
+    pick: 'Auswahl',
     answer: 'Antwortet Yes oder No',
     help: 'Anleitung',
+  },
+
+  pick: {
+    usage: 'Gib mir mindestens zwei Optionen — /pick Stein | Papier | Schere',
+    tooMany: 'Zu viele Optionen — höchstens 100.',
+    spaceSplit: 'An Leerzeichen getrennt — nutze , oder | für ganze Wendungen.',
   },
 
   help: `Würfle wie noch nie — vollständige Rollenspiel-Notation mit Behalten/Verwerfen, explodierenden Würfeln, Wiederholungswürfen, Erfolgspools und Proben.
@@ -18,6 +25,7 @@ export const de: Messages = {
 /full [Notation] — würfelt mit Aufschlüsselung pro Würfel (Kurzform: /f)
 /random — würfelt d100 (<code>d%</code>)
 /ask [Frage] — antwortet Yes oder No (Kurzform: /a)
+/pick [Optionen] — wählt eine zufällig aus (Kurzform: /p, beta)
 /help — diese Anleitung
 
 Inline: tippe @rollrobot [Notation] in jedem Chat, oder wähle einen Eintrag aus der Liste.
@@ -38,6 +46,13 @@ Kurzschreibweise: <code>/roll 20</code> würfelt d20, <code>/roll 2 10 -1</code>
 
 Benenne einen Wurf, indem du ihn am Ende in Anführungszeichen setzt: <code>/roll 2d20+1 "Wahrnehmung"</code>.
 
+<b>Auswahl</b>
+<code>/pick Stein | Papier | Schere</code> — eine Option zufällig
+<code>/pick Anna, Ben, Clara</code> — Kommas gehen auch
+<code>/pick Norden Süden Osten Westen</code> — einzelne Wörter brauchen kein Trennzeichen
+<code>/pick Schwert | Bogen "Welche Waffe?"</code> — benenne die Auswahl
+Füge eine Liste in eigenen Zeilen ein, um eine Zeile aus einer Tabelle zu ziehen.
+
 Probiere die Notation im ${playground('Playground')} aus, oder lies die ${reference('vollständige Notationsreferenz')}.`,
 
   commands: [
@@ -45,6 +60,7 @@ Probiere die Notation im ${playground('Playground')} aus, oder lies die ${refere
     { command: 'full', description: 'Würfeln mit Aufschlüsselung — /full 4d6kh3' },
     { command: 'random', description: 'Würfeln — d100' },
     { command: 'ask', description: 'Antwortet Yes oder No — /ask Angreifen?' },
+    { command: 'pick', description: 'Wählt zufällig aus — /pick Stein | Papier | Schere' },
     { command: 'help', description: 'Notationsanleitung und Links' },
   ],
 
@@ -61,5 +77,5 @@ Probiere die Notation im ${playground('Playground')} aus, oder lies die ${refere
 4dF für Fate
 d% für Call of Cthulhu
 
-/roll liefert die Summe, /full die Aufschlüsselung pro Würfel, /ask ein Yes oder No, /help die Notationsübersicht. Tippe @rollrobot in jedem Chat, um ohne Hinzufügen des Bots zu würfeln.`,
+/roll liefert die Summe, /full die Aufschlüsselung, /ask ein Yes oder No, /pick eine zufällige Option, /help die Notationsübersicht. Tippe @rollrobot in jedem Chat, um ohne Hinzufügen des Bots zu würfeln.`,
 };
