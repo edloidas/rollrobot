@@ -19,9 +19,9 @@ export const fa: Messages = {
   },
 
   pick: {
-    usage: '/pick Rock | Paper | Scissors — دست‌کم دو گزینه بده',
-    tooMany: 'تعداد گزینه‌ها بیش از حد است — حداکثر 100 مورد',
-    spaceSplit: 'با فاصله جدا شد — برای عبارت کامل از , یا | استفاده کن',
+    usage: '/pick سنگ | کاغذ | قیچی — دست‌کم دو گزینه بده',
+    tooMany: 'گزینه‌ها بیش از حد زیادند — حداکثر 100 مورد',
+    spaceSplit: 'هر واژه یک گزینه شد — برای نگه‌داشتن عبارت‌ها از ، یا | استفاده کن',
   },
 
   help: `مثل هیچ‌کس دیگری تاس بینداز — نمادگذاری کامل بازی‌های نقش‌آفرینی: نگه‌داشتن و کنار گذاشتن، تاس انفجاری، پرتاب مجدد، شمارش موفقیت‌ها و چک در برابر درجهٔ سختی.
@@ -31,7 +31,7 @@ export const fa: Messages = {
 /full 4d6kh3 — پرتاب با جزئیات هر تاس، میان‌بر /f
 /random — پرتاب تاس d100 (<code>d%</code>)
 /ask — پاسخ Yes یا No، میان‌بر /a
-/pick — انتخاب تصادفی از یک فهرست، میان‌بر /p، آزمایشی
+/pick — انتخاب تصادفی از یک فهرست، آزمایشی، میان‌بر /p
 /help — همین راهنما
 
 Inline: @rollrobot را در هر گفت‌وگو همراه با نمادگذاری بنویس، یا از فهرست انتخاب کن
@@ -43,7 +43,7 @@ Inline: @rollrobot را در هر گفت‌وگو همراه با نمادگذا
 <code>2d6r&lt;3</code> — پرتاب مجدد مقادیر کمتر از سه (ro — فقط یک پرتاب مجدد)
 <code>4d6min2</code> — حداقل مقدار هر تاس دو می‌شود، همچنین (max)
 <code>6d10&gt;=6f1</code> — شمارش موفقیت‌ها، یک‌ها به‌عنوان شکست کم می‌شوند
-<code>1d20+7 vs 15</code> — چک در برابر درجهٔ سختی، با درجات موفقیت
+<code>1d20+7 vs 15</code> — چک در برابر درجهٔ سختی، درجات موفقیت Pathfinder 2e
 <code>4dF</code> — تاس Fate
 <code>d%</code> — تاس درصدی
 <code>2d6+floor(1d4/2)</code> — توابع: floor, ceil, round, abs, min, max, sqrt, pow
@@ -55,14 +55,10 @@ Inline: @rollrobot را در هر گفت‌وگو همراه با نمادگذا
 نام پرتاب را داخل گیومه و در پایان بنویس.
 
 <b>انتخاب</b>
-<code>/pick Rock | Paper | Scissors</code>
-یک گزینه به‌صورت تصادفی، جداکننده خط عمودی
-<code>/pick سنگ، کاغذ، قیچی</code>
-کاما هم جدا می‌کند
-<code>/pick north south east west</code>
-واژه‌های تک‌کلمه‌ای جداکننده نمی‌خواهند
-<code>/pick Sword | Bow «کدام سلاح؟»</code>
-نام انتخاب را داخل گیومه و در پایان بنویس.
+<code>/pick سنگ | کاغذ | قیچی</code>
+یک گزینه به‌صورت تصادفی، جداکنندهٔ خط عمودی
+<code>/pick Fate، Pathfinder «کدام سیستم؟»</code>
+کاما هم جدا می‌کند، نام انتخاب داخل گیومه
 
 فهرست را در چند خط جداگانه بچسبان تا یک سطر از جدول انتخاب شود.
 
@@ -73,18 +69,18 @@ Inline: @rollrobot را در هر گفت‌وگو همراه با نمادگذا
     { command: 'full', description: '/full 4d6kh3 — پرتاب با جزئیات' },
     { command: 'random', description: '/random — پرتاب تاس d100' },
     { command: 'ask', description: '/ask — پاسخ Yes یا No' },
-    { command: 'pick', description: '/pick Rock | Paper — انتخاب تصادفی' },
+    { command: 'pick', description: '/pick — انتخاب تصادفی از یک فهرست' },
     { command: 'help', description: 'راهنمای نمادگذاری و پیوندها' },
   ],
 
   shortDescription:
-    'تاس نقش‌آفرینی رومیزی در هر گفت‌وگو — D&D, Pathfinder, World of Darkness, Shadowrun, Fate',
+    'تاس نقش‌آفرینی رومیزی در هر گفت‌وگو — D&D, Pathfinder, World of Darkness, Shadowrun, Fate, Call of Cthulhu',
 
   description: `نمادگذاری تاس برای بازی‌های نقش‌آفرینی رومیزی، در هر گفت‌وگو.
 
 4d6kh3 برای ویژگی‌ها
 2d20kh1+7 با برتری
-1d20+12 vs 20 برای چک در Pathfinder
+1d20+12 vs 20 برای چک در Pathfinder 2e
 7d10>=6f1 برای مجموعهٔ تاس Storyteller
 {1d8!, 1d6!}kh1 برای Savage Worlds
 4dF برای Fate
