@@ -13,31 +13,31 @@ export const pt: Messages = {
   },
 
   pick: {
-    usage: 'Dê pelo menos duas opções — /pick Pedra | Papel | Tesoura',
+    usage: 'Dê pelo menos duas opções — /pick Patrulha de goblins | Sala vazia',
     tooMany: 'Opções demais — no máximo 100.',
-    spaceSplit: 'Separado por espaços — use , ou | para manter frases inteiras.',
+    spaceSplit: 'Cada palavra virou uma opção — use , ou | para manter frases inteiras.',
   },
 
-  help: `Role os dados como ninguém — notação de RPG completa com manter/descartar, dados explosivos, novas rolagens, reservas de sucessos e testes.
+  help: `Role os dados como ninguém — notação de RPG completa com manter/descartar, dados explosivos, novas rolagens, paradas de dados e testes.
 
 <b>Comandos</b>
 /roll [notação] — rola e mostra o total (atalho: /r)
 /full [notação] — rola com o detalhe dado a dado (atalho: /f)
 /random — rola d100 (<code>d%</code>)
 /ask [pergunta] — responde Yes ou No (atalho: /a)
-/pick [opções] — escolhe uma ao acaso (atalho: /p, beta)
+/pick [opções] — escolhe uma ao acaso (beta, atalho: /p)
 /help — este guia
 
-Inline: digite @rollrobot [notação] em qualquer conversa, ou escolha uma opção da lista.
+Inline: digite @rollrobot [notação] em qualquer conversa, ou use um dos exemplos prontos da lista.
 
 <b>Notação</b>
 <code>2d20+5</code> — dados e aritmética: + - * / e parênteses
 <code>4d6kh3</code> — mantém os 3 maiores (também kl, dh, dl)
 <code>d8!</code> — dados explosivos
 <code>2d6r&lt;3</code> — rola de novo abaixo de 3 (ro — rola de novo uma vez)
-<code>4d6min2</code> — fixa cada dado em pelo menos 2 (também max)
-<code>6d10&gt;=6f1</code> — conta sucessos, subtrai os 1s como falhas
-<code>1d20+7 vs 15</code> — teste contra uma CD com graus de sucesso
+<code>4d6min2</code> — define um mínimo de 2 em cada dado (também max)
+<code>6d10&gt;=6f1</code> — conta sucessos, subtrai cada 1 como falha
+<code>1d20+7 vs 15</code> — teste contra uma CD, graus de sucesso de Pathfinder 2e
 <code>4dF</code> — dados Fate
 <code>d%</code> — dado percentual
 <code>2d6+floor(1d4/2)</code> — funções: floor, ceil, round, abs, min, max, sqrt, pow
@@ -47,11 +47,9 @@ Notação abreviada: <code>/roll 20</code> rola d20, <code>/roll 2 10 -1</code> 
 Nomeie uma rolagem citando-a no final: <code>/roll 2d20+1 "Percepção"</code>.
 
 <b>Escolha</b>
-<code>/pick Pedra | Papel | Tesoura</code> — uma opção ao acaso
-<code>/pick Alice, Bruno, Carla</code> — vírgulas também funcionam
-<code>/pick norte sul leste oeste</code> — palavras soltas dispensam separador
-<code>/pick Espada | Arco "Qual arma?"</code> — dê nome à escolha
-Cole uma lista em linhas separadas para tirar uma linha de uma tabela.
+<code>/pick Patrulha de goblins | Sala vazia | Tesouro</code> — uma opção ao acaso
+<code>/pick Passar de fininho, Negociar "E agora?"</code> — vírgulas e um nome entre aspas
+Cole uma lista em linhas separadas para sortear um resultado de uma tabela.
 
 Teste a notação no ${playground('playground')}, ou leia a ${reference('referência completa')}.`,
 
@@ -59,8 +57,11 @@ Teste a notação no ${playground('playground')}, ou leia a ${reference('referê
     { command: 'roll', description: 'Role dados — /roll 2d20kh1+5' },
     { command: 'full', description: 'Role com detalhe — /full 4d6kh3' },
     { command: 'random', description: 'Role d100' },
-    { command: 'ask', description: 'Responde Yes ou No — /ask Vamos atacar?' },
-    { command: 'pick', description: 'Escolhe uma ao acaso — /pick Pedra | Papel | Tesoura' },
+    { command: 'ask', description: 'Responda Yes ou No — /ask Vamos atacar?' },
+    {
+      command: 'pick',
+      description: 'Escolha uma ao acaso — /pick Patrulha de goblins | Sala vazia',
+    },
     { command: 'help', description: 'Guia de notação e links' },
   ],
 
@@ -71,8 +72,8 @@ Teste a notação no ${playground('playground')}, ou leia a ${reference('referê
 
 4d6kh3 para atributos
 2d20kh1+7 com vantagem
-1d20+12 vs 20 para um teste de Pathfinder
-7d10>=6f1 para uma reserva de Storyteller
+1d20+12 vs 20 para um teste de Pathfinder 2e
+7d10>=6f1 para uma parada de dados do Storyteller
 {1d8!, 1d6!}kh1 para Savage Worlds
 4dF para Fate
 d% para Call of Cthulhu
