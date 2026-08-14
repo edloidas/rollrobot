@@ -1,11 +1,13 @@
 import type { InlineQueryResult } from 'grammy/types';
 import { isNotationError, roll, type RollResult } from 'roll-parser';
 import { formatDetailedResult, formatResult, withLabel } from '../format';
-import { DEFAULT_LOCALE, type Locale, type Messages, messages } from '../i18n';
-import { extractLabel } from '../label';
+import { DEFAULT_LOCALE, type Locale, type Messages, messages, betaTitle } from '../i18n';
+import { capText, extractLabel, isParseable } from '../label';
 import { ROLL_LIMITS } from '../limits';
 import { normalizeNotation } from '../notation';
+import { splitOptions } from '../options';
 import { askReply } from './ask';
+import { pickReply } from './pick';
 import { RANDOM_NOTATION } from './random';
 
 function createInputMessageContent(text: string) {
@@ -16,7 +18,7 @@ function createInputMessageContent(text: string) {
   };
 }
 
-type InlineVariant = 'roll' | 'full' | 'random' | 'ask';
+type InlineVariant = 'roll' | 'full' | 'random' | 'ask' | 'pick';
 
 function createArticle(
   variant: InlineVariant,
@@ -33,6 +35,9 @@ function createArticle(
     description,
   };
 }
+
+/** The article subtitle only previews the pool; Telegram truncates the rest anyway. */
+const MAX_POOL_DESCRIPTION = 120;
 
 export const DEFAULT_NOTATION = 'd20';
 
@@ -132,6 +137,46 @@ function isQuestion(query: string, resolved: QueryRoll | null, notation: string)
   return resolved == null || !EXPLICIT_DIE.test(notation);
 }
 
+/**
+ * Whether the query reads as a list to pick from rather than as notation.
+ *
+ * ! Both halves are required, and the conjunction is the whole point. A separator alone is
+ *   not enough: a comma is valid inside a Savage Worlds pool (`{1d8!, 1d6!}kh1`) and in
+ *   function arguments (`max(1d6, 1d8)`), a newline is plain whitespace to the grammar, and
+ *   `@{a|b}` makes every separator legal — so keying on the separator would shred real
+ *   notation into a pick. A parse failure alone is not enough either: the space fallback
+ *   splits `Should I text her?` into four options, so every question typed inline would
+ *   offer a nonsense pick alongside its answer.
+ */
+function isPickQuery(notation: string): boolean {
+  if (isTyping(notation)) return false;
+  const { tier } = splitOptions(notation);
+  return tier != null && tier !== 'space' && !isParseable(notation);
+}
+
+/**
+ * Notation still being typed: a bracket opened and not yet closed. Inline queries arrive per
+ * keystroke, so every prefix of `{1d8!, 1d6!}kh1` and `max(1d6, 1d8)` passes the pick gate on
+ * its way to becoming valid — and would put a nonsense `{1d8! · 1d6` pick above the roll the
+ * user is halfway through writing. Lists carry balanced brackets or none.
+ */
+function isTyping(notation: string): boolean {
+  const count = (char: string) => [...notation].filter((each) => each === char).length;
+  return count('(') !== count(')') || count('{') !== count('}');
+}
+
+/** Built from the whole query, so a trailing label survives; `null` past `MAX_PICK_ITEMS`. */
+function createPickArticle(
+  query: string,
+  titles: Messages['inline'],
+  locale: Locale,
+): InlineQueryResult | null {
+  const { text, choice } = pickReply(query, locale, { echo: true });
+  if (choice == null) return null;
+  const pool = capText(splitOptions(query).options.join(' · '), MAX_POOL_DESCRIPTION);
+  return createArticle('pick', betaTitle(titles.pick, 'pick'), pool, text);
+}
+
 /** Trailing when the query rolled on notation of its own; there the question is the aside. */
 function isAskTrailing(resolved: QueryRoll | null, notation: string): boolean {
   return resolved != null && notation !== '' && notation !== 'd';
@@ -150,15 +195,33 @@ export function createInlineArticles(
       ? createQueryArticles(resolved.result, titles, resolved.label)
       : createPresetArticles(titles);
 
-  const ask = isQuestion(query, resolved, notation)
-    ? createArticle('ask', titles.ask, titles.answer, askReply(query).text)
-    : null;
+  const pick = isPickQuery(notation) ? createPickArticle(query, titles, locale) : null;
+
+  // A list under a named separator is not a yes/no question, and the help button explains
+  // notation — neither belongs on a query whose intent is already unambiguous
+  const ask =
+    pick == null && isQuestion(query, resolved, notation)
+      ? createArticle('ask', titles.ask, titles.answer, askReply(query).text)
+      : null;
 
   return {
-    results: ask == null ? rolls : askArticles(rolls, ask, resolved, notation),
-    // ! Left on the parse alone, so a question still raises the help button
+    results: orderArticles(rolls, pick, ask, resolved, notation),
+    // ! Left on the parse alone, pick or no pick. Suppressing it under a pick would hide the
+    //   button on exactly the half-typed notation that most needs it, since a list and a
+    //   broken roll are indistinguishable until the roll is finished.
     hasInvalidQuery: resolved == null && notation !== '' && notation !== 'd',
   };
+}
+
+function orderArticles(
+  rolls: InlineQueryResult[],
+  pick: InlineQueryResult | null,
+  ask: InlineQueryResult | null,
+  resolved: QueryRoll | null,
+  notation: string,
+): InlineQueryResult[] {
+  if (pick != null) return [pick, ...rolls];
+  return ask == null ? rolls : askArticles(rolls, ask, resolved, notation);
 }
 
 function askArticles(

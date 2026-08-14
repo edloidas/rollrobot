@@ -13,7 +13,8 @@ export const PRECISION_NOTES: Record<Precision, string> = {
 };
 
 // `double1 = 0` marks the first term of an invocation, so it yields one row per
-// call; `blob2` is empty only for /help and /start, which record no dice.
+// call; `blob2` is empty for the commands that record no dice — /start, /help,
+// /ask and /pick.
 const INVOCATIONS = 'double1 = 0';
 const ROLLS = "double1 = 0 AND blob2 != ''";
 const TERMS = "blob2 != ''";
@@ -141,7 +142,7 @@ export async function fetchCommandSurface(
   return rows.map((row) => ({ command: row.command, surface: row.surface, n: count(row, 'n') }));
 }
 
-/** `index1` holds the command name for /help and /start, which record no dice. */
+/** `index1` holds the command name for the commands that record no dice. */
 const DIE_BUCKETS = new Set(['d4', 'd6', 'd8', 'd10', 'd12', 'd20', 'd100', 'dF', 'other']);
 
 /**

@@ -10,7 +10,7 @@ import { normalizeNotation } from './notation';
  * on the Swiss and reversed-guillemet layouts. Some emit the same glyph on both
  * sides, hence the self-closing entries.
  */
-const QUOTE_PAIRS: Record<string, string | undefined> = {
+export const QUOTE_PAIRS: Record<string, string | undefined> = {
   '"': '"',
   "'": "'",
   '`': '`',
@@ -40,7 +40,7 @@ export function capText(text: string, max: number): string {
   return points.slice(0, max - 1).join('') + ELLIPSIS;
 }
 
-function capLabel(label: string): string {
+export function capLabel(label: string): string {
   return capText(label, MAX_LABEL_LENGTH);
 }
 
@@ -58,7 +58,7 @@ const OPENING_QUOTES = new Set([...Object.values(QUOTE_PAIRS).join('')]);
  * `parse` rather than `roll`: no RNG and no `ROLL_LIMITS`, so a rejected candidate
  * costs a lex and a parse — cheap enough to run several times per inline keystroke.
  */
-function isParseable(notation: string): boolean {
+export function isParseable(notation: string): boolean {
   try {
     parse(normalizeNotation(notation));
     return true;

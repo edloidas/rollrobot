@@ -12,13 +12,17 @@ import { askReply } from './handlers/ask';
 import { fullReply } from './handlers/full';
 import { RANDOM_NOTATION, randomReply } from './handlers/random';
 import { helpReply } from './handlers/help';
+import { pickReply } from './handlers/pick';
 import { chosenInlineRoll, createInlineArticles, DEFAULT_NOTATION } from './handlers/inline';
 import { type Locale, messages, resolveLocale } from './i18n';
-import { extractLabel } from './label';
+import { capText, extractLabel } from './label';
 import { normalizeNotation } from './notation';
 import { noPermissionText } from './text';
 
 const GROUPS = ['group', 'supergroup'];
+
+/** A pool can run to a hundred options; the log only needs enough to recognise the call. */
+const MAX_LOGGED_OPTIONS = 300;
 
 function senderName(ctx: Context): string {
   return ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name ?? 'unknown');
@@ -46,6 +50,19 @@ function logRoll(ctx: Context, command: string, request: string, reply: string):
   const parts = [`${name}${group}`, `/${command}`, oneLine(request), '|', result];
   console.log(parts.filter((part) => part !== '').join(' '));
 }
+
+/**
+ * Inline variants that carry no roll, mapped to the command they record.
+ *
+ * ! A `Map`, not an object literal. The prefix comes from a user-supplied result id, and an
+ *   object lookup walks the prototype chain — `toString:x` would resolve to a function,
+ *   reaching `trackCommand` as a non-string and printing a multi-line body that defeats the
+ *   `oneLine` defence right above it.
+ */
+const SHAPELESS_VARIANTS = new Map<string, Command>([
+  ['ask', 'ask'],
+  ['pick', 'pick'],
+]);
 
 /** Result IDs are `<variant>:<uuid>`; unprefixed IDs predate that and cannot be attributed. */
 function inlineVariant(resultId: string): string {
@@ -153,6 +170,15 @@ export function createBot(env: BotEnv): Bot {
     await trackCommand(env, trackContext(ctx, 'ask'));
   });
 
+  bot.command(['pick', 'p'], async (ctx) => {
+    const input = (ctx.match as string) ?? '';
+    const { text } = pickReply(input, resolveLocale(ctx.from?.language_code));
+    // Capped like `/ask` quotes its question — a hundred options would otherwise land whole
+    logRoll(ctx, 'pick', capText(input, MAX_LOGGED_OPTIONS), text);
+    await ctx.reply(text, replyOptions(ctx));
+    await trackCommand(env, trackContext(ctx, 'pick'));
+  });
+
   bot.command('random', async (ctx) => {
     const { label } = extractLabel((ctx.match as string) ?? '');
     const { text, result } = randomReply(label);
@@ -167,11 +193,12 @@ export function createBot(env: BotEnv): Bot {
     const { query, result_id } = ctx.chosenInlineResult;
     const variant = inlineVariant(result_id);
 
-    // An answer has no dice shape to record, and the roll path's `?? roll(DEFAULT_NOTATION)`
-    // fallback would invent a phantom d20 term for it
-    if (variant === 'ask') {
-      console.log(`${name} [inline] ask ${oneLine(query)}`);
-      await trackCommand(env, { command: 'ask', surface: 'inline', userId: ctx.from?.id });
+    // An answer and a pick have no dice shape to record, and the roll path's
+    // `?? roll(DEFAULT_NOTATION)` fallback would invent a phantom d20 term for either
+    const shapeless = SHAPELESS_VARIANTS.get(variant);
+    if (shapeless != null) {
+      console.log(`${name} [inline] ${shapeless} ${oneLine(query)}`);
+      await trackCommand(env, { command: shapeless, surface: 'inline', userId: ctx.from?.id });
       return;
     }
 

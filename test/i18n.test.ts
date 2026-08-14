@@ -12,6 +12,7 @@ import {
 function allText(entry: Messages): string[] {
   return [
     ...Object.values(entry.inline),
+    ...Object.values(entry.pick),
     entry.help,
     entry.shortDescription,
     entry.description,
@@ -38,6 +39,14 @@ describe('resolveLocale', () => {
   test('is case-insensitive', () => {
     expect(resolveLocale('DE')).toBe('de');
     expect(resolveLocale('PT-BR')).toBe('pt');
+  });
+
+  // ! `in` walks the prototype, so these would resolve to a function and throw on every lookup
+  test('falls back to English for prototype keys', () => {
+    for (const key of ['constructor', '__proto__', 'toString', 'valueOf', 'hasOwnProperty']) {
+      expect(resolveLocale(key)).toBe(DEFAULT_LOCALE);
+      expect(messages(resolveLocale(key)).pick.usage.length).toBeGreaterThan(0);
+    }
   });
 
   test('falls back to English for unsupported and missing codes', () => {
@@ -72,6 +81,7 @@ describe('messages', () => {
           'full',
           'random',
           'ask',
+          'pick',
           'help',
         ]);
         for (const { description } of entry.commands) {
@@ -94,6 +104,11 @@ describe('messages', () => {
         expect(entry.description.length).toBeLessThanOrEqual(512);
       });
 
+      // The guide goes out as a single message, markup and all
+      test('keeps the guide inside one Telegram message', () => {
+        expect(entry.help.length).toBeLessThanOrEqual(4096);
+      });
+
       test('keeps the notation examples and links intact', () => {
         for (const example of [
           '2d20+5',
@@ -112,7 +127,7 @@ describe('messages', () => {
       });
 
       test('advertises only the current commands', () => {
-        for (const command of ['/roll', '/full', '/random', '/ask', '/help']) {
+        for (const command of ['/roll', '/full', '/random', '/ask', '/pick', '/help']) {
           expect(entry.help).toContain(command);
         }
         for (const retired of ['/sroll', '/droll', '/wod']) {
@@ -129,7 +144,8 @@ describe('fa', () => {
 
   // `@` strands at the far end of a mention the same way `/` does on a command, so a line
   // carrying either needs the Latin anchor
-  const NOTATION_LINE = /\/(roll|full|random|ask|help|r|f|a)\b|\d*d[\d%F]|@\w/;
+  // `pick` precedes `p` so the longer command wins the alternation before `\b` is tried
+  const NOTATION_LINE = /\/(roll|full|random|ask|help|pick|r|f|a|p)\b|\d*d[\d%F]|@\w/;
 
   test('uses Persian letter forms rather than Arabic ones', () => {
     for (const text of allText(entry)) {
@@ -149,6 +165,7 @@ describe('fa', () => {
   const directionalLines = [entry.help, entry.description]
     .flatMap((text) => text.split('\n'))
     .concat(entry.commands.map((command) => command.description))
+    .concat(Object.values(entry.pick))
     .map((line) => line.replace(/<[^>]+>/g, ''))
     .filter((line) => NOTATION_LINE.test(line));
 

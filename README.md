@@ -43,6 +43,7 @@ Fate, `d%` for Call of Cthulhu.
 | `/full [notation]` | `/f` | The same, plus a die-by-die breakdown |
 | `/random` | | A `d100` roll, total only |
 | `/ask [question]` | `/a` | The question quoted, and `Yes` or `No` under it |
+| `/pick [options]` | `/p` | One option out of the list, chosen at random *(beta)* |
 | `/help` | | Notation guide and links |
 
 Omitting the notation rolls `d20`. In groups the bot replies to the message it was called
@@ -52,11 +53,25 @@ from, so several people can roll at once without the thread coming apart.
 punctuation are all part of the question rather than syntax. The answer stays English in every
 language: the sender's interface language is a poor guess at the language of the chat.
 
+`/pick` splits its options on the first separator tier present, and only that one: a newline,
+then `|` `;` `؛`, then `,` `،`, then spaces. So an option may contain any separator below its
+own tier — `/pick Potion of Healing, Greater | Armor, +1 Chain Mail` keeps both commas, and a
+random table pasted on separate lines works as-is. Repeating an option weights it. A quoted
+name at the end labels the pick, as it does for a roll. Since the bot replies to the command
+message, the pool stays visible above the answer without being echoed back.
+
+Picking a `@username` mentions them, which is the point — it is how the table settles who
+goes first.
+
 Typing `@rollrobot [notation]` in any chat offers one roll under two headings, **Roll** and
 **Full** — the choice is about display, not a reroll. With no notation the list falls back to
 `d20` and `d100` presets. Anything that is not notation for a named die also offers **Ask**,
-leading the list when the query does not roll and trailing it when it does. Results are
-personal and uncached, so every new query rolls afresh.
+leading the list when the query does not roll and trailing it when it does. A query that names
+a separator *and* fails to parse leads with **Pick** instead — both halves are required, since
+a comma is valid inside `{1d8!, 1d6!}kh1` and `max(1d6, 1d8)`, and the space fallback alone
+would turn every question into a list. An inline pick carries its pool in the message, having
+no command above it to reply to. Results are personal and uncached, so every new query rolls
+afresh.
 
 ## Notation
 
@@ -131,7 +146,8 @@ deliberate step. See [DEPLOYMENT.md](DEPLOYMENT.md).
 ## Analytics
 
 Rolls are recorded to an Analytics Engine dataset — one data point per distinct dice term,
-plus one per `/start` and `/help`. User IDs are stored as HMAC-SHA256 digests and the dataset
+plus one per `/start`, `/help`, `/ask` and `/pick`, none of which record a dice term. User IDs
+are stored as HMAC-SHA256 digests and the dataset
 is write-only from the Worker; without the binding, nothing is recorded and the bot replies
 as usual. Reading the data is a local command, `bun run analytics`. See
 [ANALYTICS.md](ANALYTICS.md).

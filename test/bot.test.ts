@@ -77,11 +77,27 @@ describe('Chosen inline results', () => {
     expect(await chosenLog('abc', 'd20')).toEqual('@testuser [inline] unknown d20');
   });
 
+  // ! An object lookup would resolve these off the prototype, printing a multi-line function
+  //   body that defeats the one-line defence and passing a non-string to the analytics row
+  test('should not resolve a prototype key as a variant', async () => {
+    for (const key of ['toString', '__proto__', 'constructor', 'valueOf']) {
+      const line = await chosenLog(`${key}:abc`, 'd20');
+      expect(line).toEqual(`@testuser [inline] ${key} d20`);
+      expect(line.split('\n')).toHaveLength(1);
+    }
+  });
+
   test('should log a chosen answer without re-resolving the query as notation', async () => {
     expect(await chosenLog('ask:abc', 'will it rain')).toEqual(
       '@testuser [inline] ask will it rain',
     );
     expect(await chosenLog('ask:abc', '2d6')).toEqual('@testuser [inline] ask 2d6');
+  });
+
+  test('should log a chosen pick as a pick rather than as an answer', async () => {
+    expect(await chosenLog('pick:abc', 'Rock | Paper')).toEqual(
+      '@testuser [inline] pick Rock | Paper',
+    );
   });
 
   test('should keep a chosen answer on one log line', async () => {
@@ -154,6 +170,19 @@ describe('Command logging', () => {
     );
     expect(await commandLog('/roll 2d6 "a\nb"')).toMatch(/^@testuser \/roll 2d6 "a b" \| /);
   });
+
+  test('should log the options and the chosen one', async () => {
+    expect(await commandLog('/pick Rock | Paper')).toMatch(
+      /^@testuser \/pick Rock \| Paper \| (Rock|Paper)$/,
+    );
+  });
+
+  // ! A newline-separated pool is the ordinary way to use this command, so the same defence
+  //   matters more here than anywhere else
+  test('should collapse a multi-line pool onto one line', async () => {
+    // Newline outranks the pipe, so the pool is `a` and `b | c` — both survive the collapse
+    expect(await commandLog('/pick a\nb | c')).toMatch(/^@testuser \/pick a b \| c \| (a|b \| c)$/);
+  });
 });
 
 describe('Analytics tracking', () => {
@@ -218,6 +247,32 @@ describe('Analytics tracking', () => {
     expect(dataset.points).toHaveLength(1);
     expect(dataset.points[0].indexes).toEqual(['ask']);
     expect(dataset.points[0].blobs?.slice(0, 4)).toEqual(['ask', '', '', 'inline']);
+  });
+
+  test('should record /pick with no dice term', async () => {
+    await tracked.send('/pick Rock | Paper');
+
+    expect(dataset.points).toHaveLength(1);
+    expect(dataset.points[0].indexes).toEqual(['pick']);
+    expect(dataset.points[0].blobs?.slice(0, 4)).toEqual(['pick', '', '', 'private']);
+  });
+
+  // ! Attributing this to /ask is the trap: that branch used to hardcode the command it wrote
+  test('should record a chosen pick as pick rather than as ask', async () => {
+    await tracked.sendChosenInline('pick:abc', 'Rock | Paper');
+
+    expect(dataset.points).toHaveLength(1);
+    expect(dataset.points[0].indexes).toEqual(['pick']);
+    expect(dataset.points[0].blobs?.slice(0, 4)).toEqual(['pick', '', '', 'inline']);
+  });
+
+  // ! Off the prototype these resolved to a function, which Analytics Engine rejects outright
+  test('should record a prototype-keyed result id as an ordinary inline roll', async () => {
+    for (const key of ['toString', '__proto__', 'constructor']) {
+      await tracked.sendChosenInline(`${key}:abc`, '2d6');
+      expect(dataset.points.at(-1)?.blobs?.[0]).toEqual('inline');
+      expect(typeof dataset.points.at(-1)?.indexes?.[0]).toEqual('string');
+    }
   });
 
   test('should not record inline queries, which fire per keystroke', async () => {

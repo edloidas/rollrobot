@@ -1,6 +1,15 @@
 import { Bot } from 'grammy';
-import { DEFAULT_LOCALE, messages, SUPPORTED_LOCALES } from '../src/i18n';
+import { DEFAULT_LOCALE, messages, SUPPORTED_LOCALES, betaDescription } from '../src/i18n';
+import type { CommandText } from '../src/locales/types';
 import { ALLOWED_UPDATES } from '../src/telegram';
+
+/** The `(beta)` marker lives in `i18n` rather than in eight dictionaries. */
+function marked(commands: readonly CommandText[]) {
+  return commands.map(({ command, description }) => ({
+    command,
+    description: betaDescription(description, command),
+  }));
+}
 
 const token = process.env.TOKEN || '';
 const webhookUrl = process.env.WEBHOOK_URL || '';
@@ -27,14 +36,14 @@ const bot = new Bot(token);
 
 // Default entries answer every language Telegram has no explicit set for
 const fallback = messages(DEFAULT_LOCALE);
-await bot.api.setMyCommands([...fallback.commands]);
+await bot.api.setMyCommands(marked(fallback.commands));
 await bot.api.setMyDescription(fallback.description);
 await bot.api.setMyShortDescription(fallback.shortDescription);
 
 // ! `language_code` takes two-letter ISO 639-1 codes only — no regional variants
 for (const locale of SUPPORTED_LOCALES.filter((code) => code !== DEFAULT_LOCALE)) {
   const { commands, description, shortDescription } = messages(locale);
-  await bot.api.setMyCommands([...commands], { language_code: locale });
+  await bot.api.setMyCommands(marked(commands), { language_code: locale });
   await bot.api.setMyDescription(description, { language_code: locale });
   await bot.api.setMyShortDescription(shortDescription, { language_code: locale });
 }

@@ -7,8 +7,15 @@ export const en: Messages = {
     full: 'Full',
     random: 'Random',
     ask: 'Ask',
+    pick: 'Pick',
     answer: 'Answers Yes or No',
     help: 'How to use',
+  },
+
+  pick: {
+    usage: 'Give me at least two options — /pick Rock | Paper | Scissors',
+    tooMany: 'Too many options — 100 at most.',
+    spaceSplit: 'Split on spaces — use , or | to keep phrases together.',
   },
 
   help: `Roll the dice like no one before — full RPG notation with keep/drop, exploding dice, rerolls, success pools, and checks.
@@ -18,6 +25,7 @@ export const en: Messages = {
 /full [notation] — roll with a die-by-die breakdown (shortcut: /f)
 /random — roll d100 (<code>d%</code>)
 /ask [question] — answer Yes or No (shortcut: /a)
+/pick [options] — pick one at random (shortcut: /p, beta)
 /help — this guide
 
 Inline: type @rollrobot [notation] in any chat, or pick a preset from the list.
@@ -38,6 +46,13 @@ Shorthand: <code>/roll 20</code> rolls d20, <code>/roll 2 10 -1</code> rolls 2d1
 
 Name a roll by quoting it at the end: <code>/roll 2d20+1 "Perception"</code>.
 
+<b>Picking</b>
+<code>/pick Rock | Paper | Scissors</code> — one option at random
+<code>/pick Alice, Bob, Carol</code> — commas work too
+<code>/pick north south east west</code> — single words can go bare
+<code>/pick Sword | Bow "Which weapon?"</code> — name the choice
+Paste a list on separate lines to draw a row from a table.
+
 Try notation live in the ${playground('playground')}, or read the full ${reference('notation reference')}.`,
 
   commands: [
@@ -45,6 +60,7 @@ Try notation live in the ${playground('playground')}, or read the full ${referen
     { command: 'full', description: 'Roll with a breakdown — /full 4d6kh3' },
     { command: 'random', description: 'Roll d100' },
     { command: 'ask', description: 'Answer Yes or No — /ask Should we attack?' },
+    { command: 'pick', description: 'Pick one at random — /pick Rock | Paper | Scissors' },
     { command: 'help', description: 'Notation guide and links' },
   ],
 
@@ -61,5 +77,5 @@ Try notation live in the ${playground('playground')}, or read the full ${referen
 4dF for Fate
 d% for Call of Cthulhu
 
-/roll gives the total, /full a die-by-die breakdown, /ask a Yes or No, /help the notation guide. Type @rollrobot in any chat to roll without adding the bot.`,
+/roll gives the total, /full a die-by-die breakdown, /ask a Yes or No, /pick one option at random, /help the notation guide. Type @rollrobot in any chat to roll without adding the bot.`,
 };

@@ -7,8 +7,15 @@ export const pt: Messages = {
     full: 'Detalhada',
     random: 'Aleatória',
     ask: 'Pergunta',
+    pick: 'Escolha',
     answer: 'Responde Yes ou No',
     help: 'Como usar',
+  },
+
+  pick: {
+    usage: 'Dê pelo menos duas opções — /pick Pedra | Papel | Tesoura',
+    tooMany: 'Opções demais — no máximo 100.',
+    spaceSplit: 'Separado por espaços — use , ou | para manter frases inteiras.',
   },
 
   help: `Role os dados como ninguém — notação de RPG completa com manter/descartar, dados explosivos, novas rolagens, reservas de sucessos e testes.
@@ -18,6 +25,7 @@ export const pt: Messages = {
 /full [notação] — rola com o detalhe dado a dado (atalho: /f)
 /random — rola d100 (<code>d%</code>)
 /ask [pergunta] — responde Yes ou No (atalho: /a)
+/pick [opções] — escolhe uma ao acaso (atalho: /p, beta)
 /help — este guia
 
 Inline: digite @rollrobot [notação] em qualquer conversa, ou escolha uma opção da lista.
@@ -38,6 +46,13 @@ Notação abreviada: <code>/roll 20</code> rola d20, <code>/roll 2 10 -1</code> 
 
 Nomeie uma rolagem citando-a no final: <code>/roll 2d20+1 "Percepção"</code>.
 
+<b>Escolha</b>
+<code>/pick Pedra | Papel | Tesoura</code> — uma opção ao acaso
+<code>/pick Alice, Bruno, Carla</code> — vírgulas também funcionam
+<code>/pick norte sul leste oeste</code> — palavras soltas dispensam separador
+<code>/pick Espada | Arco "Qual arma?"</code> — dê nome à escolha
+Cole uma lista em linhas separadas para tirar uma linha de uma tabela.
+
 Teste a notação no ${playground('playground')}, ou leia a ${reference('referência completa')}.`,
 
   commands: [
@@ -45,6 +60,7 @@ Teste a notação no ${playground('playground')}, ou leia a ${reference('referê
     { command: 'full', description: 'Role com detalhe — /full 4d6kh3' },
     { command: 'random', description: 'Role d100' },
     { command: 'ask', description: 'Responde Yes ou No — /ask Vamos atacar?' },
+    { command: 'pick', description: 'Escolhe uma ao acaso — /pick Pedra | Papel | Tesoura' },
     { command: 'help', description: 'Guia de notação e links' },
   ],
 
@@ -61,5 +77,5 @@ Teste a notação no ${playground('playground')}, ou leia a ${reference('referê
 4dF para Fate
 d% para Call of Cthulhu
 
-/roll dá o total, /full o detalhe dado a dado, /ask um Yes ou No, /help o guia de notação. Digite @rollrobot em qualquer conversa para rolar sem adicionar o bot.`,
+/roll dá o total, /full o detalhe dado a dado, /ask um Yes ou No, /pick uma opção ao acaso, /help o guia de notação. Digite @rollrobot em qualquer conversa para rolar sem adicionar o bot.`,
 };
