@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="fav-rainbow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff4d6d" />
+      <stop offset="25%" stop-color="#ff9e3d" />
+      <stop offset="50%" stop-color="#ffe14d" />
+      <stop offset="70%" stop-color="#4dff9e" />
+      <stop offset="100%" stop-color="#b06dff" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="20" fill="#0a0a0f" />
+  <g fill="none" stroke="url(#fav-rainbow)" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <polygon points="50,12 84,31 84,69 50,88 16,69 16,31" />
+    <polygon points="50,31 68,62 32,62" />
+    <path d="M50,12 L50,31 M84,31 L68,62 M84,69 L68,62 M50,88 L50,62 M16,69 L32,62 M16,31 L32,62 M32,62 L50,62 M68,62 L50,62" />
+  </g>
+</svg>

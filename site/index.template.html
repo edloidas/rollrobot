@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="{{lang}}" dir="{{dir}}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- Applies the stored theme before paint, so a light-mode visitor never
+         sees a dark frame. src/theme.ts re-applies it and wires the toggle.
+
+         The value is validated here, not stamped verbatim: a stale entry would
+         leave the toggle showing no icon until the module replaced it. -->
+    <script>
+      (() => {
+        let mode = 'auto';
+
+        try {
+          const stored = localStorage.getItem('theme-preference');
+          if (stored === 'light' || stored === 'dark') mode = stored;
+        } catch {
+          // Storage refused — the OS preference decides, same as `auto`.
+        }
+
+        document.documentElement.dataset.theme = mode;
+      })();
+    </script>
+    <title>{{title}}</title>
+    <meta name="description" content="{{description}}" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {{hreflang}}
+    <link rel="stylesheet" href="{{style}}" />
+  </head>
+  <body>
+    <!-- Defines `#dice-pattern`, which the hero card's <rect> in render.ts fills
+         itself with. The d6 group shares the others' stroke-width at a smaller
+         scale, so it draws a lighter line and sits back from the rest. -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
+      <defs>
+        <g id="s-d4"><polygon points="50,8 92,88 8,88"/><path d="M50,8 L50,61.3 M92,88 L50,61.3 M8,88 L50,61.3"/></g>
+        <g id="s-d6"><rect x="8" y="8" width="84" height="84" rx="16"/></g>
+        <g id="s-d8"><polygon points="50,6 94,50 50,94 6,50"/><path d="M6,50 L94,50 M50,6 L50,94"/></g>
+        <g id="s-d10"><polygon points="50,4 90,42 50,96 10,42"/><path d="M10,42 L50,62 M90,42 L50,62 M50,62 L50,96"/></g>
+        <g id="s-d20"><polygon points="50,4 89.8,27 89.8,73 50,96 10.2,73 10.2,27"/><polygon points="50,26 72,64 28,64"/><path d="M50,4 L50,26 M89.8,27 L72,64 M89.8,73 L72,64 M50,96 L50,64 M10.2,73 L28,64 M10.2,27 L28,64 M28,64 L50,64 M72,64 L50,64"/></g>
+
+        <pattern id="dice-pattern" width="260" height="260" patternUnits="userSpaceOnUse">
+          <g class="dice-ink" fill="none" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+            <use href="#s-d20" transform="translate(12,14) scale(0.20) rotate(-12,50,50)"/>
+            <use href="#s-d8"  transform="translate(132,20) scale(0.20) rotate(0,50,50)"/>
+            <use href="#s-d10" transform="translate(196,10) scale(0.20) rotate(14,50,50)"/>
+            <use href="#s-d4"  transform="translate(236,62) scale(0.20) rotate(-14,50,50)"/>
+            <use href="#s-d20" transform="translate(46,58) scale(0.20) rotate(24,50,50)"/>
+            <use href="#s-d8"  transform="translate(174,78) scale(0.20) rotate(10,50,50)"/>
+            <use href="#s-d10" transform="translate(14,110) scale(0.20) rotate(-8,50,50)"/>
+            <use href="#s-d20" transform="translate(86,126) scale(0.20) rotate(16,50,50)"/>
+            <use href="#s-d4"  transform="translate(150,130) scale(0.20) rotate(28,50,50)"/>
+            <use href="#s-d8"  transform="translate(44,176) scale(0.20) rotate(6,50,50)"/>
+            <use href="#s-d20" transform="translate(118,190) scale(0.20) rotate(-20,50,50)"/>
+            <use href="#s-d10" transform="translate(188,178) scale(0.20) rotate(22,50,50)"/>
+            <use href="#s-d4"  transform="translate(16,226) scale(0.20) rotate(12,50,50)"/>
+            <use href="#s-d20" transform="translate(226,220) scale(0.20) rotate(8,50,50)"/>
+          </g>
+          <g class="dice-ink" fill="none" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+            <use href="#s-d6" transform="translate(78,8) scale(0.14) rotate(18,50,50)"/>
+            <use href="#s-d6" transform="translate(112,70) scale(0.14) rotate(-22,50,50)"/>
+            <use href="#s-d6" transform="translate(218,122) scale(0.14) rotate(-6,50,50)"/>
+            <use href="#s-d6" transform="translate(152,236) scale(0.14) rotate(-16,50,50)"/>
+          </g>
+        </pattern>
+      </defs>
+    </svg>
+
+    <!-- Lives in the shell rather than in the hero or the manual: a locale
+         switch replaces both wholesale. -->
+    <nav class="theme-nav" aria-label="Theme">
+      <button
+        type="button"
+        class="theme-toggle"
+        id="theme-toggle"
+        aria-label="Toggle theme (auto, light, dark)"
+        title="Toggle theme"
+      >
+        <svg class="theme-icon theme-icon--auto" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2v2" />
+          <path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715" />
+          <path d="M16 12a4 4 0 0 0-4-4" />
+          <path d="m19 5-1.256 1.256" />
+          <path d="M20 12h2" />
+        </svg>
+        <svg class="theme-icon theme-icon--light" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2" />
+          <path d="M12 20v2" />
+          <path d="m4.93 4.93 1.41 1.41" />
+          <path d="m17.66 17.66 1.41 1.41" />
+          <path d="M2 12h2" />
+          <path d="M20 12h2" />
+          <path d="m6.34 17.66-1.41 1.41" />
+          <path d="m19.07 4.93-1.41 1.41" />
+        </svg>
+        <svg class="theme-icon theme-icon--dark" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+        </svg>
+      </button>
+    </nav>
+
+    {{hero}}
+    {{tabs}}
+    {{manual}}
+
+    {{contentUrls}}
+    <script type="module" src="{{script}}"></script>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+/**
+ * Single source of truth for the landing page's on-disk layout.
+ *
+ * `build-site.ts` emits these paths and `check-site.ts` asserts them afterwards,
+ * so a renamed directory cannot drift between the two sides.
+ *
+ * The built tree is served from the domain root and the pages live one level
+ * down under `/<locale>/`, so every URL a page carries is root-relative.
+ */
+
+import { join } from 'node:path';
+
+export const ROOT_DIR = join(import.meta.dir, '..');
+export const SITE_DIR = join(ROOT_DIR, 'site');
+export const SRC_DIR = join(SITE_DIR, 'src');
+export const PUBLIC_DIR = join(SITE_DIR, 'public');
+export const DIST_DIR = join(SITE_DIR, 'dist');
+
+/** Directory names inside `site/dist/`. */
+export const ASSETS_DIR_NAME = 'assets';
+export const FONTS_DIR_NAME = 'fonts';
+export const CONTENT_DIR_NAME = 'content';
+
+/** Browser entrypoint in `site/src/`, bundled into `assets/` as hashed `.js`. */
+export const SCRIPT_ENTRYPOINT = 'main.ts';
+
+/**
+ * Entrypoint for the root shim's detection logic. Inlined into `dist/index.html`
+ * rather than written to `assets/`: a redirect that waits on a second request is
+ * a visible blank frame.
+ */
+export const REDIRECT_ENTRYPOINT = 'redirect.ts';
+
+/** Stylesheet in `site/src/`, copied into `assets/` rather than bundled. */
+export const STYLE_SOURCE = 'style.css';
+
+/** Page shell in `site/`, filled once per locale. */
+export const TEMPLATE_SOURCE = 'index.template.html';
+
+/** Single file copied from `site/public/` into the `dist/` root. */
+export const FAVICON = 'favicon.svg';
+
+/**
+ * The stylesheet's `@font-face` URLs are written relative to `site/src/`, so
+ * `site/public/fonts/` resolves during development. In `dist/` the stylesheet
+ * sits in `assets/` and the fonts one level up, so the prefix has to move.
+ *
+ * The hash covers the rewritten text, so a change here moves the filename too.
+ */
+export const CSS_FONT_PATH: readonly [from: string, to: string] = [
+  `../public/${FONTS_DIR_NAME}/`,
+  `../${FONTS_DIR_NAME}/`,
+];
+
+/** Canonical origin, used for the `hreflang` and `canonical` links. */
+export const SITE_ORIGIN = 'https://rollrobot.edloidas.io';
+
+/** Stands in for Bun's `[hash]` slot, which only covers what the bundler writes. */
+export function contentHash(text: string): string {
+  return new Bun.CryptoHasher('sha256').update(text).digest('hex').slice(0, 8);
+}
+
+/**
+ * Quotes a literal for use inside a `RegExp`. Both sides build patterns out of
+ * the names above rather than retyping them, so the escaper belongs here too.
+ */
+export function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
