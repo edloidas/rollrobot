@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM"],
+    "types": [],
+    "paths": {}
+  },
+  "include": ["src/**/*.ts", "content/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

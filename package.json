@@ -22,7 +22,7 @@
     "worker:upload": "wrangler versions upload",
     "telegram:configure": "bun scripts/configure-telegram.ts",
     "analytics": "bun scripts/analytics/index.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p site/tsconfig.json",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
     "format": "biome format --write .",
@@ -31,7 +31,11 @@
     "check:fix": "bun run typecheck && bun run lint:fix && bun run format",
     "test": "bun test",
     "test:watch": "bun test --watch",
-    "validate": "bun run check && bun run test"
+    "validate": "bun run check && bun run test && bun run site:build && bun run site:check",
+    "site:build": "bun scripts/build-site.ts",
+    "site:check": "bun scripts/check-site.ts",
+    "site:dev": "bun scripts/build-site.ts && bun scripts/serve-site.ts",
+    "site:preview": "bun scripts/serve-site.ts"
   },
   "dependencies": {
     "grammy": "^1.45.1",

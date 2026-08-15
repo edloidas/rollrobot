@@ -1,0 +1,724 @@
+/* rollrobot — landing page stylesheet. One page, one column, no framework.
+   Palette is ported from roll-parser's site/src/style.css; layout, tokens and
+   class names are this site's own. */
+
+/*
+ * * Fonts
+ */
+
+/* Self-hosted woff2 — see site/public/fonts/README.md for provenance and
+   subsetting.
+
+   ! The `../public/fonts/` prefix must stay exactly that: build-site.ts rewrites
+   ! that string, and only that string, to `../fonts/` for dist. */
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../public/fonts/cinzel-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../public/fonts/ibm-plex-sans-latin.woff2') format('woff2');
+}
+
+/* Same family name as the latin face above, so a /en/ visitor never fetches
+   this one. The range covers Cyrillic plus Ukrainian ґ/Ґ (U+0490-0491) and
+   Belarusian ў (U+045E) — see the fonts README. */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 100 700;
+  font-display: swap;
+  src: url('../public/fonts/ibm-plex-sans-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../public/fonts/jetbrains-mono-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('../public/fonts/jetbrains-mono-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+/* Persian-specific letters پ چ ژ گ all fall inside U+0600-06FF, so this one
+   file covers fa without pulling in unrelated scripts. */
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../public/fonts/vazirmatn-arabic.woff2') format('woff2');
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E,
+    U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+
+/*
+ * * Tokens
+ */
+
+:root {
+  color-scheme: dark;
+
+  --bg: #16120b;
+  --surface: #221d15;
+  --surface-strong: rgba(255, 240, 210, 0.09);
+  --border: rgba(255, 230, 190, 0.15);
+  --text: #f0e6d2;
+  --text-muted: #b3a583;
+  --text-dim: #7d7259;
+  --accent: #d9a441;
+  --gold-gradient: linear-gradient(135deg, #f0c060, #d9a441 45%, #a3622f);
+  /* Text laid over --accent or --gold-gradient, neither of which has the
+     contrast to take the page's own --text in either mode. */
+  --on-accent: #241a08;
+  /* A step *away* from the text, where --surface is a step towards it. */
+  --inset: rgba(0, 0, 0, 0.15);
+  /* One small step from the card's composited surface towards --text: enough to
+     read as texture, never as content. */
+  --dice-stroke: #2f291f;
+
+  /* Vazirmatn sits in the stack rather than replacing it per locale: its
+     `@font-face` is bound to the Arabic ranges, so it is reached only by glyphs
+     the faces before it do not carry, and a latin page never fetches it. Same
+     mechanism as the Cyrillic IBM Plex face above. Ordering it after the latin
+     families is what keeps English text on /fa/ looking like English text. */
+  --font-head: 'Cinzel', 'Vazirmatn', 'Iowan Old Style', Georgia, serif;
+  --font-body: 'IBM Plex Sans', 'Vazirmatn', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, monospace;
+  /* Tracks Cinzel's caps, not the elements that set --font-head — the locale
+     overrides below reset it to 0 wherever they swap Cinzel out. */
+  --tracking-head: 0.01em;
+
+  --radius: 14px;
+}
+
+/* Light palette. The `:root` dark tokens above are the default; light applies
+   when the toggle forces it, or — in `auto` — when the OS prefers light.
+
+   ! This block and the `prefers-color-scheme` block below MUST hold identical
+   ! values. Change one and you change the other. */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #f5ecdb;
+  --surface: rgba(43, 35, 23, 0.04);
+  --surface-strong: rgba(43, 35, 23, 0.07);
+  --border: rgba(43, 35, 23, 0.15);
+  --text: #2b2317;
+  --text-muted: #6b5d45;
+  --text-dim: #9a8b6f;
+  /* Deliberately darker than roll-parser's #a06b1f, which carries small notation
+     text as low as 3.3:1 — under WCAG AA. This clears 4.5:1 everywhere --accent
+     is inked, the tightest being `.example-in` on its own 8% wash. */
+  --accent: #855512;
+  --gold-gradient: linear-gradient(135deg, #b8842a, #a06b1f 45%, #7a4a18);
+  --on-accent: #fffaf0;
+  --inset: rgba(43, 35, 23, 0.06);
+  --dice-stroke: #e0d8c9;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']):not([data-theme='light']) {
+    color-scheme: light;
+
+    --bg: #f5ecdb;
+    --surface: rgba(43, 35, 23, 0.04);
+    --surface-strong: rgba(43, 35, 23, 0.07);
+    --border: rgba(43, 35, 23, 0.15);
+    --text: #2b2317;
+    --text-muted: #6b5d45;
+    --text-dim: #9a8b6f;
+    --accent: #855512;
+    --gold-gradient: linear-gradient(135deg, #b8842a, #a06b1f 45%, #7a4a18);
+    --on-accent: #fffaf0;
+    --inset: rgba(43, 35, 23, 0.06);
+    --dice-stroke: #e0d8c9;
+  }
+}
+
+/* No per-locale font swap: a locale is the page's language, not the language of
+   every run of text on it, and swapping the stack restyled the bot's own latin
+   name on /ru/ and the untranslated English on /fa/. The stacks above fall back
+   a glyph at a time, so each script reaches its own face on its own.
+
+   ! Tracking is the exception — it is a property of the element, not the glyph,
+   ! and positive letter-spacing breaks Arabic-script letter joining. */
+:root:lang(fa) {
+  --tracking-head: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/*
+ * * Base
+ */
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ! JetBrains Mono ligatures rewrite notation (`!=` -> ≠, `>=` -> ⩾), which
+   changes its meaning — every notation glyph must stay literal. */
+code,
+.reply {
+  font-variant-ligatures: none;
+}
+
+code {
+  font-family: var(--font-mono);
+}
+
+/*
+ * * Theme toggle
+ */
+
+/* Fixed, so it floats over the sticky language bar as the page scrolls.
+
+   The inset is physical, not logical: the toggle is chrome rather than content,
+   and /fa/ flipping it to the other corner reads as the control having moved.
+
+   ! `display: none` until theme.ts reveals it. The rest of the page works
+   ! without JavaScript; this button cannot, and hiding it here rather than in
+   ! <noscript> also covers a bundle that fails to load. */
+.theme-nav {
+  position: fixed;
+  /* Less the language bar's bottom border, so the button centres on the bar's
+     own box rather than sitting a border low once the bar is stuck. */
+  top: calc(0.75rem - 1px);
+  right: 1rem;
+  z-index: 5;
+  display: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+:root[data-theme-toggle='ready'] .theme-nav {
+  display: flex;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  width: 1.95rem;
+  height: 1.95rem;
+  padding: 0;
+  color: var(--text-muted);
+  cursor: pointer;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease,
+    background 150ms ease;
+}
+
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--surface-strong);
+}
+
+.theme-icon {
+  display: block;
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* `auto` is the fallthrough, not a case of its own: `data-theme` can hold
+   whatever a stale localStorage value carried in, and matching on `auto`
+   directly would leave the button empty for those values. */
+.theme-icon--light,
+.theme-icon--dark,
+:root[data-theme='light'] .theme-icon--auto,
+:root[data-theme='dark'] .theme-icon--auto {
+  display: none;
+}
+
+:root[data-theme='light'] .theme-icon--light,
+:root[data-theme='dark'] .theme-icon--dark {
+  display: block;
+}
+
+/*
+ * * Hero card
+ */
+
+.hero {
+  padding-block: 26px 0;
+  padding-inline: 16px;
+}
+
+/* `overflow: hidden` clips the dice pattern to the card — the page background
+   stays flat. */
+.card {
+  position: relative;
+  overflow: hidden;
+  max-width: 560px;
+  margin-inline: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.card-pattern {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The pattern's dice live in the shell's hidden <defs>, not inside .card, so
+   they cannot be styled by descent — and a `stroke` attribute could not follow
+   the theme. */
+.dice-ink {
+  stroke: var(--dice-stroke);
+}
+
+.card-inner {
+  position: relative;
+  padding: 26px 30px 24px;
+}
+
+.avatar {
+  display: block;
+  margin-inline: auto;
+}
+
+.name {
+  font-family: var(--font-head);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: var(--tracking-head);
+  margin: 10px 0 2px;
+}
+
+.handle {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.tagline {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin: 12px auto 0;
+  max-width: 50ch;
+}
+
+.cta {
+  display: inline-block;
+  margin-block-start: 18px;
+  padding: 10px 26px;
+  border-radius: 999px;
+  background: var(--gold-gradient);
+  color: var(--on-accent);
+  font-weight: 700;
+  font-size: 12.5px;
+  text-decoration: none;
+  transition: filter 150ms ease;
+}
+
+.cta:hover {
+  filter: brightness(1.05);
+}
+
+/*
+ * * Tabs
+ */
+
+/* Full width, so its background and rule reach both edges under the toggle.
+
+   The 16px matches the padding every content block uses, so the strip lines up
+   with the card above it at any width. The strip is narrower than the bar at
+   every breakpoint, so the centred track clears the fixed toggle on its own —
+   no gutter needed. */
+.tabs {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-block-end: 1px solid var(--border);
+  padding-inline: 16px;
+  margin-block-start: 14px;
+  transition: padding 180ms ease;
+}
+
+/* `direction: ltr` pins the language order: these are the same eight tabs in the
+   same sequence on every page, and letting /fa/ reverse them moves a reader's
+   own language to the opposite end of the strip. It belongs on the scroller, not
+   the track — an RTL scrollport also starts scrolled to its right end, which
+   clips the first tab on the pages that overflow. */
+.tabs-scroll {
+  overflow-x: auto;
+  direction: ltr;
+  scrollbar-width: none;
+}
+
+.tabs-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.tabs-track {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  padding-block: 0.75rem;
+  min-width: max-content;
+  margin-inline: auto;
+}
+
+.tab {
+  padding: 5px 11px;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.tab:hover {
+  color: var(--text);
+}
+
+.tab[aria-current='page'] {
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+}
+
+.tab-short {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .tab-long {
+    display: none;
+  }
+
+  .tab-short {
+    display: inline;
+  }
+
+  .card-inner {
+    padding: 22px 20px 20px;
+  }
+}
+
+/* Narrow enough that the strip reaches the fixed theme toggle. The 3rem end
+   inset pulls the scrollport clear of it — padding on the bar is what insets a
+   scrollport, since a scroller's own padding is part of it and content scrolls
+   straight through. Physical, like the toggle's own inset.
+
+   Not centred here: the strip fills the bar at this width, so centring buys
+   nothing and only costs the tabs room. */
+@media (max-width: 480px) {
+  .tabs {
+    padding: 0 3rem 0 1rem;
+  }
+
+  .tabs-track {
+    justify-content: flex-start;
+  }
+
+  /* The strip scrolls under the button at this width, so it needs a backdrop of
+     its own — roll-parser's sticky treatment, a tint over a blur. --surface is
+     near-transparent in light mode and would show the tabs straight through. */
+  .theme-toggle {
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
+/*
+ * * Manual
+ */
+
+.manual {
+  max-width: 720px;
+  margin-inline: auto;
+  padding-inline: 16px;
+  padding-block: 24px 40px;
+}
+
+.manual section {
+  margin-block: 30px;
+}
+
+.manual section:first-of-type {
+  margin-block-start: 20px;
+}
+
+.manual h2 {
+  font-family: var(--font-head);
+  font-size: 1.4rem;
+  letter-spacing: var(--tracking-head);
+  margin: 0 0 12px;
+}
+
+.manual h3 {
+  font-family: var(--font-head);
+  font-size: 1.05rem;
+  letter-spacing: var(--tracking-head);
+  margin: 20px 0 10px;
+}
+
+.manual p {
+  margin: 0 0 10px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.command,
+.recipe {
+  margin-block-start: 20px;
+  padding-block-start: 20px;
+  border-block-start: 1px solid var(--border);
+}
+
+.command h3,
+.recipe h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 8px;
+}
+
+.shortcut {
+  margin-inline-start: 2px;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.out {
+  margin-block-start: 12px;
+}
+
+.out a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.out a:hover {
+  text-decoration: underline;
+}
+
+details {
+  padding-block: 10px;
+  border-block-end: 1px solid var(--border);
+}
+
+summary {
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: var(--tracking-head);
+  color: var(--text);
+}
+
+summary::marker {
+  color: var(--accent);
+}
+
+details p {
+  margin-block-start: 8px;
+  margin-block-end: 0;
+}
+
+/*
+ * * Notation table
+ */
+
+.table-scroll {
+  overflow-x: auto;
+  margin-block: 8px 4px;
+}
+
+.table-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.table-scroll td {
+  padding: 6px 12px;
+  border-block-end: 1px solid var(--border);
+  text-align: start;
+  white-space: nowrap;
+}
+
+.table-scroll td:last-child {
+  color: var(--text-muted);
+  white-space: normal;
+}
+
+.table-scroll td code {
+  color: var(--accent);
+}
+
+/*
+ * * Reply bubbles
+ */
+
+.example {
+  margin-block-start: 14px;
+}
+
+.example-in {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-block-end: 8px;
+}
+
+/* Holds the bot's real output, so `pre-wrap` is what keeps the line breaks the
+   formatter emits. The tag rules below cover the Telegram HTML it uses. */
+.reply {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+/* Bare, unlike `.example-in`: this is the bot's own output, where a chip around
+   every notation run competes with the quote block above it. Colour alone. */
+.reply code {
+  font-family: inherit;
+  color: var(--accent);
+}
+
+.reply b {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.reply s {
+  color: var(--text-dim);
+  text-decoration: line-through;
+}
+
+.reply u {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+}
+
+.reply i {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Telegram's quote block: an accent bar down the leading edge and a tinted
+   panel, which is what carries the label now that `.reply code` is bare.
+
+   No block margin — `format.ts` emits a newline after `</blockquote>`, and
+   `.reply` is `pre-wrap`, so the gap below is already in the text. */
+.reply blockquote {
+  margin: 0;
+  /* Hugs the label rather than the bubble, the way a Telegram quote does. */
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px 10px;
+  border-inline-start: 3px solid var(--accent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.reply pre {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  color: var(--text-muted);
+  background: var(--inset);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+/*
+ * * Footer
+ */
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 20px;
+  margin-block-start: 30px;
+  padding-block: 20px;
+  border-block-start: 1px solid var(--border);
+}
+
+.footer a {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: color 150ms ease;
+}
+
+.footer a:hover {
+  color: var(--accent);
+}

@@ -45,6 +45,7 @@
       "**/scripts/**/*.ts",
       "**/src/**/*.ts",
       "**/test/**/*.ts",
+      "**/site/**/*.ts",
       "!**/node_modules",
       "!**/dist",
       "!**/coverage"
@@ -67,6 +68,16 @@
         "rules": {
           "style": {
             "noDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["site/src/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNodejsModules": "error"
           }
         }
       }
