@@ -3,7 +3,7 @@ import { LOCALE_NAMES, SITE_LOCALES } from './locales';
 // ! `import type`, never a value import — `replies.ts` pulls in roll-parser, and
 // ! `render.ts` is in the browser bundle. `verbatimModuleSyntax` erases this line;
 // ! dropping the `type` keyword would ship the whole parser to every visitor.
-import type { ResolvedExample, ResolvedManual } from './replies';
+import type { ResolvedCommandSection, ResolvedExample, ResolvedManual } from './replies';
 
 const BOT_HANDLE = '@rollrobot';
 const TELEGRAM_URL = 'tg://resolve?domain=rollrobot';
@@ -127,6 +127,28 @@ function notes(lines: string[] | undefined): string {
   return `<ul class="notes">${lines.map((line) => `<li>${prose(line)}</li>`).join('')}</ul>`;
 }
 
+/** One entry per command, shared by the stable list and the beta one. */
+function commandArticles(items: ResolvedCommandSection['items']): string {
+  return items
+    .map((item) => {
+      const shortcut = item.shortcut
+        ? ` <span class="shortcut">/${escapeHtml(item.shortcut)}</span>`
+        : '';
+      // ! The whole heading, not just the <code>: the shortcut opens on a neutral
+      // ! `/` too, and the h3 is a flex row whose two children would otherwise
+      // ! sit in reverse order on /fa/.
+      return (
+        `<article class="command">` +
+        ltr('h3', `<code>/${escapeHtml(item.command)}</code>${shortcut}`) +
+        `<p>${prose(item.summary)}</p>` +
+        notes(item.notes) +
+        item.examples.map(renderReply).join('') +
+        `</article>`
+      );
+    })
+    .join('');
+}
+
 export function renderHero(manual: ResolvedManual, _locale: Locale): string {
   return (
     `<header class="hero"${fallbackAttrs(manual.fallback.hero)}>` +
@@ -177,24 +199,8 @@ function paragraphs(lines: string[]): string {
 }
 
 export function renderManual(manual: ResolvedManual, _locale: Locale): string {
-  const commands = manual.commands.items
-    .map((item) => {
-      const shortcut = item.shortcut
-        ? ` <span class="shortcut">/${escapeHtml(item.shortcut)}</span>`
-        : '';
-      // ! The whole heading, not just the <code>: the shortcut opens on a neutral
-      // ! `/` too, and the h3 is a flex row whose two children would otherwise
-      // ! sit in reverse order on /fa/.
-      return (
-        `<article class="command">` +
-        ltr('h3', `<code>/${escapeHtml(item.command)}</code>${shortcut}`) +
-        `<p>${prose(item.summary)}</p>` +
-        notes(item.notes) +
-        (item.example == null ? '' : renderReply(item.example)) +
-        `</article>`
-      );
-    })
-    .join('');
+  const commands = commandArticles(manual.commands.items);
+  const beta = commandArticles(manual.betaFeatures.items);
 
   const features = manual.specialFeatures.items
     .map(
@@ -256,6 +262,15 @@ export function renderManual(manual: ResolvedManual, _locale: Locale): string {
       manual.commands.heading,
       `<p>${prose(manual.commands.intro)}</p>${commands}`,
       fallback.commands,
+    ) +
+    // The intro is a callout rather than a plain paragraph: it is the warning
+    // that these commands may change or go, and it is the only thing telling
+    // this section apart from the stable list above it.
+    section(
+      'beta-features',
+      manual.betaFeatures.heading,
+      `<p class="callout">${prose(manual.betaFeatures.intro)}</p>${beta}`,
+      fallback.betaFeatures,
     ) +
     section(
       'special-features',

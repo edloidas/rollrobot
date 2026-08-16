@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { resolveManual } from '../../site/content';
+import { mergeOverEnglish, resolveManual } from '../../site/content';
 import { en } from '../../site/content/en';
 import { prose, renderHero, renderManual, renderTabs } from '../../site/src/render';
 import { resolveExamples } from '../../site/src/replies';
@@ -7,7 +7,7 @@ import { resolveExamples } from '../../site/src/replies';
 const english = resolveManual('en');
 const manual = resolveExamples(english);
 /** Stands in for a locale with no translation at all — every section is English. */
-const fallenBack = resolveExamples(resolveManual('fa'));
+const fallenBack = resolveExamples(mergeOverEnglish({}));
 
 describe('prose', () => {
   test('renders a backtick span as isolated inline code', () => {
@@ -83,6 +83,8 @@ describe('renderManual', () => {
   const sectionsWithHeading = [
     manual.gettingStarted,
     manual.commands,
+    manual.betaFeatures,
+    manual.specialFeatures,
     manual.inline,
     manual.notation,
     manual.systems,
@@ -105,9 +107,19 @@ describe('renderManual', () => {
   });
 
   test('embeds generated replies verbatim', () => {
-    const example = manual.commands.items[0].example;
+    const example = manual.commands.items[0].examples[0];
     if (example == null) throw new Error('the first command is expected to carry an example');
     expect(renderManual(manual, 'en')).toContain(example.replyHtml);
+  });
+
+  test('renders every example a command carries, not just the first', () => {
+    const html = renderManual(manual, 'en');
+    const pick = manual.betaFeatures.items[0];
+
+    expect(pick.examples).toHaveLength(2);
+    for (const example of pick.examples) {
+      expect(html).toContain(example.replyHtml);
+    }
   });
 
   test('quotes a named roll back into the typed line', () => {
@@ -119,7 +131,7 @@ describe('renderManual', () => {
           {
             command: 'roll',
             summary: 'Rolls.',
-            example: { notation: '2d6+3', rng: [4, 6], mode: 'compact', label: 'Damage' },
+            examples: [{ notation: '2d6+3', rng: [4, 6], mode: 'compact', label: 'Damage' }],
           },
         ],
       },
@@ -133,6 +145,7 @@ describe('renderManual', () => {
     const bare = resolveExamples({
       ...english,
       commands: { ...en.commands, items: [{ command: 'help', summary: 'Notation guide.' }] },
+      betaFeatures: { ...en.betaFeatures, items: [] },
       specialFeatures: { ...en.specialFeatures, items: [] },
       systems: { ...en.systems, items: [] },
     });
@@ -145,6 +158,10 @@ describe('renderManual', () => {
     const html = renderManual(manual, 'en');
     expect(html).toContain('<code>/ask Should we open the door?</code>');
     expect(html).toContain('<blockquote>Should we open the door?</blockquote>');
+  });
+
+  test('types a questionless ask as the bare command', () => {
+    expect(renderManual(manual, 'en')).toContain('<code>/ask</code>');
   });
 
   test('heads a pick example with the command that produces it', () => {

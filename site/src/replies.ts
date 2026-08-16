@@ -21,10 +21,17 @@ import type {
 /** An example plus what the page shows for it: the line you type, and the bot's answer. */
 export type ResolvedExample = Example & { typed: string; replyHtml: string };
 
-export type ResolvedManual = Omit<LocalizedManual, 'commands' | 'specialFeatures' | 'systems'> & {
-  commands: Omit<Manual['commands'], 'items'> & {
-    items: (Omit<CommandDoc, 'example'> & { example?: ResolvedExample })[];
-  };
+/** `commands` and `betaFeatures` are the same shape, resolved the same way. */
+export type ResolvedCommandSection = Omit<Manual['commands'], 'items'> & {
+  items: (Omit<CommandDoc, 'examples'> & { examples: ResolvedExample[] })[];
+};
+
+export type ResolvedManual = Omit<
+  LocalizedManual,
+  'commands' | 'betaFeatures' | 'specialFeatures' | 'systems'
+> & {
+  commands: ResolvedCommandSection;
+  betaFeatures: ResolvedCommandSection;
   specialFeatures: Omit<Manual['specialFeatures'], 'items'> & {
     items: (Omit<FeatureDoc, 'example'> & { example?: ResolvedExample })[];
   };
@@ -104,9 +111,11 @@ function askAnswer(example: AskExample): string {
     if (answer.text.includes(wanted)) return answer.text;
   }
 
+  const asked = example.question == null ? 'a bare /ask' : `"${example.question}"`;
+
   throw new Error(
-    `Ask example "${example.question}" never answered ${example.answer} in ${MAX_ATTEMPTS} ` +
-      `attempts — askReply no longer returns that answer`,
+    `Ask example ${asked} never answered ${example.answer} in ${MAX_ATTEMPTS} attempts — ` +
+      `askReply no longer returns that answer`,
   );
 }
 
@@ -124,7 +133,7 @@ function pickChoice(example: PickExample): string {
 
 /** The line a user types to get this reply, command included. */
 function typedLine(example: Example): string {
-  if (example.kind === 'ask') return `/ask ${example.question}`;
+  if (example.kind === 'ask') return example.question == null ? '/ask' : `/ask ${example.question}`;
   if (example.kind === 'pick') return `/pick ${example.input}`;
 
   const command = example.mode === 'full' ? '/full' : '/roll';
@@ -157,17 +166,22 @@ export function renderExample(example: Example): ResolvedExample {
   return resolved;
 }
 
+function resolveCommands(section: Manual['commands']): ResolvedCommandSection {
+  return {
+    ...section,
+    items: section.items.map((item) => ({
+      ...item,
+      examples: (item.examples ?? []).map(renderExample),
+    })),
+  };
+}
+
 /** Walks the manual and resolves every example it carries. */
 export function resolveExamples(manual: LocalizedManual): ResolvedManual {
   return {
     ...manual,
-    commands: {
-      ...manual.commands,
-      items: manual.commands.items.map((item) => ({
-        ...item,
-        example: item.example == null ? undefined : renderExample(item.example),
-      })),
-    },
+    commands: resolveCommands(manual.commands),
+    betaFeatures: resolveCommands(manual.betaFeatures),
     specialFeatures: {
       ...manual.specialFeatures,
       items: manual.specialFeatures.items.map((item) => ({

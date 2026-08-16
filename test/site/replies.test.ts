@@ -45,14 +45,18 @@ describe('renderExample', () => {
 describe('resolveExamples', () => {
   test('attaches a reply to every example in the manual', () => {
     const resolved = resolveExamples(english);
-    const replies = [...resolved.commands.items, ...resolved.systems.items]
-      .map((item) => item.example)
-      .filter((example) => example != null);
+    const replies = [
+      ...resolved.commands.items.flatMap((item) => item.examples),
+      ...resolved.betaFeatures.items.flatMap((item) => item.examples),
+      ...resolved.systems.items.map((item) => item.example),
+    ];
 
     // Counted against the source, so resolving nothing cannot pass.
-    const sources = [...en.commands.items, ...en.systems.items].filter(
-      (item) => item.example != null,
-    );
+    const sources = [
+      ...en.commands.items.flatMap((item) => item.examples ?? []),
+      ...en.betaFeatures.items.flatMap((item) => item.examples ?? []),
+      ...en.systems.items.map((item) => item.example),
+    ];
 
     expect(replies).toHaveLength(sources.length);
     for (const example of replies) {
@@ -60,11 +64,11 @@ describe('resolveExamples', () => {
     }
   });
 
-  test('leaves a command carrying no example unresolved', () => {
+  test('leaves a command carrying no example with an empty list', () => {
     const resolved = resolveExamples({
       ...english,
       commands: { ...en.commands, items: [{ command: 'help', summary: 'Notation guide.' }] },
     });
-    expect(resolved.commands.items[0].example).toBeUndefined();
+    expect(resolved.commands.items[0].examples).toEqual([]);
   });
 });

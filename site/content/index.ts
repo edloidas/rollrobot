@@ -1,34 +1,42 @@
 import type { Locale } from '../../src/i18n';
+import { be } from './be';
+import { de } from './de';
 import { en } from './en';
+import { es } from './es';
+import { fa } from './fa';
+import { pt } from './pt';
 import { ru } from './ru';
 import type { FallbackSections, LocalizedManual, PartialManual } from './types';
 import { MANUAL_SECTIONS } from './types';
+import { uk } from './uk';
 
-// ! Placeholder entries until each translation lands — an empty object is a
-// ! complete fallback to English, which is the intended state, not a gap.
-const EMPTY: PartialManual = {};
-
+/**
+ * Every locale the bot speaks, each one translated whole.
+ *
+ * Typed `PartialManual` rather than `Manual` so a locale added later can land one
+ * section at a time — see {@link mergeOverEnglish}. Each entry is nonetheless a
+ * complete `Manual` today, which `resolveManual`'s test asserts.
+ */
 export const MANUALS: Record<Locale, PartialManual> = {
   en,
-  es: EMPTY,
-  pt: EMPTY,
-  de: EMPTY,
+  es,
+  pt,
+  de,
   ru,
-  uk: EMPTY,
-  be: EMPTY,
-  fa: EMPTY,
+  uk,
+  be,
+  fa,
 };
 
 /**
- * Merges a locale over English one top-level section at a time. Sections are
+ * Merges a translation over English one top-level section at a time. Sections are
  * whole units on purpose: a half-translated `commands` list would interleave two
  * languages inside one table, which reads worse than the English section intact.
  *
  * Which sections took English is recorded rather than discarded — see
  * {@link LocalizedManual}.
  */
-export function resolveManual(locale: Locale): LocalizedManual {
-  const partial = MANUALS[locale] ?? {};
+export function mergeOverEnglish(partial: PartialManual): LocalizedManual {
   const resolved = {} as LocalizedManual;
   const fallback = {} as FallbackSections;
 
@@ -45,4 +53,8 @@ export function resolveManual(locale: Locale): LocalizedManual {
   resolved.fallback = fallback;
 
   return resolved;
+}
+
+export function resolveManual(locale: Locale): LocalizedManual {
+  return mergeOverEnglish(MANUALS[locale] ?? {});
 }
