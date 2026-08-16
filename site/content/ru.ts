@@ -5,6 +5,7 @@ export const ru: Manual = {
     title: 'Roll Robot — кубики для настолок в любом чате Telegram',
     description:
       'Полная ролевая нотация кубиков в Telegram: оставить/отбросить, взрывающиеся кубики, перебросы, пулы успехов и проверки.',
+    social: 'Телеграм-бот с кубиками для настолок. От edloidas.io',
   },
   hero: {
     tagline:
