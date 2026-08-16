@@ -15,6 +15,7 @@ Dice notation for tabletop RPGs, rolled in any Telegram chat.
   <a href="https://roll-parser.edloidas.io/"><strong>Playground</strong></a> ·
   <a href="https://roll-parser.edloidas.io/reference"><strong>Notation Guide</strong></a> ·
   <a href="DEPLOYMENT.md"><strong>Deployment</strong></a> ·
+  <a href="SITE.md"><strong>Landing page</strong></a> ·
   <a href="ANALYTICS.md"><strong>Analytics</strong></a>
 </p>
 
@@ -142,6 +143,10 @@ issue, branch, and release conventions.
 The bot runs as a single Cloudflare Worker behind a Telegram webhook. Deploying it needs
 three Worker secrets and one `wrangler` command; registering the webhook is a separate,
 deliberate step. See [DEPLOYMENT.md](DEPLOYMENT.md).
+
+The landing page at [rollrobot.edloidas.io](https://rollrobot.edloidas.io) is a separate
+Cloudflare Pages deploy — eight prerendered locales, no Worker involvement, so neither can
+break the other. See [SITE.md](SITE.md).
 
 ## Analytics
 
