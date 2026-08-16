@@ -101,7 +101,8 @@
      families is what keeps English text on /fa/ looking like English text. */
   --font-head: 'Cinzel', 'Vazirmatn', 'Iowan Old Style', Georgia, serif;
   --font-body: 'IBM Plex Sans', 'Vazirmatn', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, monospace;
+  --font-mono:
+    'JetBrains Mono', 'Vazirmatn', ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, monospace;
   /* Tracks Cinzel's caps, not the elements that set --font-head — the locale
      overrides below reset it to 0 wherever they swap Cinzel out. */
   --tracking-head: 0.01em;
@@ -222,7 +223,7 @@ code {
   /* Less the language bar's bottom border, so the button centres on the bar's
      own box rather than sitting a border low once the bar is stuck. */
   top: calc(0.75rem - 1px);
-  right: 1rem;
+  right: calc(0.75rem - 1px);
   z-index: 5;
   display: none;
   user-select: none;
@@ -519,15 +520,28 @@ code {
   line-height: 1.6;
 }
 
+/* Notation, commands and the handle set inside a sentence. Bare, like
+   `.reply code` — the chip belongs to `.example-in`, and one on every literal
+   would make a paragraph unreadable. `em`, not `px`, so it tracks whatever it
+   sits in; the mono face runs large beside the body sans at a shared size. */
+.manual p code,
+.manual summary code,
+.manual td code {
+  font-size: 0.92em;
+  color: var(--accent);
+}
+
 .command,
-.recipe {
+.recipe,
+.feature {
   margin-block-start: 20px;
   padding-block-start: 20px;
   border-block-start: 1px solid var(--border);
 }
 
 .command h3,
-.recipe h3 {
+.recipe h3,
+.feature h3 {
   display: flex;
   align-items: baseline;
   gap: 8px;
@@ -536,28 +550,94 @@ code {
 
 .shortcut {
   margin-inline-start: 2px;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--text-dim);
 }
 
-.out {
-  margin-block-start: 12px;
+/* Points under a summary. The marker hangs outside, so a wrapped line lands
+   under its own text — flush left under the bullet reads as a new point. */
+.notes {
+  margin: 0 0 10px;
+  padding-inline-start: 1.2em;
+  list-style: disc outside;
+  color: var(--text-muted);
+  line-height: 1.6;
 }
 
-.out a {
-  color: var(--accent);
-  font-weight: 600;
+.notes li {
+  margin-block-start: 4px;
+}
+
+/* An instruction that has to be followed, not an aside. A dashed box rather than
+   a leading bar, so it cannot be mistaken for the quote block in a reply, and
+   full-strength text on a tint against the muted prose around it.
+
+   ! `.manual .callout`, not `.callout`: `.manual p` is the more specific
+   ! selector, and would otherwise keep its own muted colour and margin. */
+.manual .callout {
+  margin: 14px 0;
+  padding: 10px 14px;
+  font-size: 0.92em;
+  line-height: 1.55;
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: var(--radius);
+}
+
+/* Wide and short, the hero card's treatment without its pattern. `auto-fit` puts
+   two on a line wherever two fit and one on a line where they do not, so no
+   breakpoint has to know about them. */
+.link-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-block: 14px;
+}
+
+.link-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 16px;
+  font-family: var(--font-head);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-head);
+  color: var(--text);
   text-decoration: none;
-  border-radius: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition:
+    color 150ms ease,
+    border-color 150ms ease,
+    background 150ms ease;
 }
 
-.out a:hover {
-  text-decoration: underline;
+/* Optically centred rather than box-centred: the glyph sits high in its own em
+   box, so metric alignment leaves it low against the label beside it. */
+.link-arrow {
+  font-size: 1rem;
+  line-height: 0.85rem;
+  margin-top: -0.25rem;
+}
+
+.link-card:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--surface-strong);
 }
 
 details {
   padding-block: 10px;
   border-block-end: 1px solid var(--border);
+}
+
+/* The footer draws its own rule directly below, and two together read as a gap. */
+details:last-of-type {
+  border-block-end: none;
 }
 
 summary {
