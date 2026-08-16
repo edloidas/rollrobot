@@ -100,9 +100,9 @@ function clean(parts: string[], bullets: boolean): string[] {
  * `tier` reports which separator won, and is `null` when fewer than two options came
  * out — a lone option was never really split, whatever characters it contains.
  *
- * ! Never run `normalizeNotation` over any of this. It folds Cyrillic `к`/`д` to `d` for
- *   the roll path, which would turn `/pick кубик, карта` into `dубик`, and it rewrites a
- *   bare `5 10` into `5d10`. Options are prose, not notation.
+ * ! Never run `normalizeNotation` over any of this. It folds a Cyrillic `к`/`д` before a
+ *   digit to `d` for the roll path, which would turn `/pick к20, к6` into `d20, d6`, and
+ *   it rewrites a bare `5 10` into `5d10`. Options are prose, not notation.
  */
 export function splitOptions(input: string): SplitOptions {
   const { head, label, wrapped } = extractQuotedTail(input.trim());
