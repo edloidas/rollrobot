@@ -1,4 +1,4 @@
-import { playground, reference } from './links';
+import { manual, manualUrl, playground, reference } from './links';
 import type { Messages } from './types';
 
 export const pt: Messages = {
@@ -18,14 +18,16 @@ export const pt: Messages = {
     spaceSplit: 'Cada palavra virou uma opção — use , ou | para manter frases inteiras.',
   },
 
-  help: `Role os dados como ninguém — notação de RPG completa com manter/descartar, dados explosivos, novas rolagens, paradas de dados e testes.
+  help: `Notação de dados de RPG para rolar em qualquer conversa.
+
+${manual('Guia completo', 'pt')}
 
 <b>Comandos</b>
-/roll [notação] — rola e mostra o total (atalho: /r)
-/full [notação] — rola com o detalhe dado a dado (atalho: /f)
+/roll [notação] — rola e mostra o total
+/full [notação] — rola com o detalhe dado a dado
 /random — rola d100 (<code>d%</code>)
-/ask [pergunta] — responde Yes ou No (atalho: /a)
-/pick [opções] — escolhe uma ao acaso (beta, atalho: /p)
+/ask [pergunta] — responde Yes ou No
+/pick [opções] — escolhe uma ao acaso (beta)
 /help — este guia
 
 Inline: digite @rollrobot [notação] em qualquer conversa, ou use um dos exemplos prontos da lista.
@@ -35,27 +37,22 @@ Inline: digite @rollrobot [notação] em qualquer conversa, ou use um dos exempl
 <code>4d6kh3</code> — mantém os 3 maiores (também kl, dh, dl)
 <code>d8!</code> — dados explosivos
 <code>2d6r&lt;3</code> — rola de novo abaixo de 3 (ro — rola de novo uma vez)
-<code>4d6min2</code> — define um mínimo de 2 em cada dado (também max)
+<code>4d6min2</code> — eleva cada dado para no mínimo 2 (também max)
 <code>6d10&gt;=6f1</code> — conta sucessos, subtrai cada 1 como falha
-<code>1d20+7 vs 15</code> — teste contra uma CD, graus de sucesso de Pathfinder 2e
+<code>1d20+7 vs 15</code> — teste contra uma CD, graus de sucesso do Pathfinder 2e
 <code>4dF</code> — dados Fate
 <code>d%</code> — dado percentual
 <code>2d6+floor(1d4/2)</code> — funções: floor, ceil, round, abs, min, max, sqrt, pow
 
-Notação abreviada: <code>/roll 20</code> rola d20, <code>/roll 2 10 -1</code> rola 2d10-1.
+<b>Perguntar e escolher</b>
+<code>/ask A porta está armadilhada?</code> — tudo depois do comando é a pergunta
+<code>/pick Patrulha de goblins | Sala vazia</code> — duas ou mais opções, separadas por , | ; ou quebra de linha
 
-Nomeie uma rolagem citando-a no final: <code>/roll 2d20+1 "Percepção"</code>.
-
-<b>Escolha</b>
-<code>/pick Patrulha de goblins | Sala vazia | Tesouro</code> — uma opção ao acaso
-<code>/pick Passar de fininho, Negociar "E agora?"</code> — vírgulas e um nome entre aspas
-Cole uma lista em linhas separadas para sortear um resultado de uma tabela.
-
-Teste a notação no ${playground('playground')}, ou leia a ${reference('referência completa')}.`,
+Teste a notação no ${playground('playground')} ou leia a ${reference('referência completa')}.`,
 
   commands: [
     { command: 'roll', description: 'Role dados — /roll 2d20kh1+5' },
-    { command: 'full', description: 'Role com detalhe — /full 4d6kh3' },
+    { command: 'full', description: 'Role dado a dado — /full 4d6kh3' },
     { command: 'random', description: 'Role d100' },
     { command: 'ask', description: 'Responda Yes ou No — /ask Vamos atacar?' },
     {
@@ -68,15 +65,16 @@ Teste a notação no ${playground('playground')}, ou leia a ${reference('referê
   shortDescription:
     'Dados de RPG em qualquer conversa — D&D, Pathfinder, World of Darkness, Shadowrun, Fate, Call of Cthulhu.',
 
-  description: `Notação de dados de RPG, rolada em qualquer conversa.
+  description: `Notação de dados de RPG para rolar em qualquer conversa.
+${manualUrl('pt')}
 
 4d6kh3 para atributos
 2d20kh1+7 com vantagem
-1d20+12 vs 20 para um teste de Pathfinder 2e
+1d20+12 vs 20 para um teste do Pathfinder 2e
 7d10>=6f1 para uma parada de dados do Storyteller
 {1d8!, 1d6!}kh1 para Savage Worlds
 4dF para Fate
 d% para Call of Cthulhu
 
-/roll dá o total, /full o detalhe dado a dado, /ask um Yes ou No, /pick uma opção ao acaso, /help o guia de notação. Digite @rollrobot em qualquer conversa para rolar sem adicionar o bot.`,
+/roll dá o total, /full o detalhe dado a dado, /ask um Yes ou No, /pick uma opção ao acaso (beta), /help o guia de notação. Digite @rollrobot em qualquer conversa para rolar sem adicionar o bot.`,
 };

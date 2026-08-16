@@ -9,7 +9,7 @@ export const be: Manual = {
   },
   hero: {
     tagline:
-      'Кубікі для настолак у любым чаце — D&D, Pathfinder, World of Darkness, Shadowrun, Fate, «Кліч Ктулху».',
+      'Кубікі для настолак у любым чаце — D&D, Pathfinder, World of Darkness, Shadowrun, Fate, Call of Cthulhu.',
     cta: 'Адкрыць у Telegram',
   },
   gettingStarted: {

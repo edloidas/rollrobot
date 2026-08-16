@@ -1,4 +1,4 @@
-import { playground, reference } from './links';
+import { manual, manualUrl, playground, reference } from './links';
 import type { Messages } from './types';
 
 export const en: Messages = {
@@ -18,14 +18,16 @@ export const en: Messages = {
     spaceSplit: 'Every word became an option — use , or | to keep phrases together.',
   },
 
-  help: `Roll the dice like no one before — full RPG notation with keep/drop, exploding dice, rerolls, success pools, and checks.
+  help: `Dice notation for tabletop RPGs, rolled in any chat.
+
+${manual('Complete Guide', 'en')}
 
 <b>Commands</b>
-/roll [notation] — roll and show the total (shortcut: /r)
-/full [notation] — roll with a die-by-die breakdown (shortcut: /f)
+/roll [notation] — roll and show the total
+/full [notation] — roll with a die-by-die breakdown
 /random — roll d100 (<code>d%</code>)
-/ask [question] — answer Yes or No (shortcut: /a)
-/pick [options] — pick one at random (beta, shortcut: /p)
+/ask [question] — answer Yes or No
+/pick [options] — pick one at random (beta)
 /help — this guide
 
 Inline: type @rollrobot [notation] in any chat, or pick a preset from the list.
@@ -42,14 +44,9 @@ Inline: type @rollrobot [notation] in any chat, or pick a preset from the list.
 <code>d%</code> — percentile die
 <code>2d6+floor(1d4/2)</code> — functions: floor, ceil, round, abs, min, max, sqrt, pow
 
-Shorthand: <code>/roll 20</code> rolls d20, <code>/roll 2 10 -1</code> rolls 2d10-1.
-
-Name a roll by quoting it at the end: <code>/roll 2d20+1 "Perception"</code>.
-
-<b>Picking</b>
-<code>/pick Goblin patrol | Empty room | Treasure hoard</code> — one option at random
-<code>/pick Sneak past, Talk it out "What now?"</code> — commas work too, quote a name
-Paste a list on separate lines to draw a row from a table.
+<b>Asking and picking</b>
+<code>/ask Is the door trapped?</code> — everything after the command is the question
+<code>/pick Goblin patrol | Empty room</code> — two or more options, split on , | ; or a line break
 
 Try notation live in the ${playground('playground')}, or read the full ${reference('notation reference')}.`,
 
@@ -66,6 +63,7 @@ Try notation live in the ${playground('playground')}, or read the full ${referen
     'Dice for tabletop RPGs in any chat — D&D, Pathfinder, World of Darkness, Shadowrun, Fate, Call of Cthulhu.',
 
   description: `Dice notation for tabletop RPGs, rolled in any chat.
+${manualUrl('en')}
 
 4d6kh3 for ability scores
 2d20kh1+7 with advantage
@@ -75,5 +73,5 @@ Try notation live in the ${playground('playground')}, or read the full ${referen
 4dF for Fate
 d% for Call of Cthulhu
 
-/roll gives the total, /full a die-by-die breakdown, /ask a Yes or No, /pick one option at random, /help the notation guide. Type @rollrobot in any chat to roll without adding the bot.`,
+/roll gives the total, /full a die-by-die breakdown, /ask a Yes or No, /pick one option at random (beta), /help the notation guide. Type @rollrobot in any chat to roll without adding the bot.`,
 };

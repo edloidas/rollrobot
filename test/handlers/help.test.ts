@@ -13,6 +13,9 @@ function codeBlocks(help: string): string[] {
   );
 }
 
+/** The two commands whose argument is prose, not notation — checked on their own terms below. */
+const PROSE_COMMANDS = /^\/(ask|pick)\b/;
+
 /**
  * Guide examples, run through the same shims the commands apply — so `/roll 2 10 -1`
  * is checked as `2d10-1`, and a label example is checked with its quotes stripped.
@@ -20,15 +23,15 @@ function codeBlocks(help: string): string[] {
  */
 function notationExamples(help: string): string[] {
   return codeBlocks(help)
-    .filter((example) => !example.startsWith('/pick'))
+    .filter((example) => !PROSE_COMMANDS.test(example))
     .map((example) => normalizeNotation(extractLabel(example.replace(/^\/\w+\s*/, '')).notation));
 }
 
-/** Pick examples carry option lists rather than notation, so they are checked as lists. */
-function pickExamples(help: string): string[] {
+/** Examples for one prose command, with the command itself stripped. */
+function argumentsOf(help: string, command: string): string[] {
   return codeBlocks(help)
-    .filter((example) => example.startsWith('/pick'))
-    .map((example) => example.replace(/^\/pick\s*/, ''));
+    .filter((example) => example.startsWith(`/${command}`))
+    .map((example) => example.replace(new RegExp(`^/${command}\\s*`), ''));
 }
 
 let bot: TestBot;
@@ -73,10 +76,19 @@ describe('Help commands', () => {
 
     // A translator who drops a separator leaves an example that cannot pick anything
     test(`should only show pick examples that split in ${locale}`, () => {
-      const examples = pickExamples(messages(locale).help);
+      const examples = argumentsOf(messages(locale).help, 'pick');
       expect(examples.length).toBeGreaterThan(0);
       for (const options of examples) {
         expect(pickReply(options, locale).choice).not.toBeNull();
+      }
+    });
+
+    // The mark is the whole reason the example reads as a question and not as an option list
+    test(`should end every ask example with a question mark in ${locale}`, () => {
+      const examples = argumentsOf(messages(locale).help, 'ask');
+      expect(examples.length).toBeGreaterThan(0);
+      for (const question of examples) {
+        expect(question).toMatch(/[?؟]$/u);
       }
     });
   }
