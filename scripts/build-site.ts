@@ -26,6 +26,7 @@ import {
   ICON_SIZES,
   OG_IMAGE,
   OG_IMAGE_SIZE,
+  PRELOAD_FONT,
   PUBLIC_DIR,
   REDIRECT_ENTRYPOINT,
   SCRIPT_ENTRYPOINT,
@@ -53,7 +54,7 @@ async function build(): Promise<void> {
   await copyIcons();
 
   const pages = await writeContent();
-  await writePages(pages, { script, style });
+  await writePages(pages, { script, style, preload: preloadLink(fonts) });
   await writeRedirectShim(pages);
   await writeHeaders();
   await writeRobots();
@@ -234,7 +235,7 @@ async function writeContent(): Promise<Map<Locale, Page>> {
 /** Fills the shell once per locale and writes `dist/<locale>/index.html`. */
 async function writePages(
   pages: Map<Locale, Page>,
-  assets: { script: string; style: string },
+  assets: { script: string; style: string; preload: string },
 ): Promise<void> {
   const template = await Bun.file(join(SITE_DIR, TEMPLATE_SOURCE)).text();
   const contentUrls = contentUrlsScript(pages);
@@ -250,6 +251,7 @@ async function writePages(
       hreflang: alternateLinks(locale),
       style: assets.style,
       script: assets.script,
+      preload: assets.preload,
       contentUrls,
       themeNav: escapeHtml(manual.a11y.theme),
       themeAuto: escapeHtml(manual.a11y.themeModes.auto),
@@ -283,6 +285,28 @@ function fill(template: string, slots: Record<string, string>): string {
 
     return value;
   });
+}
+
+/**
+ * Starts the body text face loading from the markup instead of waiting for the
+ * stylesheet to parse and discover it. See {@link PRELOAD_FONT} for why it is
+ * this face and only this face.
+ *
+ * `crossorigin` is required even same-origin: a font is fetched in CORS mode, so
+ * without it the preload lands in a different cache partition than the
+ * stylesheet's own request and the file is fetched twice.
+ */
+function preloadLink(fonts: Map<string, string>): string {
+  const hashed = fonts.get(PRELOAD_FONT);
+
+  if (hashed === undefined) {
+    throw new Error(`PRELOAD_FONT "${PRELOAD_FONT}" is not among the fonts that were copied`);
+  }
+
+  return (
+    `<link rel="preload" href="/${FONTS_DIR_NAME}/${hashed}" as="font" ` +
+    `type="font/woff2" crossorigin />`
+  );
 }
 
 /**

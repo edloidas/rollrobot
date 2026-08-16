@@ -52,6 +52,21 @@ export const OG_IMAGE_SIZE = 512;
 export const OG_IMAGE = `favicon-${OG_IMAGE_SIZE}.png`;
 
 /**
+ * The one face worth a `<link rel="preload">`.
+ *
+ * Fonts are reachable only through `@font-face`, so none of them starts loading
+ * until the stylesheet has parsed. This is the body text face, which covers more
+ * of the page than any other, and it is preloaded on every locale rather than
+ * from a per-locale table: every page renders Latin — the bot's name, `Telegram`,
+ * `edloidas.io` — so there is no locale where the fetch is wasted, and no
+ * mapping to drift from the `unicode-range` declarations in the stylesheet.
+ *
+ * ! Deliberately one face and not a set. Preloading a face a page does not use
+ * ! takes bandwidth from one it does, which makes the page slower, not faster.
+ */
+export const PRELOAD_FONT = 'ibm-plex-sans-latin.woff2';
+
+/**
  * `--bg` in each palette, mirrored into `<meta name="theme-color">`. Declared
  * here rather than retyped in the template so `check-site.ts` can assert both
  * still appear in the emitted stylesheet.
