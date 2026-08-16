@@ -165,7 +165,7 @@ export function renderHero(manual: ResolvedManual, _locale: Locale): string {
   );
 }
 
-export function renderTabs(active: Locale): string {
+export function renderTabs(manual: ResolvedManual, active: Locale): string {
   const tabs = SITE_LOCALES.map((locale) => {
     const current = locale === active ? ' aria-current="page"' : '';
     return (
@@ -182,7 +182,8 @@ export function renderTabs(active: Locale): string {
   // rule, the middle element scrolls when the tabs overflow, and the track
   // centres them. See the `.tabs` rules in style.css.
   return (
-    `<nav class="tabs" aria-label="Language"><div class="tabs-scroll">` +
+    `<nav class="tabs" aria-label="${escapeHtml(manual.a11y.language)}">` +
+    `<div class="tabs-scroll">` +
     `<div class="tabs-track">${tabs}</div></div></nav>`
   );
 }

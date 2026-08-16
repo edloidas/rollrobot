@@ -338,4 +338,13 @@ export const ru: Manual = {
     reference: 'Справочник по нотации',
     source: 'Исходный код',
   },
+  a11y: {
+    language: 'Язык',
+    theme: 'Тема',
+    themeModes: {
+      auto: 'Тема: системная',
+      light: 'Тема: светлая',
+      dark: 'Тема: тёмная',
+    },
+  },
 };

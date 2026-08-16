@@ -65,15 +65,22 @@ describe('renderHero', () => {
 });
 
 describe('renderTabs', () => {
+  const russian = resolveExamples(resolveManual('ru'));
+
   test('emits one anchor per locale with both labels', () => {
-    const html = renderTabs('ru');
+    const html = renderTabs(russian, 'ru');
     expect(html).toContain('href="/ru/"');
     expect(html).toContain('Русский');
     expect(html).toContain('>RU<');
   });
 
   test('marks the active locale', () => {
-    expect(renderTabs('ru')).toContain('aria-current="page"');
+    expect(renderTabs(russian, 'ru')).toContain('aria-current="page"');
+  });
+
+  test('labels the bar in the locale it is rendered for, not in English', () => {
+    expect(renderTabs(russian, 'ru')).toContain(`aria-label="${russian.a11y.language}"`);
+    expect(renderTabs(manual, 'en')).toContain('aria-label="Language"');
   });
 });
 

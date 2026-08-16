@@ -333,4 +333,13 @@ export const be: Manual = {
     reference: 'Даведнік натацыі',
     source: 'Зыходны код',
   },
+  a11y: {
+    language: 'Мова',
+    theme: 'Тэма',
+    themeModes: {
+      auto: 'Тэма: сістэмная',
+      light: 'Тэма: светлая',
+      dark: 'Тэма: цёмная',
+    },
+  },
 };

@@ -5,7 +5,7 @@ import { renderHero, renderManual } from './render';
 // ! `replies.ts` pulls in roll-parser and must never reach the browser bundle.
 import type { ResolvedManual } from './replies';
 import { canonicalHref, contentUrl, localeFromPath } from './routing';
-import { initTheme } from './theme';
+import { initTheme, relabelTheme } from './theme';
 
 //
 // * State
@@ -28,6 +28,7 @@ let switchGeneration = 0;
 // subtrees applyLocale replaces, so all three survive every switch and are
 // worth finding once rather than on each click.
 const tabsEl = document.querySelector('.tabs');
+const themeNavEl = document.querySelector('.theme-nav');
 const canonicalEl = document.querySelector('link[rel="canonical"]');
 const descriptionEl = document.querySelector('meta[name="description"]');
 
@@ -127,6 +128,11 @@ function applyLocale(
   // Only the canonical names *this* document, so it has to follow the switch.
   updateCanonical(locale);
 
+  // ! The two controls live in the shell, which `applyLocale` does not replace,
+  // ! so nothing else would carry them across a switch — a reader who moved to
+  // ! /fa/ would keep hearing the previous language's labels.
+  applyControlLabels(manual);
+
   activateTab(locale);
 
   // ! Only a deliberate switch counts as the visitor's choice. A `popstate`
@@ -146,14 +152,49 @@ function updateCanonical(locale: Locale): void {
   canonicalEl.setAttribute('href', canonicalHref(current, locale));
 }
 
+/** Relabels the language bar and the theme button for the locale now on screen. */
+function applyControlLabels(manual: ResolvedManual): void {
+  tabsEl?.setAttribute('aria-label', manual.a11y.language);
+  themeNavEl?.setAttribute('aria-label', manual.a11y.theme);
+
+  const toggle = document.getElementById('theme-toggle');
+  if (toggle === null) return;
+
+  const { auto, light, dark } = manual.a11y.themeModes;
+
+  toggle.dataset.labelAuto = auto;
+  toggle.dataset.labelLight = light;
+  toggle.dataset.labelDark = dark;
+
+  // The button's own `aria-label` still names the old language until the theme
+  // module re-reads the attributes just replaced.
+  relabelTheme();
+}
+
+/**
+ * `smooth`, unless the visitor asked for less motion.
+ *
+ * The `scroll-behavior` override in the reduced-motion block cannot reach this —
+ * an explicit `behavior` on `scrollIntoView` outranks the stylesheet.
+ */
+function scrollBehavior(animate: boolean): ScrollBehavior {
+  if (!animate) return 'auto';
+
+  return matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+}
+
 /** Moves `aria-current` to the matching tab and scrolls it into view horizontally. */
-function activateTab(locale: Locale): void {
+function activateTab(locale: Locale, options = { animate: true }): void {
   if (tabsEl === null) return;
 
   for (const tab of tabsEl.querySelectorAll('.tab')) {
     if (tab.getAttribute('data-locale') === locale) {
       tab.setAttribute('aria-current', 'page');
-      tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      tab.scrollIntoView({
+        behavior: scrollBehavior(options.animate),
+        inline: 'center',
+        block: 'nearest',
+      });
     } else {
       tab.removeAttribute('aria-current');
     }
@@ -197,5 +238,11 @@ function onPopState(): void {
 
 tabsEl?.addEventListener('click', onTabsClick);
 window.addEventListener('popstate', onPopState);
+
+// ! Not just for the switch: the prerendered page marks the active tab but
+// ! cannot scroll it into view, so below 480px — where the track starts at the
+// ! leading edge — a /be/ or /fa/ visitor lands with their own tab off-screen.
+// ! Unanimated, since this is page load rather than a response to a click.
+activateTab(currentLocale, { animate: false });
 
 initTheme();
