@@ -27,6 +27,7 @@
     <meta name="author" content="Mikita Taukachou" />
     <meta name="robots" content="index, follow" />
     {{icons}}
+    {{preload}}
     {{hreflang}}
     {{social}}
     <link rel="stylesheet" href="{{style}}" />
@@ -71,12 +72,13 @@
     </svg>
 
     <!-- Lives in the shell rather than in the hero or the manual: a locale
-         switch replaces both wholesale. -->
-    <!-- The three mode labels ride on the button because that is what consumes
-         them: theme.ts sets `aria-label` from the applied mode on every change,
-         and a locale switch rewrites the attributes in place. The initial value
-         is the `auto` label, which is never seen wrong — the button stays
-         `display: none` until theme.ts has applied the real mode. -->
+         switch replaces both wholesale.
+
+         Which is why the three mode labels ride on the button itself — theme.ts
+         sets `aria-label` from the applied mode on every change, and the switch
+         rewrites these attributes in place rather than re-rendering the control.
+         The initial value is the `auto` label, and it is never seen wrong: the
+         button stays `display: none` until theme.ts has applied the real mode. -->
     <nav class="theme-nav" aria-label="{{themeNav}}">
       <button
         type="button"
