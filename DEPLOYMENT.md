@@ -1,13 +1,14 @@
 # Deployment
 
-Roll Robot runs as one Cloudflare Worker behind a Telegram webhook. This document covers a
-first deploy end to end; day-to-day releases are just `bun run worker:deploy`, or a `v*` tag
-if you want CI to do it.
+Roll Robot runs as one Cloudflare Worker behind a Telegram webhook, plus a static landing
+page on Cloudflare Pages. The two are independent deploys and neither can break the other.
+This document covers a first deploy end to end; day-to-day releases are just
+`bun run worker:deploy`, or a `v*` tag if you want CI to do it.
 
 [How it fits together](#how-it-fits-together) · [Secrets](#secrets) ·
 [Cloudflare setup](#cloudflare-setup) · [Local environment](#local-environment) ·
 [Deploy](#deploy) · [Telegram configuration](#telegram-configuration) · [Verify](#verify) ·
-[Releases](#releases)
+[Landing page](#landing-page) · [Releases](#releases)
 
 ## How it fits together
 
@@ -115,6 +116,65 @@ curl "https://api.telegram.org/bot<telegram-bot-token>/getWebhookInfo"
 group, supergroup, and inline — and watch the Worker logs. When Telegram refuses a group
 reply with a `403` about missing rights, the bot direct-messages the sender instead of
 failing silently; other refusals are logged only, so the logs are the place to look.
+
+## Landing page
+
+The site at [rollrobot.edloidas.io](https://rollrobot.edloidas.io) is a Cloudflare Pages
+project, separate from the Worker. It is fully static — eight prerendered pages, one per
+locale, plus a root shim that redirects `/` to the visitor's language in the browser. There
+is no Pages Function and no server-side rendering, so a Worker outage leaves the page up.
+
+`site/dist/` is generated and gitignored; Pages builds it on every push.
+
+| Setting | Value |
+| --- | --- |
+| Build command | `bun run site:build && bun run site:check` |
+| Output directory | `site/dist` |
+| Root directory | `/` |
+| Production branch | `master` |
+
+Pages detects Bun from `bun.lock` and installs dependencies itself. Nothing here needs a
+secret, an environment variable, or an API token — which is why this is a Git integration
+rather than a workflow.
+
+The check is part of the build command on purpose. `bun scripts/check-site.ts` verifies the
+tree Pages is about to publish: that every referenced asset exists, that `hreflang` and
+`canonical` point where they should, that no template slot went unfilled, that the client
+bundle has not silently gained `roll-parser`, and that `_headers` never marks an unhashed
+file `immutable`. A failing check fails the deploy instead of publishing a broken page.
+
+### What the build emits
+
+Everything under `assets/`, `fonts/` and `content/` is content-hashed and served
+`immutable` for a year via `_headers`. The `dist/` root is deliberately excluded: the
+favicons and `robots.txt` are referenced by convention from places that cannot read a
+manifest, so their names have to stay stable.
+
+### Regenerating the icons
+
+`site/public/favicon-*.png` are rasterized from `favicon.svg` and committed, not generated
+at build time — `sharp` reaches the repo only as a transitive dependency of `miniflare`, and
+a build must not depend on that. After editing the SVG, regenerate them locally:
+
+```sh
+bun -e 'const s=require("sharp");const f=await Bun.file("site/public/favicon.svg").arrayBuffer();
+for (const n of [16,32,180,512]) await s(Buffer.from(f),{density:900}).resize(n,n).png({compressionLevel:9}).toFile(`site/public/favicon-${n}.png`)'
+```
+
+The 512 is also the `og:image` for every locale's link preview, so check it renders before
+committing.
+
+### Preview
+
+```sh
+bun run site:dev
+```
+
+Builds and serves `site/dist/` on `:4173`. `scripts/serve-site.ts` mirrors what Pages does
+with a static directory — a trailing slash resolves to `index.html`, a bare directory path
+redirects to the slashed form, anything else is a 404 — so what you see locally is what
+Pages serves. It does **not** apply `_headers`; caching is the one thing you cannot review
+without deploying.
 
 ## Releases
 
