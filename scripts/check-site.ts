@@ -76,7 +76,7 @@ async function main(): Promise<void> {
   await checkBundle();
   await checkStylesheetFonts();
   await checkHeaders();
-  await checkThemeColors();
+  await checkStylesheets();
   await checkRobots();
   await checkSitemap();
 
@@ -247,14 +247,11 @@ function immutableFor(headers: string, dir: string): boolean {
   return block !== undefined && block.includes('immutable');
 }
 
-/**
- * Asserts both `theme-color` values still name a colour the stylesheet uses.
- *
- * The tags are written from `THEME_COLORS` and the palette from `style.css`, so
- * nothing but this ties the browser chrome to the page it frames — retune `--bg`
- * in either palette and the tag would keep painting the old one.
- */
-async function checkThemeColors(): Promise<void> {
+/** The two selectors the light palette is declared under. See {@link checkLightPalette}. */
+const LIGHT_FORCED = ":root[data-theme='light']";
+const LIGHT_PREFERRED = ":root:not([data-theme='dark']):not([data-theme='light'])";
+
+async function checkStylesheets(): Promise<void> {
   const assetsDir = join(DIST_DIR, ASSETS_DIR_NAME);
   if (!existsSync(assetsDir)) return;
 
@@ -264,15 +261,99 @@ async function checkThemeColors(): Promise<void> {
     const cssPath = join(assetsDir, entry);
     const css = await Bun.file(cssPath).text();
 
-    for (const colour of THEME_COLORS) {
-      if (!css.includes(colour)) {
-        report(
-          `${toRel(cssPath)}: theme-color "${colour}" appears nowhere in the stylesheet — ` +
-            'THEME_COLORS has drifted from the palette',
-        );
-      }
+    checkThemeColors(css, toRel(cssPath));
+    checkLightPalette(css, toRel(cssPath));
+  }
+}
+
+/**
+ * Asserts both `theme-color` values still name a colour the stylesheet uses.
+ *
+ * The tags are written from `THEME_COLORS` and the palette from `style.css`, so
+ * nothing but this ties the browser chrome to the page it frames — retune `--bg`
+ * in either palette and the tag would keep painting the old one.
+ */
+function checkThemeColors(css: string, rel: string): void {
+  for (const colour of THEME_COLORS) {
+    if (!css.includes(colour)) {
+      report(
+        `${rel}: theme-color "${colour}" appears nowhere in the stylesheet — ` +
+          'THEME_COLORS has drifted from the palette',
+      );
     }
   }
+}
+
+/**
+ * Asserts the light palette's two declarations still agree.
+ *
+ * It is written twice on purpose — once for a visitor who forced light with the
+ * toggle, once for an `auto` visitor whose OS prefers it — because a media query
+ * and an attribute selector cannot share a block. `style.css` says the two MUST
+ * hold identical values; this is what makes that a fact rather than a request.
+ *
+ * The alternative was folding both into `light-dark()`, which was rejected: on a
+ * browser without it every consuming property goes invalid at computed-value
+ * time and the page loses its palette outright rather than degrading, and the
+ * page is shared chiefly into Telegram, whose iOS browser is whatever WebKit the
+ * OS shipped.
+ */
+function checkLightPalette(css: string, rel: string): void {
+  const forced = declarations(css, LIGHT_FORCED);
+  const preferred = declarations(css, LIGHT_PREFERRED);
+
+  if (forced === null || preferred === null) {
+    const missing = forced === null ? LIGHT_FORCED : LIGHT_PREFERRED;
+    report(`${rel}: no light-palette block for "${missing}" — the selector was renamed`);
+    return;
+  }
+
+  for (const [property, value] of forced) {
+    const other = preferred.get(property);
+
+    if (other === undefined) {
+      report(`${rel}: "${property}" is declared under ${LIGHT_FORCED} but not ${LIGHT_PREFERRED}`);
+    } else if (other !== value) {
+      report(
+        `${rel}: light palette disagrees on "${property}" — ${LIGHT_FORCED} says "${value}", ` +
+          `${LIGHT_PREFERRED} says "${other}"`,
+      );
+    }
+  }
+
+  for (const property of preferred.keys()) {
+    if (!forced.has(property)) {
+      report(`${rel}: "${property}" is declared under ${LIGHT_PREFERRED} but not ${LIGHT_FORCED}`);
+    }
+  }
+}
+
+/**
+ * Every declaration in the block a selector opens, comments stripped first — a
+ * comment carrying a `:` or a `}` would otherwise be read as one.
+ */
+function declarations(css: string, selector: string): Map<string, string> | null {
+  const bare = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const start = bare.indexOf(selector);
+  if (start === -1) return null;
+
+  const open = bare.indexOf('{', start);
+  const close = bare.indexOf('}', open);
+  if (open === -1 || close === -1) return null;
+
+  const found = new Map<string, string>();
+
+  for (const line of bare.slice(open + 1, close).split(';')) {
+    const separator = line.indexOf(':');
+    if (separator === -1) continue;
+
+    const property = line.slice(0, separator).trim();
+    if (property === '') continue;
+
+    found.set(property, line.slice(separator + 1).trim());
+  }
+
+  return found;
 }
 
 /**
