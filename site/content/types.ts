@@ -122,6 +122,26 @@ export interface Manual {
   limits: { heading: string; body: string[] };
   faq: { heading: string; items: FaqItem[] };
   footer: { playground: string; reference: string; source: string };
+  /**
+   * Labels for the two controls, which carry no visible text of their own.
+   *
+   * Localized like everything else on the page: a translated manual whose only
+   * two controls announce themselves in English is the one place a screen-reader
+   * user is dropped out of their language.
+   */
+  a11y: {
+    /** `aria-label` on the language tab bar. */
+    language: string;
+    /** `aria-label` on the theme control's nav. */
+    theme: string;
+    /**
+     * The theme button's `aria-label`, one per mode. It names the mode that is
+     * *applied*, not what a click would do — a three-way cycle has no single
+     * "next" worth announcing, and re-labelling the focused button is what tells
+     * a screen-reader user the click landed. See `initTheme`.
+     */
+    themeModes: { auto: string; light: string; dark: string };
+  };
 }
 
 /** A translation in progress. Any absent section falls back to English whole. */
@@ -155,4 +175,8 @@ export const MANUAL_SECTIONS = [
   'limits',
   'faq',
   'footer',
+  'a11y',
+  // ! `satisfies` checks membership, not exhaustiveness, and every test here
+  // ! iterates this array — so a section added to `Manual` and forgotten below
+  // ! surfaces as a TypeError at build time rather than as a named failure.
 ] as const satisfies readonly (keyof Manual)[];

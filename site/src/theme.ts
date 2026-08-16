@@ -49,8 +49,35 @@ function appliedTheme(): ThemeMode {
   return asTheme(document.documentElement.dataset.theme);
 }
 
+/** `data-label-auto` and friends, as `dataset` spells them. */
+const LABEL_KEYS: Record<ThemeMode, string> = {
+  auto: 'labelAuto',
+  light: 'labelLight',
+  dark: 'labelDark',
+};
+
+/**
+ * Names the applied mode on the button, which carries an icon and no text.
+ *
+ * Looks the element up per call rather than closing over it: a locale switch
+ * rewrites these attributes in place, and the label has to follow the mode
+ * whether the mode or the language is what changed.
+ */
+function labelToggle(mode: ThemeMode): void {
+  const toggle = document.getElementById('theme-toggle');
+  const label = toggle?.dataset[LABEL_KEYS[mode]];
+
+  if (toggle != null && label != null) toggle.setAttribute('aria-label', label);
+}
+
 function applyTheme(mode: ThemeMode): void {
   document.documentElement.dataset.theme = mode;
+  labelToggle(mode);
+}
+
+/** Re-labels the toggle after a locale switch replaced its three mode labels. */
+export function relabelTheme(): void {
+  labelToggle(appliedTheme());
 }
 
 function nextTheme(mode: ThemeMode): ThemeMode {

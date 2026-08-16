@@ -72,13 +72,20 @@
 
     <!-- Lives in the shell rather than in the hero or the manual: a locale
          switch replaces both wholesale. -->
-    <nav class="theme-nav" aria-label="Theme">
+    <!-- The three mode labels ride on the button because that is what consumes
+         them: theme.ts sets `aria-label` from the applied mode on every change,
+         and a locale switch rewrites the attributes in place. The initial value
+         is the `auto` label, which is never seen wrong — the button stays
+         `display: none` until theme.ts has applied the real mode. -->
+    <nav class="theme-nav" aria-label="{{themeNav}}">
       <button
         type="button"
         class="theme-toggle"
         id="theme-toggle"
-        aria-label="Toggle theme (auto, light, dark)"
-        title="Toggle theme"
+        aria-label="{{themeAuto}}"
+        data-label-auto="{{themeAuto}}"
+        data-label-light="{{themeLight}}"
+        data-label-dark="{{themeDark}}"
       >
         <svg class="theme-icon theme-icon--auto" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 2v2" />

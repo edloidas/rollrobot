@@ -344,4 +344,13 @@ export const es: Manual = {
     reference: 'Referencia de notación',
     source: 'Código fuente',
   },
+  a11y: {
+    language: 'Idioma',
+    theme: 'Tema',
+    themeModes: {
+      auto: 'Tema: del sistema',
+      light: 'Tema: claro',
+      dark: 'Tema: oscuro',
+    },
+  },
 };
