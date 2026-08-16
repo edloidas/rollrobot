@@ -55,9 +55,14 @@ export const CSS_FONT_PATH: readonly [from: string, to: string] = [
 /** Canonical origin, used for the `hreflang` and `canonical` links. */
 export const SITE_ORIGIN = 'https://rollrobot.edloidas.io';
 
-/** Stands in for Bun's `[hash]` slot, which only covers what the bundler writes. */
-export function contentHash(text: string): string {
-  return new Bun.CryptoHasher('sha256').update(text).digest('hex').slice(0, 8);
+/**
+ * Stands in for Bun's `[hash]` slot, which only covers what the bundler writes.
+ *
+ * Takes bytes as well as text because the fonts are hashed too — they are copied
+ * rather than bundled, and a `.woff2` has no text form to hash.
+ */
+export function contentHash(content: string | Uint8Array): string {
+  return new Bun.CryptoHasher('sha256').update(content).digest('hex').slice(0, 8);
 }
 
 /**
