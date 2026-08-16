@@ -25,8 +25,11 @@ export interface RollExample {
 /** An `/ask` example: Yes or No above the question, quoted. */
 export interface AskExample {
   kind: 'ask';
-  /** Everything after the command. Needs no quoting — the whole line is the question. */
-  question: string;
+  /**
+   * Everything after the command. Needs no quoting — the whole line is the question.
+   * Omitted for the bare `/ask`, which answers with nothing quoted above it.
+   */
+  question?: string;
   /** Which of the two answers to show. See `renderExample` for how it is pinned. */
   answer: 'yes' | 'no';
 }
@@ -48,8 +51,8 @@ export interface CommandDoc {
   summary: string;
   /** Points too fiddly for the summary, rendered as a list beneath it. */
   notes?: string[];
-  /** Omitted by a command that answers nothing. */
-  example?: Example;
+  /** Worked examples in the order shown. Omitted by a command that answers nothing. */
+  examples?: Example[];
 }
 
 /** One convenience that works across commands, rather than a notation form. */
@@ -89,6 +92,13 @@ export interface Manual {
   hero: { tagline: string; cta: string };
   gettingStarted: { heading: string; body: string[] };
   commands: { heading: string; intro: string; items: CommandDoc[] };
+  /**
+   * Commands that ship but are not settled yet, kept out of `commands` because the
+   * two sections promise different things: one is stable, the other may change
+   * shape or leave the bot. The intro is what carries that warning, so a
+   * translation that drops it drops the only thing separating the two lists.
+   */
+  betaFeatures: { heading: string; intro: string; items: CommandDoc[] };
   specialFeatures: { heading: string; intro: string; items: FeatureDoc[] };
   inline: { heading: string; body: string[] };
   notation: {
@@ -127,6 +137,7 @@ export const MANUAL_SECTIONS = [
   'hero',
   'gettingStarted',
   'commands',
+  'betaFeatures',
   'specialFeatures',
   'inline',
   'notation',

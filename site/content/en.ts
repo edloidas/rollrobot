@@ -22,26 +22,26 @@ export const en: Manual = {
   commands: {
     heading: 'Commands',
     intro:
-      'Five commands, the same in private chats and groups, plus `/pick` in beta. `/roll` and `/full` take notation; send either bare for a plain `d20`.',
+      'Five commands, the same in private chats and groups. `/roll` and `/full` take notation; send either bare for a plain `d20`.',
     items: [
       {
         command: 'roll',
         shortcut: 'r',
         summary: 'The total, with the expression normalized so you can check what it read.',
-        example: { notation: '2d6+3', rng: [4, 6], mode: 'compact' },
+        examples: [{ notation: '2d6+3', rng: [4, 6], mode: 'compact' }],
       },
       {
         command: 'full',
         shortcut: 'f',
         summary:
           'The same roll, die by die. Dropped struck through, successes bold, failures underlined, a natural high or low arrowed.',
-        example: { notation: '4d6kh3', rng: [6, 5, 3, 1], mode: 'full' },
+        examples: [{ notation: '4d6kh3', rng: [6, 5, 3, 1], mode: 'full' }],
       },
       {
         command: 'random',
         summary:
           '`d100` and nothing else, for when you just need a number out of a hundred. Same as `/roll d100`.',
-        example: { notation: 'd100', rng: [73], mode: 'compact' },
+        examples: [{ notation: 'd100', rng: [73], mode: 'compact' }],
       },
       {
         command: 'ask',
@@ -50,33 +50,51 @@ export const en: Manual = {
           'A yes-or-no answer for the calls not worth a roll — is the door trapped, does the merchant haggle, does it rain tonight. Everything after the command is the question, quoted back above the answer.',
         notes: [
           'No quotes needed. Punctuation, apostrophes and notation are all safe inside the question.',
+          'Bare `/ask` works too: no question, just the answer, for a call already spoken aloud at the table.',
           'The answer is a `d2`, so it is a fair coin and nothing more.',
           'Yes and No stay English in every locale — your interface language is a poor guess at the language of the chat.',
         ],
-        example: { kind: 'ask', question: 'Should we open the door?', answer: 'yes' },
-      },
-      {
-        command: 'pick',
-        shortcut: 'p',
-        summary:
-          'Chooses one option out of a list you give it — a random encounter, who takes first watch, which door. One die over the options, nothing weighted unless you say so. Still in beta.',
-        notes: [
-          'Two options minimum, one hundred at most.',
-          'Only the first separator present is used, in this order: a line break, then `|` or `;`, then a comma, then plain spaces.',
-          'Name the separator when an option contains a comma — `Rope, 50ft | Torch` splits into two, not three.',
-          'Repeat an option to weight it: it takes one slot in the list per copy.',
-          'A quoted name at the end labels the pick instead of joining the list.',
+        examples: [
+          { kind: 'ask', question: 'Should we open the door?', answer: 'yes' },
+          { kind: 'ask', answer: 'no' },
         ],
-        example: {
-          kind: 'pick',
-          input: 'Goblin patrol | Empty room | Treasure hoard',
-          choice: 'Empty room',
-        },
       },
       {
         command: 'help',
         summary:
           'The notation guide in one message, with links to the playground and the reference. This page in short, without leaving Telegram. `/start` prints the same.',
+      },
+    ],
+  },
+  betaFeatures: {
+    heading: 'Beta features',
+    intro:
+      'Shipped and usable, but not settled: anything here may change shape or leave the bot in a later update. The five commands above will not.',
+    items: [
+      {
+        command: 'pick',
+        shortcut: 'p',
+        summary:
+          'Chooses one option out of a list you give it — a random encounter, who takes first watch, which door. One die over the options, nothing weighted unless you say so.',
+        notes: [
+          'Two options minimum, one hundred at most.',
+          'A comma is all it takes — `Sneak past, Talk it out`. `|` and `;` do the same, and a line break outranks both, so a pasted table splits row by row.',
+          'Only the first separator present is used, in that order: a line break, then `|` or `;`, then a comma, then plain spaces. Reach for `|` when an option contains a comma — `Rope, 50ft | Torch` splits into two, not three.',
+          'Repeat an option to weight it: it takes one slot in the list per copy.',
+          'A quoted name at the end labels the pick instead of joining the list.',
+        ],
+        examples: [
+          {
+            kind: 'pick',
+            input: 'Goblin patrol | Empty room | Treasure hoard',
+            choice: 'Empty room',
+          },
+          {
+            kind: 'pick',
+            input: 'Sneak past, Talk it out, Set an ambush',
+            choice: 'Talk it out',
+          },
+        ],
       },
     ],
   },
