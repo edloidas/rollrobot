@@ -9,7 +9,7 @@ export const ru: Manual = {
   },
   hero: {
     tagline:
-      'Кубики для настольных ролевых игр в любом чате — D&D, Pathfinder, World of Darkness, Shadowrun, Fate, «Зов Ктулху».',
+      'Кубики для настольных ролевых игр в любом чате — D&D, Pathfinder, World of Darkness, Shadowrun, Fate, Call of Cthulhu.',
     cta: 'Открыть в Telegram',
   },
   gettingStarted: {

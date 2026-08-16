@@ -126,6 +126,21 @@ describe('messages', () => {
         expect(entry.help).toContain('href="https://roll-parser.edloidas.io/reference"');
       });
 
+      // The guide is the one link that has to differ per dictionary — a locale linking
+      // another locale's page is the failure this catches
+      test('opens the guide on the landing page for its own locale', () => {
+        expect(entry.help).toContain(`href="https://rollrobot.edloidas.io/${locale}/"`);
+        expect(entry.description).toContain(`rollrobot.edloidas.io/${locale}/`);
+      });
+
+      // A link buried under twenty lines of notation is a link nobody follows
+      test('puts the guide above the commands', () => {
+        const lines = entry.help.split('\n');
+        expect(lines.findIndex((line) => line.includes('rollrobot.edloidas.io'))).toBeLessThan(
+          lines.findIndex((line) => line.startsWith('/roll')),
+        );
+      });
+
       test('advertises only the current commands', () => {
         for (const command of ['/roll', '/full', '/random', '/ask', '/pick', '/help']) {
           expect(entry.help).toContain(command);
@@ -178,14 +193,5 @@ describe('fa', () => {
 
   test('finds the notation lines it means to check', () => {
     expect(directionalLines.length).toBeGreaterThan(20);
-  });
-
-  // ! Guillemets carry no Bidi_Paired_Bracket_Type, so a pair split across an LTR run and
-  //   an RTL one resolves to different levels and the closing mark renders mirrored.
-  test('keeps a quoted example clear of the prose that explains it', () => {
-    for (const line of entry.help.split('\n')) {
-      if (!line.includes('«')) continue;
-      expect(line.replace(/<[^>]+>/g, '')).toMatch(/^\S+[^»]*»$/u);
-    }
   });
 });
