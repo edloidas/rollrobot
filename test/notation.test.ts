@@ -65,6 +65,16 @@ describe('normalizeNotation', () => {
     expect(normalizeNotation('2Д6+1')).toBe('2d6+1');
   });
 
+  // ! The fold is what the error echo shows back, so folding mid-word answered a forgotten
+  //   quote with gibberish — `1d20 Бросок кубика` echoed as `1d20 Бросоd dубиdа`
+  test('folds cyrillic only in a die position', () => {
+    expect(normalizeNotation('1d20 Бросок кубика')).toBe('1d20 Бросок кубика');
+    expect(normalizeNotation('2d6 + кот')).toBe('2d6 + кот');
+    expect(normalizeNotation('2к6 Урон')).toBe('2d6 Урон');
+    // A word ending on `к` before a number is prose, not a die
+    expect(normalizeNotation('бросок20')).toBe('бросок20');
+  });
+
   // Cyrillic `к` is U+043A, Latin `k` is U+006B — the keep modifiers are a different letter
   test('leaves the latin keep modifiers alone', () => {
     expect(normalizeNotation('4к6kh3')).toBe('4d6kh3');

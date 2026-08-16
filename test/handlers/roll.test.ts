@@ -14,6 +14,14 @@ describe('/roll', () => {
     expect(await bot.send('/roll 4d6d1')).toMatch(/<pre>4d6d1\n {3}\^/);
   });
 
+  // ! The echo is the user's own text — folding `к`/`д` mid-word answered a forgotten quote
+  //   with `1d20 Бросоd dубиdа`, which reads as a bug in the bot rather than a hint
+  test('should echo an unescaped label as it was typed', async () => {
+    const reply = await bot.send('/roll 1d20 Бросок кубика');
+    expect(reply).toContain('<pre>1d20 Бросок кубика\n');
+    expect(reply).not.toContain('dубиdа');
+  });
+
   test('should parse and roll notation', async () => {
     const pattern = /^<code>[^<]+<\/code> = <b>-?\d+<\/b>$/;
     expect(await bot.send('/roll')).toMatch(pattern);
