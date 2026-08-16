@@ -251,8 +251,12 @@ async function writePages(
       style: assets.style,
       script: assets.script,
       contentUrls,
+      themeNav: escapeHtml(manual.a11y.theme),
+      themeAuto: escapeHtml(manual.a11y.themeModes.auto),
+      themeLight: escapeHtml(manual.a11y.themeModes.light),
+      themeDark: escapeHtml(manual.a11y.themeModes.dark),
       hero: renderHero(manual, locale),
-      tabs: renderTabs(locale),
+      tabs: renderTabs(manual, locale),
       manual: renderManual(manual, locale),
     });
 

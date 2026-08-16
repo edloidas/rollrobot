@@ -347,4 +347,13 @@ export const de: Manual = {
     reference: 'Notationsreferenz',
     source: 'Quellcode',
   },
+  a11y: {
+    language: 'Sprache',
+    theme: 'Design',
+    themeModes: {
+      auto: 'Design: System',
+      light: 'Design: hell',
+      dark: 'Design: dunkel',
+    },
+  },
 };

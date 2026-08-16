@@ -82,7 +82,7 @@
   --border: rgba(255, 230, 190, 0.15);
   --text: #f0e6d2;
   --text-muted: #b3a583;
-  --text-dim: #7d7259;
+  --text-dim: #918468;
   --accent: #d9a441;
   --gold-gradient: linear-gradient(135deg, #f0c060, #d9a441 45%, #a3622f);
   /* Text laid over --accent or --gold-gradient, neither of which has the
@@ -124,7 +124,7 @@
   --border: rgba(43, 35, 23, 0.15);
   --text: #2b2317;
   --text-muted: #6b5d45;
-  --text-dim: #9a8b6f;
+  --text-dim: #6e6049;
   /* Deliberately darker than roll-parser's #a06b1f, which carries small notation
      text as low as 3.3:1 — under WCAG AA. This clears 4.5:1 everywhere --accent
      is inked, the tightest being `.example-in` on its own 8% wash. */
@@ -145,7 +145,7 @@
     --border: rgba(43, 35, 23, 0.15);
     --text: #2b2317;
     --text-muted: #6b5d45;
-    --text-dim: #9a8b6f;
+    --text-dim: #6e6049;
     --accent: #855512;
     --gold-gradient: linear-gradient(135deg, #b8842a, #a06b1f 45%, #7a4a18);
     --on-accent: #fffaf0;
@@ -169,6 +169,24 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+/* Everything that moves here is decoration — hover fades and the language bar
+   scrolling the active tab into view. None of it carries meaning, so honouring
+   the preference costs the page nothing.
+
+   ! `scroll-behavior` covers scrolling the stylesheet owns. `scrollIntoView`
+   ! passes its own `behavior`, which outranks this — see `scrollBehavior` in
+   ! main.ts, which reads the same preference. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /*

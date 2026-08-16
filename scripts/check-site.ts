@@ -30,12 +30,16 @@ import {
  * The client bundle's byte ceiling, sized to catch `roll-parser` leaking in
  * through a value import where a type-only one was required.
  *
- * The bundle sits at 5,743 bytes and does not grow with manual content, which is
- * fetched as JSON at runtime. A leak would land near 16-17 kB (roll-parser's own
- * budgets are 12.75 kB for `{ roll }`, 12.85 kB for the full index), so 8 kB
- * gives ~1.8x headroom over the real size while still catching it.
+ * The bundle sits at ~7.3 kB and does not grow with manual content, which is
+ * fetched as JSON at runtime. A leak would land near 20 kB (roll-parser's own
+ * budgets are 12.75 kB for `{ roll }`, 12.85 kB for the full index), so 12 kB
+ * still catches one outright while leaving the bundle room to gain a feature.
+ *
+ * ! Raise this only against a measured size. It was 8 kB when the bundle was
+ * ! 7.5 kB, which is a ceiling that fails the next time anyone touches main.ts —
+ * ! and a ceiling raised in a hurry is one nobody trusts.
  */
-const BUNDLE_MAX_BYTES = 8 * 1024;
+const BUNDLE_MAX_BYTES = 12 * 1024;
 const LEAK_MARKER = 'MockRNGExhausted';
 
 const problems: string[] = [];

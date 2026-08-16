@@ -330,4 +330,13 @@ export const uk: Manual = {
     reference: 'Довідник нотації',
     source: 'Код',
   },
+  a11y: {
+    language: 'Мова',
+    theme: 'Тема',
+    themeModes: {
+      auto: 'Тема: системна',
+      light: 'Тема: світла',
+      dark: 'Тема: темна',
+    },
+  },
 };

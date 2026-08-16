@@ -338,4 +338,13 @@ export const fa: Manual = {
     reference: 'مرجع نمادگذاری',
     source: 'کد منبع',
   },
+  a11y: {
+    language: 'زبان',
+    theme: 'پوسته',
+    themeModes: {
+      auto: 'پوسته: سیستم',
+      light: 'پوسته: روشن',
+      dark: 'پوسته: تیره',
+    },
+  },
 };

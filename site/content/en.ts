@@ -331,4 +331,13 @@ export const en: Manual = {
     reference: 'Notation reference',
     source: 'Source',
   },
+  a11y: {
+    language: 'Language',
+    theme: 'Theme',
+    themeModes: {
+      auto: 'Theme: system',
+      light: 'Theme: light',
+      dark: 'Theme: dark',
+    },
+  },
 };

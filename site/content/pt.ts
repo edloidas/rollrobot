@@ -341,4 +341,13 @@ export const pt: Manual = {
     reference: 'Referência de notação',
     source: 'Código-fonte',
   },
+  a11y: {
+    language: 'Idioma',
+    theme: 'Tema',
+    themeModes: {
+      auto: 'Tema: do sistema',
+      light: 'Tema: claro',
+      dark: 'Tema: escuro',
+    },
+  },
 };
