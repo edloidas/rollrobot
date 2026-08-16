@@ -9,7 +9,7 @@
 
 import { existsSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
-import { dirname, extname, join, relative } from 'node:path';
+import { basename, dirname, extname, join, relative } from 'node:path';
 import type { Locale } from '../site/src/locales';
 import { localeDir, SITE_LOCALES } from '../site/src/locales';
 import { THEME_KEY } from '../site/src/theme-key';
@@ -80,8 +80,10 @@ async function main(): Promise<void> {
   await checkRobots();
   await checkSitemap();
 
+  const css = await readStylesheets();
+
   for (const locale of SITE_LOCALES) {
-    await checkLocalePage(locale);
+    await checkLocalePage(locale, css);
   }
 
   finish();
@@ -250,6 +252,17 @@ function immutableFor(headers: string, dir: string): boolean {
 /** The two selectors the light palette is declared under. See {@link checkLightPalette}. */
 const LIGHT_FORCED = ":root[data-theme='light']";
 const LIGHT_PREFERRED = ":root:not([data-theme='dark']):not([data-theme='light'])";
+
+/** Every emitted stylesheet's text, concatenated. There is normally exactly one. */
+async function readStylesheets(): Promise<string> {
+  const assetsDir = join(DIST_DIR, ASSETS_DIR_NAME);
+  if (!existsSync(assetsDir)) return '';
+
+  const sheets = (await readdir(assetsDir)).filter((name) => name.endsWith('.css'));
+  const texts = await Promise.all(sheets.map((entry) => Bun.file(join(assetsDir, entry)).text()));
+
+  return texts.join('\n');
+}
 
 async function checkStylesheets(): Promise<void> {
   const assetsDir = join(DIST_DIR, ASSETS_DIR_NAME);
@@ -428,7 +441,7 @@ async function checkSitemap(): Promise<void> {
 // * Locale pages
 //
 
-async function checkLocalePage(locale: Locale): Promise<void> {
+async function checkLocalePage(locale: Locale, css: string): Promise<void> {
   const dir = join(DIST_DIR, locale);
   const path = join(dir, 'index.html');
 
@@ -448,6 +461,7 @@ async function checkLocalePage(locale: Locale): Promise<void> {
   checkHtmlAttrs(locale, html, rel);
   checkThemePrepaint(html, rel);
   checkHreflang(html, rel);
+  checkPreload(html, rel, css);
   checkTemplateSlots(html, rel);
   checkDevPaths(html, rel);
   checkReferencedAssets(html, rel);
@@ -529,6 +543,37 @@ function checkHreflangTarget(
     report(`${rel}: missing hreflang link for "${hreflang}"`);
   } else if (href !== expected) {
     report(`${rel}: hreflang="${hreflang}" points at "${href}", expected "${expected}"`);
+  }
+}
+
+/**
+ * A preload is the one asset reference that fails silently: the wrong href does
+ * not 404 anything visible, it just spends the visitor's bandwidth on a file
+ * nothing goes on to use, which is slower than not preloading at all.
+ *
+ * So both halves are asserted — the file is on disk, and the stylesheet actually
+ * asks for it.
+ */
+function checkPreload(html: string, rel: string, css: string): void {
+  const href = html.match(/<link rel="preload" href="([^"]+)"/)?.[1];
+
+  if (href === undefined) {
+    report(`${rel}: no font preload`);
+    return;
+  }
+
+  if (!existsSync(join(DIST_DIR, href))) {
+    report(`${rel}: preloads "${href}", missing at ${toRel(join(DIST_DIR, href))}`);
+    return;
+  }
+
+  // The stylesheet reaches the fonts one directory up from `assets/`, so it
+  // names them relative — compare on the filename, which both sides share.
+  if (!css.includes(basename(href))) {
+    report(
+      `${rel}: preloads "${href}", which the stylesheet never loads — ` +
+        'the bandwidth is spent on a face nothing uses',
+    );
   }
 }
 
