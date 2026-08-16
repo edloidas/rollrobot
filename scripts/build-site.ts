@@ -36,21 +36,24 @@ import {
 /** A locale's resolved manual paired with the URL its JSON was written to. */
 type Page = { manual: ResolvedManual; contentUrl: string };
 
-/** The emitted stylesheet's URL, plus its text — the font check reads the text. */
-type Stylesheet = { url: string; css: string };
-
 async function build(): Promise<void> {
   await rm(DIST_DIR, { recursive: true, force: true });
 
   const script = await bundleClient();
-  const style = await copyStyle();
+  // ! Fonts before the stylesheet, and not the other way round: `copyStyle`
+  // ! rewrites their hashed names into the CSS, and the stylesheet's own hash
+  // ! covers that rewritten text.
+  const fonts = await copyFonts();
+  const style = await copyStyle(fonts);
 
-  await copyFonts(style.css);
   await copyFavicon();
 
   const pages = await writeContent();
-  await writePages(pages, { script, style: style.url });
+  await writePages(pages, { script, style });
   await writeRedirectShim();
+  await writeHeaders();
+  await writeRobots();
+  await writeSitemap();
 
   console.log(`Site built → ${DIST_DIR}`);
 }
@@ -78,52 +81,89 @@ async function bundleClient(): Promise<string> {
 }
 
 /**
+ * Copies every self-hosted font into `dist/fonts/` under a content-hashed name,
+ * returning what each one landed as so {@link copyStyle} can repoint the CSS.
+ *
+ * Hashed rather than copied verbatim because `_headers` serves this directory
+ * `immutable` for a year — see {@link writeHeaders}. The Cyrillic and Arabic
+ * faces are untrimmed (see `site/public/fonts/README.md`), so re-cutting one
+ * under its own name is a thing that will happen, and under a verbatim name it
+ * would strand every prior visitor on the stale face with no way to bust it.
+ */
+async function copyFonts(): Promise<Map<string, string>> {
+  const source = join(PUBLIC_DIR, FONTS_DIR_NAME);
+  const target = join(DIST_DIR, FONTS_DIR_NAME);
+  const names = new Map<string, string>();
+
+  for (const entry of await readdir(source)) {
+    if (!entry.endsWith('.woff2')) continue;
+
+    const file = Bun.file(join(source, entry));
+    const hashed = hashedName(entry, contentHash(await file.bytes()));
+
+    await Bun.write(join(target, hashed), file);
+    names.set(entry, hashed);
+  }
+
+  if (names.size === 0) {
+    throw new Error(`no .woff2 files in ${join(PUBLIC_DIR, FONTS_DIR_NAME)}`);
+  }
+
+  return names;
+}
+
+/**
  * Copies the stylesheet into `assets/` under a hashed name, rewriting the
  * dev-relative font prefix to where the fonts land in `dist/` — see
- * {@link CSS_FONT_PATH}.
+ * {@link CSS_FONT_PATH} — and each filename to its hashed form.
  */
-async function copyStyle(): Promise<Stylesheet> {
+async function copyStyle(fonts: Map<string, string>): Promise<string> {
   const [from, to] = CSS_FONT_PATH;
   const source = await Bun.file(join(SRC_DIR, STYLE_SOURCE)).text();
-  const css = source.replaceAll(from, to);
+  const rewritten = source.replaceAll(from, to);
 
-  if (css === source) {
+  if (rewritten === source) {
     throw new Error(
       `${STYLE_SOURCE} carries no "${from}" font path — the rewrite would be a no-op`,
     );
   }
 
+  const css = rewriteFontNames(rewritten, fonts);
   const name = hashedName(STYLE_SOURCE, contentHash(css));
+
   await Bun.write(join(DIST_DIR, ASSETS_DIR_NAME, name), css);
 
-  return { url: `/${ASSETS_DIR_NAME}/${name}`, css };
+  return `/${ASSETS_DIR_NAME}/${name}`;
 }
 
 /**
- * Copies every self-hosted font into `dist/fonts/`, then asserts the stylesheet
- * can actually reach each face it asks for.
+ * Repoints every `url(../fonts/…)` at the hashed name the face was written under.
  *
- * Copying and rewriting are independent steps: on their own, a renamed or absent
- * `.woff2` leaves both succeeding and the build exits 0 having shipped a page
- * whose fonts 404.
+ * Rewriting is what proves the two halves agree: a face the stylesheet asks for
+ * that `copyFonts` never wrote has no hashed name to substitute, and throws here
+ * rather than shipping a page whose fonts 404.
  */
-async function copyFonts(css: string): Promise<void> {
-  const source = join(PUBLIC_DIR, FONTS_DIR_NAME);
-  const target = join(DIST_DIR, FONTS_DIR_NAME);
-
-  for (const entry of await readdir(source)) {
-    if (!entry.endsWith('.woff2')) continue;
-    await Bun.write(join(target, entry), Bun.file(join(source, entry)));
-  }
-
-  const referenced = fontReferences(css);
-  if (referenced.size === 0) {
-    throw new Error(`${STYLE_SOURCE} loads no fonts from "${CSS_FONT_PATH[1]}" after the rewrite`);
-  }
+function rewriteFontNames(css: string, fonts: Map<string, string>): string {
+  const [, prefix] = CSS_FONT_PATH;
+  const pattern = new RegExp(`(url\\(['"]?${escapeRegExp(prefix)})([^'")]+)(['"]?\\))`, 'g');
 
   const missing: string[] = [];
-  for (const name of referenced) {
-    if (!(await Bun.file(join(target, name)).exists())) missing.push(name);
+  let referenced = 0;
+
+  const rewritten = css.replace(pattern, (match, open: string, name: string, close: string) => {
+    referenced += 1;
+
+    const hashed = fonts.get(name);
+    if (hashed === undefined) {
+      missing.push(name);
+      return match;
+    }
+
+    return `${open}${hashed}${close}`;
+  });
+
+  if (referenced === 0) {
+    throw new Error(`${STYLE_SOURCE} loads no fonts from "${prefix}" after the rewrite`);
   }
 
   if (missing.length > 0) {
@@ -132,14 +172,8 @@ async function copyFonts(css: string): Promise<void> {
         `dist/${FONTS_DIR_NAME}/: ${missing.join(', ')}`,
     );
   }
-}
 
-/** Filenames the rewritten stylesheet loads, derived from {@link CSS_FONT_PATH}. */
-function fontReferences(css: string): Set<string> {
-  const [, prefix] = CSS_FONT_PATH;
-  const pattern = new RegExp(`url\\(['"]?${escapeRegExp(prefix)}([^'")]+)['"]?\\)`, 'g');
-
-  return new Set([...css.matchAll(pattern)].map(([, name]) => name));
+  return rewritten;
 }
 
 async function copyFavicon(): Promise<void> {
@@ -287,6 +321,57 @@ async function writeRedirectShim(): Promise<void> {
 `;
 
   await Bun.write(join(DIST_DIR, 'index.html'), html);
+}
+
+//
+// * Site files
+//
+
+/**
+ * Writes `dist/_headers`, which is how Cloudflare Pages learns what may be
+ * cached. Without it every asset is served `max-age=0, must-revalidate`.
+ *
+ * ! Only content-hashed directories may take `immutable`. All three below are —
+ * ! `assets/` and `content/` by construction, `fonts/` because {@link copyFonts}
+ * ! hashes them too. A verbatim filename here would pin a stale file for a year.
+ */
+async function writeHeaders(): Promise<void> {
+  const immutable = [ASSETS_DIR_NAME, FONTS_DIR_NAME, CONTENT_DIR_NAME]
+    .map((dir) => `/${dir}/*\n  Cache-Control: public, max-age=31536000, immutable\n`)
+    .join('\n');
+
+  const headers =
+    `/*\n` +
+    `  X-Content-Type-Options: nosniff\n` +
+    `  Referrer-Policy: strict-origin-when-cross-origin\n\n` +
+    immutable;
+
+  await Bun.write(join(DIST_DIR, '_headers'), headers);
+}
+
+async function writeRobots(): Promise<void> {
+  const robots = `User-agent: *\nAllow: /\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`;
+
+  await Bun.write(join(DIST_DIR, 'robots.txt'), robots);
+}
+
+/**
+ * Lists the eight locale pages.
+ *
+ * Not `/`: it is the `x-default` target but it only ever redirects, and a
+ * sitemap is for pages that answer for themselves. No `lastmod` either —
+ * stamping build time would make every rebuild look like a content change.
+ */
+async function writeSitemap(): Promise<void> {
+  const urls = SITE_LOCALES.map((locale) => `  <url>\n    <loc>${pageUrl(locale)}</loc>\n  </url>`);
+
+  const sitemap =
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+    `${urls.join('\n')}\n` +
+    `</urlset>\n`;
+
+  await Bun.write(join(DIST_DIR, 'sitemap.xml'), sitemap);
 }
 
 //

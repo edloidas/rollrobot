@@ -69,6 +69,9 @@ async function main(): Promise<void> {
   await checkRootShim();
   await checkBundle();
   await checkStylesheetFonts();
+  await checkHeaders();
+  await checkRobots();
+  await checkSitemap();
 
   for (const locale of SITE_LOCALES) {
     await checkLocalePage(locale);
@@ -161,6 +164,98 @@ async function checkStylesheetFonts(): Promise<void> {
         report(`${toRel(cssPath)}: references "${url}", missing at ${toRel(onDisk)}`);
       }
     }
+  }
+}
+
+//
+// * Site files
+//
+
+/**
+ * `<base>.<hash>.<ext>`, the shape `build-site.ts` writes cache-busted names in.
+ *
+ * Alphanumeric rather than hex: `contentHash` emits hex, but Bun's own `[hash]`
+ * slot names the client bundle in base 36 (`main.r0382x5m.js`), and both are
+ * cache-busted.
+ */
+const HASHED_NAME = /\.[0-9a-z]{8}\.[^.]+$/;
+
+/**
+ * Asserts `_headers` exists and — the part that matters — that every directory
+ * it serves `immutable` holds nothing but content-hashed filenames.
+ *
+ * A year-long `immutable` on a verbatim filename is unbustable: re-cut the file
+ * and every prior visitor keeps the stale copy until the header expires. The
+ * fonts shipped verbatim before this check existed.
+ */
+async function checkHeaders(): Promise<void> {
+  const path = join(DIST_DIR, '_headers');
+
+  if (!existsSync(path)) {
+    report(`Cloudflare Pages headers file missing: ${toRel(path)}`);
+    return;
+  }
+
+  const text = await Bun.file(path).text();
+
+  for (const dir of [ASSETS_DIR_NAME, FONTS_DIR_NAME, CONTENT_DIR_NAME]) {
+    if (!text.includes(`/${dir}/*`)) {
+      report(`${toRel(path)}: no rule for "/${dir}/*"`);
+      continue;
+    }
+
+    if (!immutableFor(text, dir)) continue;
+
+    const onDisk = join(DIST_DIR, dir);
+    if (!existsSync(onDisk)) continue;
+
+    const unhashed = (await readdir(onDisk)).filter((entry) => !HASHED_NAME.test(entry));
+
+    if (unhashed.length > 0) {
+      report(
+        `${toRel(path)}: serves "/${dir}/*" immutable, but ${unhashed.length} file(s) there ` +
+          `carry no content hash and could never be busted: ${unhashed.join(', ')}`,
+      );
+    }
+  }
+}
+
+/** Whether the block for `/<dir>/*` carries `immutable`, and not some later block. */
+function immutableFor(headers: string, dir: string): boolean {
+  const block = headers.split(/^(?=\/)/m).find((part) => part.startsWith(`/${dir}/*`));
+
+  return block !== undefined && block.includes('immutable');
+}
+
+async function checkRobots(): Promise<void> {
+  const path = join(DIST_DIR, 'robots.txt');
+
+  if (!existsSync(path)) {
+    report(`robots.txt missing: ${toRel(path)}`);
+    return;
+  }
+
+  const text = await Bun.file(path).text();
+  const sitemap = `${SITE_ORIGIN}/sitemap.xml`;
+
+  if (!text.includes(sitemap)) {
+    report(`${toRel(path)}: does not point at "${sitemap}"`);
+  }
+}
+
+async function checkSitemap(): Promise<void> {
+  const path = join(DIST_DIR, 'sitemap.xml');
+
+  if (!existsSync(path)) {
+    report(`sitemap.xml missing: ${toRel(path)}`);
+    return;
+  }
+
+  const xml = await Bun.file(path).text();
+
+  for (const locale of SITE_LOCALES) {
+    const loc = `<loc>${SITE_ORIGIN}/${locale}/</loc>`;
+    if (!xml.includes(loc)) report(`${toRel(path)}: missing "${loc}"`);
   }
 }
 
