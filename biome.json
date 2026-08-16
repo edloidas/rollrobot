@@ -40,12 +40,18 @@
       "semicolons": "always"
     }
   },
+  "css": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  },
   "files": {
     "includes": [
       "**/scripts/**/*.ts",
       "**/src/**/*.ts",
       "**/test/**/*.ts",
       "**/site/**/*.ts",
+      "**/site/src/*.css",
       "!**/node_modules",
       "!**/dist",
       "!**/coverage"
