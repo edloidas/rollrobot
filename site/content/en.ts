@@ -17,7 +17,7 @@ export const en: Manual = {
     body: [
       'Open `@rollrobot`, press Start, send `/roll 2d6+3`. You get the expression it read and the total.',
       'Playing with a group? Add the bot to the chat. It replies to the message that called it, so several people can roll at once and each answer stays with its question. It needs permission to send messages, or it stays silent.',
-      'In a chat you cannot add it to, use inline mode: type `@rollrobot 2d6+3` and tap the result. Works anywhere, joins nothing.',
+      'In a chat you cannot add it to, use inline mode: type `@rollrobot 2d6+3` and tap the result. Nothing to add, no permissions to grant — the roll goes out as your own message.',
     ],
   },
   commands: {

@@ -17,7 +17,7 @@ export const de: Manual = {
     body: [
       'Öffne `@rollrobot`, drücke Start, schick `/roll 2d6+3`. Du bekommst den erkannten Ausdruck und die Summe.',
       'Ihr spielt in der Gruppe? Füge den Bot dem Chat hinzu. Er antwortet auf die Nachricht, die ihn aufgerufen hat, sodass mehrere gleichzeitig würfeln können und jede Antwort bei ihrer Frage bleibt. Er braucht die Erlaubnis, Nachrichten zu senden, sonst bleibt er stumm.',
-      'In einem Chat, dem du ihn nicht hinzufügen kannst, nutze den Inline-Modus: schreib `@rollrobot 2d6+3` und tippe auf das Ergebnis. Funktioniert überall, tritt keinem Chat bei.',
+      'In einem Chat, dem du ihn nicht hinzufügen kannst, nutze den Inline-Modus: schreib `@rollrobot 2d6+3` und tippe auf das Ergebnis. Nichts hinzufügen, keine Rechte vergeben — der Wurf geht als deine eigene Nachricht raus.',
     ],
   },
   commands: {

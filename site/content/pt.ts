@@ -17,7 +17,7 @@ export const pt: Manual = {
     body: [
       'Abra `@rollrobot`, toque em Iniciar e envie `/roll 2d6+3`. Você recebe a expressão como ele a leu e o total.',
       'Joga em grupo? Adicione o bot à conversa. Ele responde à mensagem que o chamou, então várias pessoas podem rolar ao mesmo tempo e cada resposta fica junto da sua pergunta. Ele precisa de permissão para enviar mensagens, senão fica em silêncio.',
-      'Em uma conversa onde você não pode adicioná-lo, use o modo inline: digite `@rollrobot 2d6+3` e toque no resultado. Funciona em qualquer lugar, sem entrar em nada.',
+      'Em uma conversa onde você não pode adicioná-lo, use o modo inline: digite `@rollrobot 2d6+3` e toque no resultado. Nada para adicionar, nenhuma permissão para conceder — a rolagem sai como sua própria mensagem.',
     ],
   },
   commands: {
