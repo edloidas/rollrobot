@@ -652,7 +652,10 @@ summary::marker {
   color: var(--accent);
 }
 
-details p {
+/* ! `.manual details p`, not `details p`: same trap as `.manual .callout` above —
+   ! `.manual p` (0,1,1) outspecifies a bare `details p` (0,0,2), so the answer
+   ! paragraph took the muted 0/0/10px margin and never the 8px/0 meant for it. */
+.manual details p {
   margin-block-start: 8px;
   margin-block-end: 0;
 }
