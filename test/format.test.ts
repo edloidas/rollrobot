@@ -258,10 +258,10 @@ describe('formatError', () => {
   // Carets are placed by code-unit offset, which a right-to-left run reorders away from
   test('drops the caret line for right-to-left notation, keeping the echo', () => {
     expect(formatError(rollError('2d20 ضربه'), '2d20 ضربه')).toBe(
-      "<i>Unexpected character: 'ض'.</i>\n<pre>2d20 ضربه</pre>",
+      "<i>Unexpected character (U+0636): 'ض'.</i>\n<pre>2d20 ضربه</pre>",
     );
     expect(formatError(rollError('2d20 בדיקה'), '2d20 בדיקה')).toBe(
-      "<i>Unexpected character: 'ב'.</i>\n<pre>2d20 בדיקה</pre>",
+      "<i>Unexpected character (U+05D1): 'ב'.</i>\n<pre>2d20 בדיקה</pre>",
     );
   });
 
