@@ -1,13 +1,43 @@
-/** One worked example: notation, the dice it should draw, and how the bot replies to it. */
-export interface Example {
-  /** Notation exactly as a user would type it, without the leading command. */
+/**
+ * One worked example, rendered from the bot's own handlers at build time.
+ *
+ * `kind` picks which handler answers it, and with it which command heads the
+ * typed line shown above the reply.
+ */
+export type Example = RollExample | AskExample | PickExample;
+
+/** A roll. The notation is normalized exactly as the bot normalizes it, then rolled. */
+export interface RollExample {
+  kind?: 'roll';
+  /**
+   * Exactly as a user would type it after the command — shorthands included.
+   * `4 6`, `2к6` and `۲۰` are all legitimate here; the bot folds them itself.
+   */
   notation: string;
-  /** Scripted RNG draws. Must match the notation's draw count or the build fails loudly. */
+  /** Scripted RNG draws. Must match the roll's draw count or the build fails loudly. */
   rng: number[];
   /** `compact` mirrors /roll, `full` mirrors /full. */
   mode: 'compact' | 'full';
   /** Optional roll name, rendered as the quoted label the bot puts above a reply. */
   label?: string;
+}
+
+/** An `/ask` example: Yes or No above the question, quoted. */
+export interface AskExample {
+  kind: 'ask';
+  /** Everything after the command. Needs no quoting — the whole line is the question. */
+  question: string;
+  /** Which of the two answers to show. See `renderExample` for how it is pinned. */
+  answer: 'yes' | 'no';
+}
+
+/** A `/pick` example: one option out of the list, bolded. */
+export interface PickExample {
+  kind: 'pick';
+  /** Everything after the command, separators included. */
+  input: string;
+  /** Which option to show as chosen. Must be one of the options `input` splits into. */
+  choice: string;
 }
 
 export interface CommandDoc {
@@ -16,7 +46,20 @@ export interface CommandDoc {
   /** Shortcut without the slash, e.g. `r`. Omitted when there is none. */
   shortcut?: string;
   summary: string;
-  /** Omitted by a command that rolls nothing — the caption is built from `mode`. */
+  /** Points too fiddly for the summary, rendered as a list beneath it. */
+  notes?: string[];
+  /** Omitted by a command that answers nothing. */
+  example?: Example;
+}
+
+/** One convenience that works across commands, rather than a notation form. */
+export interface FeatureDoc {
+  /** Short name, e.g. `Cyrillic dice letters`. */
+  title: string;
+  /** The literal it is about is marked with backticks, as all prose is. */
+  description: string;
+  /** A rule that has to be followed, set apart from the description. */
+  important?: string;
   example?: Example;
 }
 
@@ -46,13 +89,14 @@ export interface Manual {
   hero: { tagline: string; cta: string };
   gettingStarted: { heading: string; body: string[] };
   commands: { heading: string; intro: string; items: CommandDoc[] };
+  specialFeatures: { heading: string; intro: string; items: FeatureDoc[] };
   inline: { heading: string; body: string[] };
   notation: {
     heading: string;
     intro: string;
+    /** Card labels for the two outbound roll-parser links. The URLs are not translated. */
+    links: { playground: string; reference: string };
     groups: NotationGroup[];
-    /** Link text for the outbound roll-parser reference. The URL is not translated. */
-    referenceLabel: string;
   };
   systems: { heading: string; intro: string; items: SystemRecipe[] };
   limits: { heading: string; body: string[] };
@@ -83,6 +127,7 @@ export const MANUAL_SECTIONS = [
   'hero',
   'gettingStarted',
   'commands',
+  'specialFeatures',
   'inline',
   'notation',
   'systems',
