@@ -10,7 +10,7 @@ import { readdir, rm } from 'node:fs/promises';
 import { basename, join } from 'node:path';
 import { resolveManual } from '../site/content';
 import type { Locale } from '../site/src/locales';
-import { LOCALE_NAMES, localeDir, SITE_LOCALES } from '../site/src/locales';
+import { DEFAULT_SITE_LOCALE, LOCALE_NAMES, localeDir, SITE_LOCALES } from '../site/src/locales';
 import type { ResolvedManual } from '../site/src/replies';
 import { resolveExamples } from '../site/src/replies';
 import { escapeHtml, renderHero, renderManual, renderTabs } from '../site/src/render';
@@ -23,6 +23,9 @@ import {
   escapeRegExp,
   FAVICON,
   FONTS_DIR_NAME,
+  ICON_SIZES,
+  OG_IMAGE,
+  OG_IMAGE_SIZE,
   PUBLIC_DIR,
   REDIRECT_ENTRYPOINT,
   SCRIPT_ENTRYPOINT,
@@ -31,6 +34,7 @@ import {
   SRC_DIR,
   STYLE_SOURCE,
   TEMPLATE_SOURCE,
+  THEME_COLORS,
 } from './site-manifest';
 
 /** A locale's resolved manual paired with the URL its JSON was written to. */
@@ -46,11 +50,11 @@ async function build(): Promise<void> {
   const fonts = await copyFonts();
   const style = await copyStyle(fonts);
 
-  await copyFavicon();
+  await copyIcons();
 
   const pages = await writeContent();
   await writePages(pages, { script, style });
-  await writeRedirectShim();
+  await writeRedirectShim(pages);
   await writeHeaders();
   await writeRobots();
   await writeSitemap();
@@ -176,8 +180,27 @@ function rewriteFontNames(css: string, fonts: Map<string, string>): string {
   return rewritten;
 }
 
-async function copyFavicon(): Promise<void> {
+/**
+ * Copies the SVG favicon and its PNG ladder into the `dist/` root.
+ *
+ * Not hashed, unlike everything else: `/favicon.svg` and `/favicon-180.png` are
+ * referenced by convention from places that cannot read a manifest — an Apple
+ * touch icon, a bookmark, a link-preview fetcher — so the names have to be
+ * stable. `_headers` leaves the root out of `immutable` for exactly this reason.
+ */
+async function copyIcons(): Promise<void> {
   await Bun.write(join(DIST_DIR, FAVICON), Bun.file(join(PUBLIC_DIR, FAVICON)));
+
+  for (const size of ICON_SIZES) {
+    const name = `favicon-${size}.png`;
+    const source = Bun.file(join(PUBLIC_DIR, name));
+
+    if (!(await source.exists())) {
+      throw new Error(`${name} missing from site/public/ — rasterize it from ${FAVICON}`);
+    }
+
+    await Bun.write(join(DIST_DIR, name), source);
+  }
 }
 
 //
@@ -222,6 +245,8 @@ async function writePages(
       dir: localeDir(locale),
       title: escapeHtml(manual.meta.title),
       description: escapeHtml(manual.meta.description),
+      icons: iconLinks(),
+      social: socialTags(manual, locale, pageUrl(locale)),
       hreflang: alternateLinks(locale),
       style: assets.style,
       script: assets.script,
@@ -256,6 +281,82 @@ function fill(template: string, slots: Record<string, string>): string {
   });
 }
 
+/**
+ * The icon set and the two `theme-color` tags, identical on every page.
+ *
+ * Each `rel` carries its own meaning — a bookmark icon, an Apple touch icon —
+ * so these are written out rather than derived from {@link ICON_SIZES}, which
+ * exists to say what gets *copied*. `check-site.ts` asserts each href resolves.
+ */
+function iconLinks(): string {
+  const [light, dark] = THEME_COLORS;
+
+  return [
+    `<link rel="icon" type="image/svg+xml" href="/${FAVICON}" />`,
+    `<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />`,
+    `<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />`,
+    `<link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png" />`,
+    `<meta name="theme-color" content="${light}" media="(prefers-color-scheme: light)" />`,
+    `<meta name="theme-color" content="${dark}" media="(prefers-color-scheme: dark)" />`,
+  ].join('\n    ');
+}
+
+/**
+ * `og:locale` wants `language_TERRITORY`, which the bare tags the pages are
+ * keyed on are not. Build-only, so it stays out of `locales.ts` and out of the
+ * browser bundle.
+ */
+const OG_LOCALES: Record<Locale, string> = {
+  en: 'en_US',
+  es: 'es_ES',
+  pt: 'pt_BR',
+  de: 'de_DE',
+  ru: 'ru_RU',
+  uk: 'uk_UA',
+  be: 'be_BY',
+  fa: 'fa_IR',
+};
+
+/**
+ * Link-preview tags, chiefly for Telegram — where this page is shared far more
+ * than anywhere else, and where a bare URL with no card is what shipped before.
+ *
+ * `meta.social` rather than `meta.description`: the latter is written for a
+ * search result and runs past what a card will show. A square image with
+ * `twitter:card: summary` matches edloidas.io, whose own card this mirrors.
+ *
+ * ! These describe the *prerendered* locale and are not updated by the in-place
+ * ! tab switch in `main.ts`. That is fine — no crawler or preview fetcher clicks
+ * ! a tab — so do not "fix" it by re-rendering the head on every switch.
+ */
+function socialTags(manual: ResolvedManual, locale: Locale, url: string): string {
+  const title = escapeHtml(manual.meta.title);
+  const social = escapeHtml(manual.meta.social);
+  const image = `${SITE_ORIGIN}/${OG_IMAGE}`;
+
+  return [
+    `<meta property="og:type" content="website" />`,
+    `<meta property="og:site_name" content="Roll Robot" />`,
+    `<meta property="og:title" content="${title}" />`,
+    `<meta property="og:description" content="${social}" />`,
+    `<meta property="og:url" content="${url}" />`,
+    `<meta property="og:locale" content="${OG_LOCALES[locale]}" />`,
+    ...SITE_LOCALES.filter((other) => other !== locale).map(
+      (other) => `<meta property="og:locale:alternate" content="${OG_LOCALES[other]}" />`,
+    ),
+    `<meta property="og:image" content="${image}" />`,
+    `<meta property="og:image:type" content="image/png" />`,
+    `<meta property="og:image:width" content="${OG_IMAGE_SIZE}" />`,
+    `<meta property="og:image:height" content="${OG_IMAGE_SIZE}" />`,
+    `<meta property="og:image:alt" content="Roll Robot" />`,
+    `<meta name="twitter:card" content="summary" />`,
+    `<meta name="twitter:title" content="${title}" />`,
+    `<meta name="twitter:description" content="${social}" />`,
+    `<meta name="twitter:image" content="${image}" />`,
+    `<meta name="twitter:image:alt" content="Roll Robot" />`,
+  ].join('\n    ');
+}
+
 /** The canonical URL for this page plus a reciprocal link to every locale. */
 function alternateLinks(active: Locale): string {
   return [
@@ -286,7 +387,7 @@ function contentUrlsScript(pages: Map<Locale, Page>): string {
  * code is inlined rather than emitted as an asset — see
  * {@link REDIRECT_ENTRYPOINT}.
  */
-async function writeRedirectShim(): Promise<void> {
+async function writeRedirectShim(pages: Map<Locale, Page>): Promise<void> {
   const output = await Bun.build({
     entrypoints: [join(SRC_DIR, REDIRECT_ENTRYPOINT)],
     target: 'browser',
@@ -302,14 +403,30 @@ async function writeRedirectShim(): Promise<void> {
     (locale) => `<a href="/${locale}/" lang="${locale}">${escapeHtml(LOCALE_NAMES[locale])}</a>`,
   ).join(' ');
 
+  // The shim redirects rather than answering for itself, so it carries English:
+  // whoever reads it — a no-JS visitor, a preview fetcher — got no locale from
+  // the URL either.
+  const page = pages.get(DEFAULT_SITE_LOCALE);
+  if (page === undefined) throw new Error(`no "${DEFAULT_SITE_LOCALE}" page for the root shim`);
+
+  const { manual } = page;
+
   const html = `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <script>${code}</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Roll Robot</title>
-    <link rel="icon" type="image/svg+xml" href="/${FAVICON}" />
+    <!-- No stylesheet here — this page exists to be left. Without a declared
+         scheme a dark-mode visitor gets a white frame for the length of the
+         redirect, on the way to a dark page. -->
+    <style>:root{color-scheme:light dark}</style>
+    <title>${escapeHtml(manual.meta.title)}</title>
+    <meta name="description" content="${escapeHtml(manual.meta.description)}" />
+    <meta name="author" content="Mikita Taukachou" />
+    <meta name="robots" content="index, follow" />
+    ${iconLinks()}
+    ${socialTags(manual, DEFAULT_SITE_LOCALE, `${SITE_ORIGIN}/`)}
   </head>
   <body>
     <noscript>

@@ -37,8 +37,26 @@ export const STYLE_SOURCE = 'style.css';
 /** Page shell in `site/`, filled once per locale. */
 export const TEMPLATE_SOURCE = 'index.template.html';
 
-/** Single file copied from `site/public/` into the `dist/` root. */
+/** Files copied from `site/public/` into the `dist/` root. */
 export const FAVICON = 'favicon.svg';
+
+/**
+ * PNG fallbacks for the SVG favicon, rasterized from it and committed rather
+ * than generated — `sharp` is only in `node_modules` as a transitive dependency
+ * of `miniflare`, so a build script must not reach for it.
+ */
+export const ICON_SIZES = [16, 32, 180, 512] as const;
+
+/** The largest icon, reused as the link-preview card image. */
+export const OG_IMAGE_SIZE = 512;
+export const OG_IMAGE = `favicon-${OG_IMAGE_SIZE}.png`;
+
+/**
+ * `--bg` in each palette, mirrored into `<meta name="theme-color">`. Declared
+ * here rather than retyped in the template so `check-site.ts` can assert both
+ * still appear in the emitted stylesheet.
+ */
+export const THEME_COLORS: readonly [light: string, dark: string] = ['#f5ecdb', '#16120b'];
 
 /**
  * The stylesheet's `@font-face` URLs are written relative to `site/src/`, so

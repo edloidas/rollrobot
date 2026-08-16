@@ -5,6 +5,7 @@ export const es: Manual = {
     title: 'Roll Robot — dados de rol en cualquier chat de Telegram',
     description:
       'Notación de rol completa en Telegram: conservar/descartar, dados explosivos, nuevas tiradas, reservas de éxitos y pruebas.',
+    social: 'Bot de Telegram para dados de rol. Creado por edloidas.io',
   },
   hero: {
     tagline:
