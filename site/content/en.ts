@@ -5,6 +5,7 @@ export const en: Manual = {
     title: 'Roll Robot — dice for tabletop RPGs in any Telegram chat',
     description:
       'Full RPG dice notation in Telegram: keep/drop, exploding dice, rerolls, success pools and checks.',
+    social: 'Telegram bot for tabletop RPG dice. Made by edloidas.io',
   },
   hero: {
     tagline:

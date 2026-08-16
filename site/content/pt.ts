@@ -5,6 +5,7 @@ export const pt: Manual = {
     title: 'Roll Robot — dados de RPG em qualquer conversa do Telegram',
     description:
       'Notação de dados de RPG completa no Telegram: manter/descartar, dados explosivos, novas rolagens, paradas de dados e testes.',
+    social: 'Bot do Telegram para dados de RPG. Feito por edloidas.io',
   },
   hero: {
     tagline:

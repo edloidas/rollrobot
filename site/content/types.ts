@@ -88,7 +88,17 @@ export interface FaqItem {
 }
 
 export interface Manual {
-  meta: { title: string; description: string };
+  meta: {
+    title: string;
+    description: string;
+    /**
+     * One line for a link preview card — Telegram's above all, which is where
+     * this page gets shared. Separate from `description`, which is written for a
+     * search result and runs too long to survive a card. Names the author, which
+     * a search snippet has no reason to.
+     */
+    social: string;
+  };
   hero: { tagline: string; cta: string };
   gettingStarted: { heading: string; body: string[] };
   commands: { heading: string; intro: string; items: CommandDoc[] };

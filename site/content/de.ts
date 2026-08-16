@@ -5,6 +5,7 @@ export const de: Manual = {
     title: 'Roll Robot — Würfel für Rollenspiele in jedem Telegram-Chat',
     description:
       'Vollständige Rollenspiel-Notation in Telegram: Behalten/Verwerfen, explodierende Würfel, Wiederholungswürfe, Würfelpools und Proben.',
+    social: 'Telegram-Bot für Rollenspiel-Würfel. Von edloidas.io',
   },
   hero: {
     tagline:

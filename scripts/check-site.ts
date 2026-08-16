@@ -23,6 +23,7 @@ import {
   ROOT_DIR,
   SCRIPT_ENTRYPOINT,
   SITE_ORIGIN,
+  THEME_COLORS,
 } from './site-manifest';
 
 /**
@@ -55,7 +56,8 @@ function toRel(path: string): string {
  */
 const ASSET_REF_PATTERN = new RegExp(
   `(?:href|src)="(\\/(?:${escapeRegExp(ASSETS_DIR_NAME)}|${escapeRegExp(FONTS_DIR_NAME)}|` +
-    `${escapeRegExp(CONTENT_DIR_NAME)})\\/[^"]+|\\/${escapeRegExp(FAVICON)})"`,
+    `${escapeRegExp(CONTENT_DIR_NAME)})\\/[^"]+|\\/${escapeRegExp(FAVICON)}|` +
+    `\\/favicon-\\d+\\.png)"`,
   'g',
 );
 
@@ -70,6 +72,7 @@ async function main(): Promise<void> {
   await checkBundle();
   await checkStylesheetFonts();
   await checkHeaders();
+  await checkThemeColors();
   await checkRobots();
   await checkSitemap();
 
@@ -93,9 +96,22 @@ async function checkRootShim(): Promise<void> {
   }
 
   const html = await Bun.file(path).text();
+  const rel = toRel(path);
+
   if (!html.includes('location.replace')) {
-    report(`${toRel(path)}: does not call "location.replace" — the root shim is inert`);
+    report(`${rel}: does not call "location.replace" — the root shim is inert`);
   }
+
+  // The shim ships no stylesheet, so without a declared scheme a dark-mode
+  // visitor gets a white frame for the length of the redirect.
+  if (!html.includes('color-scheme')) {
+    report(`${rel}: declares no "color-scheme" — dark-mode visitors flash white`);
+  }
+
+  // `/` is the x-default target, so a preview fetcher that does not run the
+  // redirect still has to find a card here.
+  checkSocial(html, rel, `${SITE_ORIGIN}/`);
+  checkReferencedAssets(html, rel);
 }
 
 //
@@ -227,6 +243,70 @@ function immutableFor(headers: string, dir: string): boolean {
   return block !== undefined && block.includes('immutable');
 }
 
+/**
+ * Asserts both `theme-color` values still name a colour the stylesheet uses.
+ *
+ * The tags are written from `THEME_COLORS` and the palette from `style.css`, so
+ * nothing but this ties the browser chrome to the page it frames — retune `--bg`
+ * in either palette and the tag would keep painting the old one.
+ */
+async function checkThemeColors(): Promise<void> {
+  const assetsDir = join(DIST_DIR, ASSETS_DIR_NAME);
+  if (!existsSync(assetsDir)) return;
+
+  const sheets = (await readdir(assetsDir)).filter((name) => name.endsWith('.css'));
+
+  for (const entry of sheets) {
+    const cssPath = join(assetsDir, entry);
+    const css = await Bun.file(cssPath).text();
+
+    for (const colour of THEME_COLORS) {
+      if (!css.includes(colour)) {
+        report(
+          `${toRel(cssPath)}: theme-color "${colour}" appears nowhere in the stylesheet — ` +
+            'THEME_COLORS has drifted from the palette',
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Link-preview tags. A card that quietly stops rendering is invisible from the
+ * page itself, so the `og:url`/`og:image` pair is asserted rather than trusted.
+ */
+function checkSocial(html: string, rel: string, url: string): void {
+  const content = (property: string): string | undefined =>
+    html.match(
+      new RegExp(`<meta (?:property|name)="${escapeRegExp(property)}" content="([^"]*)"`),
+    )?.[1];
+
+  for (const tag of ['og:type', 'og:title', 'og:description', 'twitter:card']) {
+    if (content(tag) === undefined) report(`${rel}: missing "${tag}"`);
+  }
+
+  const declared = content('og:url');
+  if (declared !== url) {
+    report(`${rel}: og:url is "${declared ?? ''}", expected "${url}"`);
+  }
+
+  const image = content('og:image');
+  if (image === undefined) {
+    report(`${rel}: missing "og:image"`);
+    return;
+  }
+
+  if (!image.startsWith(SITE_ORIGIN)) {
+    report(`${rel}: og:image "${image}" is not absolute — preview fetchers require a full URL`);
+    return;
+  }
+
+  const onDisk = join(DIST_DIR, image.slice(SITE_ORIGIN.length));
+  if (!existsSync(onDisk)) {
+    report(`${rel}: og:image "${image}" missing at ${toRel(onDisk)}`);
+  }
+}
+
 async function checkRobots(): Promise<void> {
   const path = join(DIST_DIR, 'robots.txt');
 
@@ -287,6 +367,7 @@ async function checkLocalePage(locale: Locale): Promise<void> {
   checkDevPaths(html, rel);
   checkReferencedAssets(html, rel);
   checkContentUrls(html, rel);
+  checkSocial(html, rel, `${SITE_ORIGIN}/${locale}/`);
 }
 
 function checkHtmlAttrs(locale: Locale, html: string, rel: string): void {
