@@ -206,6 +206,27 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Covers the strip a mobile in-app browser's translucent chrome sits over —
+   Telegram's iOS webview, and any host that insets fixed and sticky boxes
+   without clipping what scrolls. `top: 0` there is the chrome's bottom edge, so
+   the language bar stops at it while the manual keeps scrolling up into the gap,
+   readable through the blur.
+
+   Anchored above that edge rather than sized to the inset: `env(safe-area-inset-
+   top)` reports the *unobscured* remainder, which is 0 once the host has taken
+   the inset itself. A browser that obscures nothing puts the band off screen. */
+body::before {
+  content: '';
+  position: fixed;
+  top: -100vh;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  z-index: 6;
+  background: var(--bg);
+  pointer-events: none;
+}
+
 a:focus-visible,
 button:focus-visible,
 summary:focus-visible {
