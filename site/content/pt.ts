@@ -35,8 +35,11 @@ export const pt: Manual = {
         command: 'full',
         shortcut: 'f',
         summary:
-          'A mesma rolagem, dado a dado. Descartados riscados, sucessos em negrito, falhas sublinhadas, um máximo ou mínimo natural com seta.',
-        examples: [{ notation: '4d6kh3', rng: [6, 5, 3, 1], mode: 'full' }],
+          'A mesma rolagem, dado a dado. Descartados riscados, um máximo ou mínimo natural com seta; numa parada de dados que conta sucessos, estes vêm em negrito e as falhas sublinhadas.',
+        examples: [
+          { notation: '4d6kh3', rng: [6, 5, 3, 1], mode: 'full' },
+          { notation: '4d10>=6f1', rng: [10, 7, 3, 1], mode: 'full' },
+        ],
       },
       {
         command: 'random',

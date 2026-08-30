@@ -36,8 +36,11 @@ export const de: Manual = {
         command: 'full',
         shortcut: 'f',
         summary:
-          'Derselbe Wurf, Würfel für Würfel. Verworfene durchgestrichen, Erfolge fett, Fehlschläge unterstrichen, ein natürliches Maximum oder Minimum mit einem Pfeil.',
-        examples: [{ notation: '4d6kh3', rng: [6, 5, 3, 1], mode: 'full' }],
+          'Derselbe Wurf, Würfel für Würfel. Verworfene durchgestrichen, ein natürliches Maximum oder Minimum mit einem Pfeil; in einem zählenden Pool Erfolge fett und Fehlschläge unterstrichen.',
+        examples: [
+          { notation: '4d6kh3', rng: [6, 5, 3, 1], mode: 'full' },
+          { notation: '4d10>=6f1', rng: [10, 7, 3, 1], mode: 'full' },
+        ],
       },
       {
         command: 'random',
