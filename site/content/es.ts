@@ -35,8 +35,11 @@ export const es: Manual = {
         command: 'full',
         shortcut: 'f',
         summary:
-          'La misma tirada, dado a dado. Descartados tachados, éxitos en negrita, fallos subrayados y una flecha en el natural máximo o mínimo.',
-        examples: [{ notation: '4d6kh3', rng: [6, 5, 3, 1], mode: 'full' }],
+          'La misma tirada, dado a dado. Descartados tachados y una flecha en el natural máximo o mínimo; en una reserva que cuenta éxitos, estos van en negrita y los fallos subrayados.',
+        examples: [
+          { notation: '4d6kh3', rng: [6, 5, 3, 1], mode: 'full' },
+          { notation: '4d10>=6f1', rng: [10, 7, 3, 1], mode: 'full' },
+        ],
       },
       {
         command: 'random',

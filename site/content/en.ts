@@ -35,8 +35,11 @@ export const en: Manual = {
         command: 'full',
         shortcut: 'f',
         summary:
-          'The same roll, die by die. Dropped struck through, successes bold, failures underlined, a natural high or low arrowed.',
-        examples: [{ notation: '4d6kh3', rng: [6, 5, 3, 1], mode: 'full' }],
+          'The same roll, die by die. Dropped struck through, a natural high or low arrowed; in a counted pool, successes bold and failures underlined.',
+        examples: [
+          { notation: '4d6kh3', rng: [6, 5, 3, 1], mode: 'full' },
+          { notation: '4d10>=6f1', rng: [10, 7, 3, 1], mode: 'full' },
+        ],
       },
       {
         command: 'random',
