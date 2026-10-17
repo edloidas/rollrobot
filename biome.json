@@ -23,7 +23,8 @@
         "noVar": "error"
       },
       "complexity": {
-        "noForEach": "off"
+        "noForEach": "off",
+        "noExcessiveCognitiveComplexity": "error"
       }
     }
   },
@@ -84,6 +85,16 @@
         "rules": {
           "correctness": {
             "noNodejsModules": "error"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["test/**"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
           }
         }
       }

@@ -1,4 +1,4 @@
-import { Bot, type Context, GrammyError, HttpError } from 'grammy/web';
+import { Bot, type BotError, type Context, GrammyError, HttpError } from 'grammy/web';
 import type { InlineQueryResultsButton } from 'grammy/types';
 import {
   type AnalyticsEnv,
@@ -89,6 +89,54 @@ function replyOptions(ctx: Context) {
   };
 }
 
+function isUnrecoverable(e: GrammyError): boolean {
+  const desc = e.description;
+  return (
+    (e.error_code === 400 && desc.includes('TOPIC_CLOSED')) ||
+    (e.error_code === 403 && (desc.includes('kicked') || desc.includes('blocked')))
+  );
+}
+
+async function notifyMissingRights(ctx: Context): Promise<void> {
+  const userId = ctx.from?.id;
+  if (!userId) return;
+
+  try {
+    await ctx.api.sendMessage(userId, noPermissionText(ctx.chat?.title), { parse_mode: 'HTML' });
+  } catch {
+    // User hasn't started the bot — nothing we can do
+  }
+}
+
+async function handleGrammyError(e: GrammyError, ctx: Context): Promise<void> {
+  const desc = e.description;
+
+  if (isUnrecoverable(e)) {
+    const who = ctx.from?.username ? `@${ctx.from.username}` : String(ctx.from?.id ?? '?');
+    const where = ctx.chat?.title ?? String(ctx.chatId ?? '?');
+    console.warn(`[${e.method}] ${e.error_code} ${who} in "${where}": ${desc}`);
+    return;
+  }
+
+  console.error(`[${e.method}] ${e.error_code}: ${desc}`);
+  const chatType = ctx.chat?.type;
+  const isGroup = chatType && GROUPS.includes(chatType);
+  if (e.error_code === 403 && isGroup && desc.includes('rights')) {
+    await notifyMissingRights(ctx);
+  }
+}
+
+async function handleBotError(err: BotError<Context>): Promise<void> {
+  const e = err.error;
+  if (e instanceof GrammyError) {
+    await handleGrammyError(e, err.ctx);
+  } else if (e instanceof HttpError) {
+    console.error(`Network error: ${e.message}`);
+  } else {
+    console.error(`Error handling update ${err.ctx.update.update_id}:`, e);
+  }
+}
+
 export interface BotEnv extends AnalyticsEnv {
   TOKEN: string;
 }
@@ -96,46 +144,7 @@ export interface BotEnv extends AnalyticsEnv {
 export function createBot(env: BotEnv): Bot {
   const bot = new Bot(env.TOKEN);
 
-  bot.catch(async (err) => {
-    const e = err.error;
-    if (e instanceof GrammyError) {
-      const desc = e.description;
-
-      // Unrecoverable chat errors — log concisely, skip further handling
-      if (
-        (e.error_code === 400 && desc.includes('TOPIC_CLOSED')) ||
-        (e.error_code === 403 && (desc.includes('kicked') || desc.includes('blocked')))
-      ) {
-        const who = err.ctx.from?.username
-          ? `@${err.ctx.from.username}`
-          : String(err.ctx.from?.id ?? '?');
-        const where = err.ctx.chat?.title ?? String(err.ctx.chatId ?? '?');
-        console.warn(`[${e.method}] ${e.error_code} ${who} in "${where}": ${desc}`);
-        return;
-      }
-
-      console.error(`[${e.method}] ${e.error_code}: ${desc}`);
-      const chatType = err.ctx.chat?.type;
-      const isGroup = chatType && GROUPS.includes(chatType);
-      if (e.error_code === 403 && isGroup && desc.includes('rights')) {
-        const userId = err.ctx.from?.id;
-        if (userId) {
-          try {
-            const chatName = err.ctx.chat?.title;
-            await err.ctx.api.sendMessage(userId, noPermissionText(chatName), {
-              parse_mode: 'HTML',
-            });
-          } catch {
-            // User hasn't started the bot — nothing we can do
-          }
-        }
-      }
-    } else if (e instanceof HttpError) {
-      console.error(`Network error: ${e.message}`);
-    } else {
-      console.error(`Error handling update ${err.ctx.update.update_id}:`, e);
-    }
-  });
+  bot.catch(handleBotError);
 
   async function replyHelp(ctx: Context, command: 'start' | 'help'): Promise<void> {
     await ctx.reply(helpReply(resolveLocale(ctx.from?.language_code)), replyOptions(ctx));

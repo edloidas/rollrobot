@@ -98,22 +98,24 @@ export function shapeTerms(result: RollResult): DiceTerm[] {
   const terms: DiceTerm[] = [];
   const seen = new Set<string>();
 
+  function emit(term: string, bucket: string, path: string[]): void {
+    const modifiers = path.join(',');
+    const key = `${term}|${modifiers}`;
+    if (seen.has(key)) return;
+
+    seen.add(key);
+    terms.push({ index: terms.length, term, bucket, modifiers });
+  }
+
   function walk(part: RollPart, path: string[]): void {
     if (terms.length >= MAX_TERMS) return;
 
-    if (part.type === 'dice' || part.type === 'fateDice') {
-      const term = part.type === 'dice' ? `${part.count}d${part.sides}` : `${part.count}dF`;
-      const modifiers = path.join(',');
-      const key = `${term}|${modifiers}`;
-      if (seen.has(key)) return;
-
-      seen.add(key);
-      terms.push({
-        index: terms.length,
-        term,
-        bucket: part.type === 'dice' ? bucketOf(part.sides) : 'dF',
-        modifiers,
-      });
+    if (part.type === 'dice') {
+      emit(`${part.count}d${part.sides}`, bucketOf(part.sides), path);
+      return;
+    }
+    if (part.type === 'fateDice') {
+      emit(`${part.count}dF`, 'dF', path);
       return;
     }
 

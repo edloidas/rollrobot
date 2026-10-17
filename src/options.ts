@@ -61,22 +61,27 @@ function extractQuotedTail(trimmed: string): QuotedTail {
   for (let i = trimmed.length - 2; i >= 0; i--) {
     if (!openers.includes(trimmed.charAt(i))) continue;
     if (i !== 0 && !/\s/.test(trimmed.charAt(i - 1))) continue;
-
-    const head = trimmed.slice(0, i).trim();
-    if (head === '') return { ...whole, wrapped: true };
-    if (SEPARATOR_CHARS.has(head.slice(-1))) return whole;
-    // A head closing on a quote means the option before this one was quoted too, so these
-    // are quoted options rather than a labelled list — `"Alpha" "Beta"` must keep both
-    if (QUOTE_PAIRS[head.slice(-1)] != null) return whole;
-    // An odd count leaves an opener unclosed in the head, so the quote found here closes
-    // that one instead of opening a label — `a, b "he said "hi""` keeps its nested quotes
-    if (countAny(head, openers) % 2 === 1) return whole;
-
-    const label = trimmed.slice(i + 1, -1).trim();
-    return { head, label: label === '' ? null : capLabel(label), wrapped: false };
+    return splitAtOpener(trimmed, i, openers);
   }
 
   return whole;
+}
+
+/** Decides whether the opener at `i`, the rightmost one at a word boundary, starts a label. */
+function splitAtOpener(trimmed: string, i: number, openers: string): QuotedTail {
+  const whole = { head: trimmed, label: null, wrapped: false };
+  const head = trimmed.slice(0, i).trim();
+  if (head === '') return { ...whole, wrapped: true };
+  if (SEPARATOR_CHARS.has(head.slice(-1))) return whole;
+  // A head closing on a quote means the option before this one was quoted too, so these
+  // are quoted options rather than a labelled list — `"Alpha" "Beta"` must keep both
+  if (QUOTE_PAIRS[head.slice(-1)] != null) return whole;
+  // An odd count leaves an opener unclosed in the head, so the quote found here closes
+  // that one instead of opening a label — `a, b "he said "hi""` keeps its nested quotes
+  if (countAny(head, openers) % 2 === 1) return whole;
+
+  const label = trimmed.slice(i + 1, -1).trim();
+  return { head, label: label === '' ? null : capLabel(label), wrapped: false };
 }
 
 function countAny(text: string, chars: string): number {

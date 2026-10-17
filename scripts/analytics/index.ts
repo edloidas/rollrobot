@@ -105,7 +105,17 @@ async function runQuota(client: AnalyticsClient, days: number, json: boolean): P
   );
 }
 
-async function main(): Promise<void> {
+interface Options {
+  days: number;
+  format: Format;
+  out: string | undefined;
+  snapshot: boolean;
+  command: string | undefined;
+  argument: string | undefined;
+}
+
+/** Parsed and validated arguments, or `null` when `--help` was asked for. */
+function parseOptions(): Options | null {
   const { values, positionals } = parseArgs({
     args: Bun.argv.slice(2),
     options: {
@@ -119,10 +129,7 @@ async function main(): Promise<void> {
     allowPositionals: true,
   });
 
-  if (values.help) {
-    console.log(USAGE);
-    return;
-  }
+  if (values.help) return null;
 
   const days = Math.min(Number(values.days ?? DEFAULT_DAYS), RETENTION_DAYS);
   if (!Number.isFinite(days) || days < 1) {
@@ -137,51 +144,67 @@ async function main(): Promise<void> {
     throw new Error('--format html needs --out, e.g. --out .tmp/report.html');
   }
 
+  const [command, argument] = positionals;
+  return { days, format, out: values.out, snapshot: values.snapshot, command, argument };
+}
+
+async function runSnapshot(client: AnalyticsClient, quiet: boolean): Promise<void> {
+  printCaveats(quiet, 'err');
+  const outcome = await writeSnapshots(client);
+  print(quiet, outcome, () =>
+    [
+      `snapshots in ${SNAPSHOT_DIR}/`,
+      `  wrote ${outcome.written.length}: ${outcome.written.join(' ') || '-'}`,
+      `  already present: ${outcome.skipped.length}`,
+      `  incomplete, not frozen: ${outcome.pending.join(' ') || '-'}`,
+    ].join('\n'),
+  );
+}
+
+async function runReport(client: AnalyticsClient, options: Options): Promise<void> {
+  const report = await buildReport(client, options.days);
+  if (options.format === 'html') {
+    const out = options.out as string;
+    await Bun.write(out, renderHtml(report, readSnapshots()));
+    console.log(`Wrote ${out}`);
+    return;
+  }
+
+  print(options.format === 'json', report, () => renderReport(report));
+}
+
+async function main(): Promise<void> {
+  const options = parseOptions();
+  if (options == null) {
+    console.log(USAGE);
+    return;
+  }
+
+  const { days, format, snapshot, command, argument } = options;
+
   // Caveats belong on the page itself for html, and in the payload for json
   const quiet = format !== 'table';
 
   const client = createClient();
-  const [command, argument] = positionals;
 
   // Only the report has enough shape to be worth a page; the rest are line output.
   // Without the --snapshot arm here, --out would be demanded and then ignored.
-  if (format === 'html' && (command != null || values.snapshot)) {
+  if (format === 'html' && (command != null || snapshot)) {
     throw new Error(
       `--format html applies to the report, not "${command ?? '--snapshot'}"\n\n${USAGE}`,
     );
   }
 
-  if (values.snapshot) {
+  if (snapshot) {
     if (command != null) {
       throw new Error(`--snapshot takes no command, but got "${command}"\n\n${USAGE}`);
     }
-
-    printCaveats(quiet, 'err');
-    const outcome = await writeSnapshots(client);
-    print(quiet, outcome, () =>
-      [
-        `snapshots in ${SNAPSHOT_DIR}/`,
-        `  wrote ${outcome.written.length}: ${outcome.written.join(' ') || '-'}`,
-        `  already present: ${outcome.skipped.length}`,
-        `  incomplete, not frozen: ${outcome.pending.join(' ') || '-'}`,
-      ].join('\n'),
-    );
-    return;
+    return runSnapshot(client, quiet);
   }
 
   switch (command) {
-    case undefined: {
-      const report = await buildReport(client, days);
-      if (format === 'html') {
-        const out = values.out as string;
-        await Bun.write(out, renderHtml(report, readSnapshots()));
-        console.log(`Wrote ${out}`);
-        return;
-      }
-
-      print(format === 'json', report, () => renderReport(report));
-      return;
-    }
+    case undefined:
+      return runReport(client, options);
     case 'doctor':
       return runDoctor(client, Number(argument ?? 20), quiet);
     case 'quota':
