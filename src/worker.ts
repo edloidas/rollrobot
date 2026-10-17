@@ -27,6 +27,22 @@ function getUpdateHandler(env: Env): ReturnType<typeof webhookCallback> {
   return handleUpdate;
 }
 
+async function handleWebhook(request: Request, env: Env): Promise<Response> {
+  if (request.headers.get('X-Telegram-Bot-Api-Secret-Token') !== env.WEBHOOK_SECRET) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
+  try {
+    return await getUpdateHandler(env)(request);
+  } catch (error) {
+    const cause = error instanceof BotError ? error.error : error;
+    if (!(cause instanceof GrammyError)) {
+      console.error('Webhook error:', cause instanceof Error ? cause.message : cause);
+    }
+    return new Response('OK');
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -36,19 +52,7 @@ export default {
     }
 
     if (request.method === 'POST' && url.pathname === WEBHOOK_PATH) {
-      if (request.headers.get('X-Telegram-Bot-Api-Secret-Token') !== env.WEBHOOK_SECRET) {
-        return new Response('Unauthorized', { status: 401 });
-      }
-
-      try {
-        return await getUpdateHandler(env)(request);
-      } catch (error) {
-        const cause = error instanceof BotError ? error.error : error;
-        if (!(cause instanceof GrammyError)) {
-          console.error('Webhook error:', cause instanceof Error ? cause.message : cause);
-        }
-        return new Response('OK');
-      }
+      return handleWebhook(request, env);
     }
 
     return new Response('Not Found', { status: 404 });
